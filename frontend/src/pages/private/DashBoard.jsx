@@ -19,22 +19,24 @@ export default function DashBoard() {
     <>
       <Navbar />
       <div className="container mt-5">
-        <table className="table">
-          <TableHeader
-            columns={[
-              "Sr. No.",
-              "Image",
-              "Email",
-              "Mobile number",
-              "Designation",
-              "Gender",
-              "Course",
-              "Created Date",
-              "Action",
-            ]}
-          />
-          <TableBody rows={["1"]} />
-        </table>
+        <div className="table-responsive">
+          <table className="table">
+            <TableHeader
+              columns={[
+                "Sr. No.",
+                "Image",
+                "Email",
+                "Mobile number",
+                "Designation",
+                "Gender",
+                "Course",
+                "Created Date",
+                "Action",
+              ]}
+            />
+            <TableBody rows={["1"]} />
+          </table>
+        </div>
       </div>
     </>
   );
