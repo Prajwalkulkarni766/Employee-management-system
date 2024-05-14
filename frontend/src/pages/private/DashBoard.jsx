@@ -1,6 +1,5 @@
 import TableHeader from "../../components/TableHeader";
 import TableBody from "../../components/TableBody";
-import Navbar from "../../components/Navbar";
 import { useEffect } from "react";
 import axios from "axios";
 
@@ -17,7 +16,6 @@ export default function DashBoard() {
   });
   return (
     <>
-      <Navbar />
       <div className="container mt-5">
         <div className="table-responsive">
           <table className="table">

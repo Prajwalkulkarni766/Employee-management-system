@@ -4,9 +4,10 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import axios from "axios";
 import { setToken } from "../../features/auth/auth.slice";
-import Navbar from "../../components/Navbar";
 import { useNavigate, Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
+import * as Yup from "yup";
+import { NavLink } from "react-router-dom";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -14,11 +15,20 @@ export default function Login() {
   const cookieToken = Cookies.get("authToken");
   const token = useSelector((state) => state.token.token);
 
+  const loginSchema = Yup.object({
+    email: Yup.string().email("Invalid email").required("Required"),
+    password: Yup.string()
+      .min(8, "Too Short!")
+      .max(16, "Too Long!")
+      .required("Required"),
+  });
+
   const formik = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
+    validationSchema: loginSchema,
     onSubmit: (values) => {
       const { email, password } = values;
       axios
@@ -44,7 +54,6 @@ export default function Login() {
 
   return (
     <>
-      <Navbar />
       <div className="container mt-5">
         <form onSubmit={formik.handleSubmit}>
           <h1>Login form</h1>
@@ -55,17 +64,30 @@ export default function Login() {
             inputId="email"
             placeholder="Enter email address"
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             value={formik.values.email}
+            errors={formik.errors.email}
+            isTouched={formik.touched.email}
           />
+
           <Input
             labelName="Password"
             inputType="password"
             inputId="password"
             placeholder="Enter password"
             onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             value={formik.values.password}
+            errors={formik.errors.password}
+            isTouched={formik.touched.password}
           />
+
           <Button labelName="Login" />
+          <br />
+          <br />
+          <NavLink to="/signup" className="nav-nav-underline ">
+            Don&apos;t have account signup
+          </NavLink>
         </form>
       </div>
     </>

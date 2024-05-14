@@ -3,11 +3,17 @@ import Login from "./pages/public/Login";
 import DashBoard from "./pages/private/DashBoard";
 import PrivateRoute from "./pages/private/PrivateRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Signup from "./pages/public/Signup";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
+  },
+  {
+    path: "/signup",
+    element: <Signup />,
   },
   {
     path: "dashboard",
@@ -38,6 +44,7 @@ function NotFound() {
 function App() {
   return (
     <>
+      <Navbar />
       <RouterProvider router={router} />
     </>
   );

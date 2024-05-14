@@ -5,7 +5,6 @@ import RadioInput from "../../components/RadioInput";
 import CheckBox from "../../components/CheckBox";
 import FileInput from "../../components/FileInput";
 import Button from "../../components/Button";
-import Navbar from "../../components/Navbar";
 
 export default function EmployeeForm() {
   const formik = useFormik({
@@ -25,7 +24,6 @@ export default function EmployeeForm() {
 
   return (
     <>
-      <Navbar />
       <div className="container mt-5">
         <form onSubmit={formik.handleSubmit}>
           <Input
