@@ -1,8 +1,9 @@
+import TextField from "@mui/material/TextField";
+
 export default function Input({
   labelName,
   inputType,
   inputId,
-  placeholder,
   onChange,
   onBlur,
   value,
@@ -11,26 +12,19 @@ export default function Input({
 }) {
   return (
     <div>
-      <label htmlFor={inputId} className="form-label">
-        {labelName}
-      </label>
-      <input
+      <TextField
         name={inputId}
         type={inputType}
-        className="form-control"
         id={inputId}
-        placeholder={placeholder}
-        onChange={onChange}
+        label={labelName}
+        variant="outlined"
         onBlur={onBlur}
         value={value}
+        onChange={onChange}
         required
       />
 
-      {isTouched && errors ? (
-        <p className="text-danger">{errors}</p>
-      ) : (
-        <p></p>
-      )}
+      {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}
     </div>
   );
 }

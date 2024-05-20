@@ -4,7 +4,7 @@ import Select from "../../components/Select";
 import RadioInput from "../../components/RadioInput";
 import CheckBox from "../../components/CheckBox";
 import FileInput from "../../components/FileInput";
-import Button from "../../components/Button";
+import MyButton from "../../components/MyButton";
 
 export default function EmployeeForm() {
   const formik = useFormik({
@@ -77,7 +77,7 @@ export default function EmployeeForm() {
             id="profileImage"
           />
 
-          <Button labelName="Create" />
+          <MyButton labelName="Create" />
         </form>
       </div>
     </>
