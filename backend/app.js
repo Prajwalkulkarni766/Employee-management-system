@@ -18,9 +18,12 @@ app.use(cookieParser());
 //routes import
 import authenticateRoute from "./src/routes/authenticate.route.js";
 import employeeRoute from "./src/routes/employee.route.js";
+import globalErrorHandler from "./src/controllers/error.controller.js";
 
 //routes declaration
-app.use("/api/v1/", authenticateRoute);
-app.use("/api/v1/", employeeRoute);
+app.use("/api/v1/auth", authenticateRoute);
+app.use("/api/v1/employee", employeeRoute);
+
+app.use(globalErrorHandler);
 
 export { app };

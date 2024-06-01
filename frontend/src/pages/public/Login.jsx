@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Toast from "../../helper/Toast";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -19,11 +20,13 @@ export default function Login() {
   const token = useSelector((state) => state.token.token);
 
   const loginSchema = Yup.object({
-    email: Yup.string().email("Invalid email").required("Required"),
+    email: Yup.string()
+      .email("Invalid Email Address")
+      .required("Email Address Required"),
     password: Yup.string()
-      .min(8, "Too Short!")
-      .max(16, "Too Long!")
-      .required("Required"),
+      .min(8, "Too Short Password!")
+      .max(16, "Too Long Password!")
+      .required("Password Required"),
   });
 
   const formik = useFormik({
@@ -32,22 +35,21 @@ export default function Login() {
       password: "",
     },
     validationSchema: loginSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const { email, password } = values;
-      axios
-        .post("/api/v1/login", {
+      try {
+        console.log("request send");
+        const response = await axios.post("/api/v1/login", {
           userName: email,
           password: password,
-        })
-        .then((response) => {
-          const token = response.data.token;
-          dispatch(setToken(token));
-          Cookies.set("authToken", token);
-          navigate("/dashboard");
-        })
-        .catch((error) => {
-          console.log(error);
         });
+        const token = response.data.token;
+        dispatch(setToken(token));
+        Cookies.set("authToken", token);
+        navigate("/dashboard");
+      } catch (error) {
+        Toast.error(error.response?.data?.message || "Something went wrong");
+      }
     },
   });
 
@@ -78,16 +80,16 @@ export default function Login() {
                 label={"Email address"}
                 variant="outlined"
                 value={formik.values.email}
-                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
+                onBlur={() => {
+                  if (formik.touched.email || formik.errors.email) {
+                    Toast.error(formik.errors.email);
+                  }
+                }}
                 required
                 fullWidth
               />
-              {formik.touched.email && formik.errors.email ? (
-                <p className="error-text">{formik.errors.email}</p>
-              ) : (
-                <p></p>
-              )}
+              <p></p>
 
               <TextField
                 name={"password"}
@@ -96,18 +98,18 @@ export default function Login() {
                 label={"Password"}
                 variant="outlined"
                 value={formik.values.password}
-                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
+                onBlur={() => {
+                  if (formik.touched.password || formik.errors.password) {
+                    Toast.error(formik.errors.password);
+                  }
+                }}
                 required
                 fullWidth
               />
-              {formik.touched.password && formik.errors.password ? (
-                <p className="error-text">{formik.errors.password}</p>
-              ) : (
-                <p></p>
-              )}
+              <p></p>
 
-              <Button size="large" variant="contained" fullWidth>
+              <Button type="submit" size="large" variant="contained" fullWidth>
                 Login
               </Button>
             </form>

@@ -1,151 +1,119 @@
 import Employee from "../models/employee.model.js";
 import { deleteImage } from "../utils/deleteImage.js";
-import { sendResponse } from "../utils/response.js";
+import catchAsync from "../utils/catchAsync.js";
+import AppResponse from "../utils/appResponse.js";
+import AppError from "../utils/appError.js";
 
-const getEmployee = async (req, res) => {
-  try {
-    const employee = await Employee.find();
-    return sendResponse(res, 200, true, "Data of employee", employee);
-  } catch (error) {
-    return sendResponse(res, 500, false, "Server error");
+const getEmployee = catchAsync(async (req, res, next) => {
+  const employee = await Employee.find();
+});
+
+const createEmployee = catchAsync(async (req, res, next) => {
+  const {
+    name,
+    email,
+    dateOfBirth,
+    mobileNumber,
+    gender,
+    education,
+    jobTitle,
+    department,
+    joiningDate,
+    salary,
+    additionalData,
+  } = req.body;
+
+  const imageUrl = req.file ? req.file.path : undefined;
+
+  const employee = await Employee.find({ email: email });
+
+  if (employee.length > 0) {
+    return next(new AppError("Please provide another email address", 409));
   }
-};
 
-const createEmployee = async (req, res) => {
-  try {
-    const { name, email, mobileNumber, designation, gender, course } = req.body;
+  const newEmployee = await new Employee({
+    name,
+    email,
+    dateOfBirth,
+    mobileNumber,
+    gender,
+    education,
+    jobTitle,
+    department,
+    joiningDate,
+    salary,
+    additionalData,
+    imageUrl,
+  }).save();
 
-    if (
-      !name ||
-      !email ||
-      !mobileNumber ||
-      !designation ||
-      !gender ||
-      !course
-    ) {
-      return sendResponse(
-        res,
-        401,
-        false,
-        "Provide name, email, mobileNumber, designation, gender and course all these field"
-      );
-    }
+  return res
+    .status(201)
+    .json(new AppResponse(201, newEmployee, "User registered Successfully"));
+});
 
-    const employee = await Employee.find({ email: email });
-    if (employee.length > 0) {
-      return sendResponse(res, 401, false, "Provide unique email address");
-    }
+const updateEmployee = catchAsync(async (req, res, next) => {
+  const { empId, name, email, mobileNumber, designation, gender, course } =
+    req.body;
 
-    let newEmployee = new Employee({
-      name: name,
-      email: email,
-      mobileNumber: mobileNumber,
-      designation: designation,
-      gender: gender,
-      course: course,
-      imageUrl: `${req.file.path}` || "",
-    });
+  const employee = await Employee.findById(empId);
 
-    newEmployee = await newEmployee.save();
-
-    return sendResponse(
-      res,
-      201,
-      true,
-      "Employee created successfully",
-      newEmployee
-    );
-  } catch (error) {
-    return sendResponse(res, 500, false, "Server error");
+  if (!employee) {
+    return next(new AppError("Employee does not exists", 400));
   }
-};
 
-const updateEmployee = async (req, res) => {
-  try {
-    const { empId, name, email, mobileNumber, designation, gender, course } =
-      req.body;
-
-    if (!empId) {
-      return sendResponse(res, 400, false, "Provide employee id");
-    }
-
-    const employee = await Employee.findById(empId);
-
-    if (!employee) {
-      return sendResponse(res, 400, false, "Employee does not exists");
-    }
-
-    employee.name = name || employee.name;
-    employee.email = email || employee.email;
-    employee.mobileNumber = mobileNumber || employee.mobileNumber;
-    employee.designation = designation || employee.designation;
-    employee.gender = gender || employee.gender;
-    employee.course = course || employee.course;
-    if (req.file && req.file.path) {
-      if (employee.imageUrl) {
-        const status = await deleteImage(employee.imageUrl);
-        console.log(status);
-        if (!status) {
-          return sendResponse(
-            res,
-            400,
-            false,
-            "Problem while deleting previous image"
-          );
-        }
+  // updating the data
+  employee.name = name || employee.name;
+  employee.email = email || employee.email;
+  employee.mobileNumber = mobileNumber || employee.mobileNumber;
+  employee.designation = designation || employee.designation;
+  employee.gender = gender || employee.gender;
+  employee.dateOfBirth = dateOfBirth || employee.dateOfBirth;
+  employee.education = education || employee.education;
+  employee.jobTitle = jobTitle || employee.jobTitle;
+  employee.department = department || employee.department;
+  employee.joiningDate = joiningDate || employee.joiningDate;
+  employee.salary = salary || employee.salary;
+  employee.additionalData = additionalData || employee.additionalData;
+  if (req.file && req.file.path) {
+    if (employee.imageUrl) {
+      const status = await deleteImage(employee.imageUrl);
+      console.log(status);
+      if (!status) {
+        return next(new AppError("Problem while deleting previous image", 400));
       }
-      employee.imageUrl = req.file.path;
     }
-
-    await employee.save();
-
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Employee updated successfully",
-      employee
-    );
-  } catch (error) {
-    console.log(error);
-    return sendResponse(res, 500, false, "Server error");
+    employee.imageUrl = req.file.path;
   }
-};
 
-const deleteEmployee = async (req, res) => {
-  try {
-    const { empId } = req.query;
+  await employee.save();
 
-    if (!empId) {
-      return sendResponse(res, 400, false, "Provide employee id");
-    }
+  return res
+    .status(200)
+    .json(new AppResponse(200, employee, "Employee updated successfully"));
+});
 
-    const employee = await Employee.findByIdAndDelete(empId);
+const deleteEmployee = catchAsync(async (req, res, next) => {
+  const { empId } = req.body;
 
-    if (!employee) {
-      return sendResponse(res, 400, false, "Provided employee not found");
-    }
+  const employee = await Employee.findByIdAndDelete(empId);
 
-    const status = await deleteImage(employee.imageUrl);
-    if (!status) {
-      return sendResponse(
-        res,
-        400,
-        false,
-        "Problem while deleting previous image"
-      );
-    }
-
-    return sendResponse(
-      res,
-      200,
-      true,
-      "Employee deleted successfully",
-      employee
-    );
-  } catch (error) {
-    return sendResponse(res, 500, false, "Server error");
+  if (!employee) {
+    return next(new AppError("Employee not found", 400));
   }
-};
+
+  const status = await deleteImage(employee.imageUrl);
+  // if (!status) {
+  //   return sendResponse(
+  //     res,
+  //     400,
+  //     false,
+  //     "Problem while deleting previous image"
+  //   );
+  // }
+
+  return res
+    .status()
+    .send(new AppResponse(204, undefined, "Employee deleted successfully"));
+});
 
 export { getEmployee, createEmployee, updateEmployee, deleteEmployee };

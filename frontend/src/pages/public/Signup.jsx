@@ -11,22 +11,25 @@ import Typography from "@mui/material/Typography";
 import { Grid } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Toast from "../../helper/Toast";
 
 export default function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const signupSchema = Yup.object({
-    name: Yup.string().min(3, "Too Short!").required("Required"),
-    email: Yup.string().email("Invalid email").required("Required"),
+    name: Yup.string().min(3, "Name Too Short!").required("Name Required"),
+    email: Yup.string()
+      .email("Invalid Email Address")
+      .required("Email Address Required"),
     mobileNumber: Yup.string().matches(
       /^[0-9]{10}$/,
-      "Must be exactly 10 digits"
+      "Mobile number must be exactly 10 digits"
     ),
     password: Yup.string()
-      .min(8, "Too Short!")
-      .max(16, "Too Long!")
-      .required("Required"),
+      .min(8, "Password Too Short!")
+      .max(16, "Password Too Long!")
+      .required("Password Required"),
   });
 
   const formik = useFormik({
@@ -37,24 +40,22 @@ export default function Signup() {
       password: "",
     },
     validationSchema: signupSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const { name, email, mobileNumber, password } = values;
-      axios
-        .post("/api/v1/login", {
+      try {
+        const response = await axios.post("/api/v1/login", {
           name: name,
           email: email,
           mobileNumber: mobileNumber,
           password: password,
-        })
-        .then((response) => {
-          const token = response.data.token;
-          dispatch(setToken(token));
-          Cookies.set("authToken", token);
-          navigate("/dashboard");
-        })
-        .catch((error) => {
-          console.log(error);
         });
+        const token = response.data.token;
+        dispatch(setToken(token));
+        Cookies.set("authToken", token);
+        navigate("/dashboard");
+      } catch (error) {
+        Toast.error(error.response?.data?.message || "Something went wrong");
+      }
     },
   });
 
@@ -82,16 +83,16 @@ export default function Signup() {
                 label={"Name"}
                 variant="outlined"
                 value={formik.values.name}
-                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
+                onBlur={() => {
+                  if (formik.touched.name || formik.errors.name) {
+                    Toast.error(formik.errors.name);
+                  }
+                }}
                 required
                 fullWidth
               />
-              {formik.touched.name && formik.errors.name ? (
-                <p className="error-text">{formik.errors.name}</p>
-              ) : (
-                <p></p>
-              )}
+              <p></p>
 
               <TextField
                 name={"email"}
@@ -100,16 +101,16 @@ export default function Signup() {
                 label={"Email address"}
                 variant="outlined"
                 value={formik.values.email}
-                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
+                onBlur={() => {
+                  if (formik.touched.email || formik.errors.email) {
+                    Toast.error(formik.errors.email);
+                  }
+                }}
                 required
                 fullWidth
               />
-              {formik.touched.email && formik.errors.email ? (
-                <p className="error-text">{formik.errors.email}</p>
-              ) : (
-                <p></p>
-              )}
+              <p></p>
 
               <TextField
                 name={"mobileNumber"}
@@ -118,16 +119,19 @@ export default function Signup() {
                 label={"Mobile number"}
                 variant="outlined"
                 value={formik.values.mobileNumber}
-                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
+                onBlur={() => {
+                  if (
+                    formik.touched.mobileNumber ||
+                    formik.errors.mobileNumber
+                  ) {
+                    Toast.error(formik.errors.mobileNumber);
+                  }
+                }}
                 required
                 fullWidth
               />
-              {formik.touched.mobileNumber && formik.errors.mobileNumber ? (
-                <p className="error-text">{formik.errors.mobileNumber}</p>
-              ) : (
-                <p></p>
-              )}
+              <p></p>
 
               <TextField
                 name={"password"}
@@ -136,18 +140,18 @@ export default function Signup() {
                 label={"Password"}
                 variant="outlined"
                 value={formik.values.password}
-                onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
+                onBlur={() => {
+                  if (formik.touched.password || formik.errors.password) {
+                    Toast.error(formik.errors.password);
+                  }
+                }}
                 required
                 fullWidth
               />
-              {formik.touched.password && formik.errors.password ? (
-                <p className="error-text">{formik.errors.password}</p>
-              ) : (
-                <p></p>
-              )}
+              <p></p>
 
-              <Button size="large" variant="contained" fullWidth>
+              <Button type="submit" size="large" variant="contained" fullWidth>
                 Signup
               </Button>
             </form>

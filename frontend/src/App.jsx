@@ -5,6 +5,8 @@ import PrivateRoute from "./pages/private/PrivateRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Signup from "./pages/public/Signup";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +48,7 @@ function App() {
     <>
       <Navbar />
       <RouterProvider router={router} />
+      <ToastContainer />
     </>
   );
 }

@@ -11,24 +11,49 @@ const employeeSchema = new mongoose.Schema({
     unique: true,
     index: true,
   },
+  dateOfBirth: {
+    type: Date,
+    required: true,
+  },
   mobileNumber: {
     type: String,
     required: true,
   },
-  designation: {
-    type: String,
-    enum: ["HR", "Manager", "Sales"],
-  },
   gender: {
     type: String,
-    enum: ["Male", "Female"],
+    enum: ["Male", "Female", "Other"],
+    required: true,
   },
-  course: {
+  education: {
+    type: {},
+  },
+  jobTitle: {
     type: String,
-    enum: ["MCA", "BCA", "BSC"],
+    required: true,
+  },
+  department: {
+    type: String,
+    required: true,
+  },
+  joiningDate: {
+    type: Date,
+    required: true,
   },
   imageUrl: {
     type: String,
+  },
+  salary: {
+    type: Number,
+    required: true,
+  },
+  additionalData: {
+    type: Object,
+    default: {},
+  },
+  role: {
+    type: String,
+    enum: ["employee", "admin"],
+    default: "employee",
   },
 });
 
