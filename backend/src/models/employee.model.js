@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const employeeSchema = new mongoose.Schema({
+const employeeSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -39,7 +39,7 @@ const employeeSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  imageUrl: {
+  image: {
     type: String,
   },
   salary: {
@@ -55,8 +55,12 @@ const employeeSchema = new mongoose.Schema({
     enum: ["employee", "admin"],
     default: "employee",
   },
+  password: {
+    type: String,
+    required: true,
+  },
 });
 
-const Employee = mongoose.model("Employee", employeeSchema);
+const Employee = model("Employee", employeeSchema);
 
 export default Employee;

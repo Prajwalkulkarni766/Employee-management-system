@@ -1,41 +1,34 @@
-import Login from "../models/login.model.js";
 import generateToken from "../utils/token.js";
-// import { sendResponse } from "../utils/response.js";
+import catchAsync from "../utils/catchAsync.js";
+import Employee from "../models/employee.model.js";
+import AppResponse from "../utils/appResponse.js";
+import bcrypt from "bcrypt";
+import AppError from "../utils/appError.js";
 
-const login = async (req, res) => {
-  // try {
-  const { userName, password } = req.body;
+const login = catchAsync(async (req, res, next) => {
+  let { email, password } = req.body;
 
-  // username or password not provided
-  // if (!userName || !password) {
-  //   return sendResponse(
-  //     res,
-  //     401,
-  //     false,
-  //     "Please provide user name and password"
-  //   );
-  // }
+  let employee = await Employee.findOne({
+    email: email,
+  });
 
-  // const user = await Login.findOne({ userName: userName });
+  if (!employee) {
+    return next(new AppError("Employee not found", 404));
+  }
 
-  // user not found
-  // if (!user) {
-  //   return sendResponse(res, 401, false, "User with provided name not found");
-  // }
-  // password mismatch
-  // else if (password != user.password) {
-  //   return sendResponse(res, 401, false, "Password is wrong");
-  // }
+  const passwordCheckResult = await bcrypt.compare(password, employee.password);
 
-  //   const token = generateToken("65eb41858f9886465482df1c");
+  if (!passwordCheckResult) {
+    return next(new AppError("Wrong credentials", 404));
+  }
+  employee["password"] = undefined;
 
-  //   res
-  //     .status(200)
-  //     .cookie("token", token, { httpOnly: true, secure: true })
-  //     .json({ status: true, message: "login successful", token: token });
-  // } catch (error) {
-  //   return sendResponse(res, 500, false, "Server error");
-  // }
-};
+  const token = generateToken(employee._id);
+
+  return res
+    .status(200)
+    .cookie("Authorization", token, { httpOnly: true, secure: true })
+    .json(new AppResponse(200, employee, "Login successfully"));
+});
 
 export { login };

@@ -1,8 +1,21 @@
-import { Router } from "express";
 import { login } from "../controllers/login.controller.js";
+import express from "express";
+import { check } from "express-validator";
+import checkErrors from "../middlewares/checkErrors.middleware.js";
 
-const router = Router();
+const authRoute = express.Router();
 
-router.post("/login", login);
+authRoute.post(
+  "/login",
+  [
+    check("email")
+      .notEmpty()
+      .isEmail()
+      .withMessage("Please provide required data"),
+    check("password").notEmpty().withMessage("Please provide required data"),
+  ],
+  checkErrors,
+  login
+);
 
-export default router;
+export default authRoute;

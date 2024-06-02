@@ -1,11 +1,14 @@
 import Employee from "../models/employee.model.js";
-import { deleteImage } from "../utils/deleteImage.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppResponse from "../utils/appResponse.js";
 import AppError from "../utils/appError.js";
+import bcrypt from "bcrypt";
+import fs, { unlink } from "fs";
 
 const getEmployee = catchAsync(async (req, res, next) => {
   const employee = await Employee.find();
+
+  return res.status(200).json(new AppResponse(200, employee));
 });
 
 const createEmployee = catchAsync(async (req, res, next) => {
@@ -21,15 +24,18 @@ const createEmployee = catchAsync(async (req, res, next) => {
     joiningDate,
     salary,
     additionalData,
+    password,
   } = req.body;
 
-  const imageUrl = req.file ? req.file.path : undefined;
+  const image = req.file ? req.file.path : null;
 
   const employee = await Employee.find({ email: email });
 
   if (employee.length > 0) {
     return next(new AppError("Please provide another email address", 409));
   }
+
+  const hashedPassword = await bcrypt.hashSync(password, 12);
 
   const newEmployee = await new Employee({
     name,
@@ -43,17 +49,31 @@ const createEmployee = catchAsync(async (req, res, next) => {
     joiningDate,
     salary,
     additionalData,
-    imageUrl,
+    image: image,
+    password: hashedPassword,
   }).save();
 
   return res
     .status(201)
-    .json(new AppResponse(201, newEmployee, "User registered Successfully"));
+    .json(new AppResponse(201, newEmployee, "User registered successfully"));
 });
 
 const updateEmployee = catchAsync(async (req, res, next) => {
-  const { empId, name, email, mobileNumber, designation, gender, course } =
-    req.body;
+  const {
+    empId,
+    name,
+    email,
+    mobileNumber,
+    designation,
+    gender,
+    dateOfBirth,
+    education,
+    jobTitle,
+    department,
+    joiningDate,
+    salary,
+    additionalData,
+  } = req.body;
 
   const employee = await Employee.findById(empId);
 
@@ -75,14 +95,10 @@ const updateEmployee = catchAsync(async (req, res, next) => {
   employee.salary = salary || employee.salary;
   employee.additionalData = additionalData || employee.additionalData;
   if (req.file && req.file.path) {
-    if (employee.imageUrl) {
-      const status = await deleteImage(employee.imageUrl);
-      console.log(status);
-      if (!status) {
-        return next(new AppError("Problem while deleting previous image", 400));
-      }
+    if (employee.image) {
+      fs.unlinkSync(employee.image);
     }
-    employee.imageUrl = req.file.path;
+    employee.image = req.file.path;
   }
 
   await employee.save();
@@ -101,18 +117,12 @@ const deleteEmployee = catchAsync(async (req, res, next) => {
     return next(new AppError("Employee not found", 400));
   }
 
-  const status = await deleteImage(employee.imageUrl);
-  // if (!status) {
-  //   return sendResponse(
-  //     res,
-  //     400,
-  //     false,
-  //     "Problem while deleting previous image"
-  //   );
-  // }
+  if (employee.image) {
+    fs.unlinkSync(employee.image);
+  }
 
   return res
-    .status()
+    .status(204)
     .send(new AppResponse(204, undefined, "Employee deleted successfully"));
 });
 

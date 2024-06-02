@@ -1,22 +1,22 @@
 import Attendance from "../models/attendance.model.js";
-import User from "../models/user.model.js";
-import generateResponse from "../utility/responseFormat.js";
+// import User from "../models/user.model.js";
 // import excelJs from "exceljs";
 import moment from "moment";
-import catchAsync from "../utility/catchAsync.js";
+import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
+import AppResponse from "../utils/appResponse.js";
 
 const clockIn = catchAsync(async (req, res, next) => {
   const { clockIn, clockInCoordinates, userName, userId, day } = req.body;
-
   const date = new Date(clockIn);
   date.setUTCHours(0, 0, 0, 0);
 
   // if already clock in
   const attendanceRecord = await Attendance.findOne({
-    user: userId,
+    employee: empId,
     date: date.toISOString(),
   });
+
   if (attendanceRecord) {
     return next(new AppError("You are already clocked In", 409));
   }
@@ -25,85 +25,71 @@ const clockIn = catchAsync(async (req, res, next) => {
   let attendance = await Attendance({
     date: date.toISOString(),
     day,
-    user: userId,
+    employee: empId,
     userName,
     clockIn,
     clockInCoordinates,
   }).save();
 
-  const response = generateResponse(
-    "success",
-
-    attendance
-  );
-
-  return res.status(201).json(response);
+  return res
+    .status(201)
+    .json(new AppResponse(201, attendance, "Clocked in successfully"));
 });
 
 const clockOut = catchAsync(async (req, res, next) => {
-  let { attendanceId, clockOut, clockOutCoordinates } = req.body;
-  let workingStatus;
-
-  let attendanceData = await Attendance.findById(attendanceId);
-
-  clockOut = new Date(clockOut);
-
-  // calculating working hours
-  let diffMilliseconds = clockOut.getTime() - attendanceData.clockIn.getTime();
-  let workingHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
-  let workingMinutes = Math.floor(
-    (diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-  );
-
-  // determining working status
-  if (workingHours >= 8) {
-    workingStatus = "Present";
-  } else if (workingHours < 8 && workingHours > 5) {
-    workingStatus = "Almost Present";
-  } else if (workingHours <= 5 && workingHours >= 4) {
-    workingStatus = "Half Day";
-  } else {
-    workingStatus = "Not Considerable";
-  }
-
-  // finding attendance and updating it
-  let attendance = await Attendance.findByIdAndUpdate(
-    attendanceId,
-    {
-      clockOut,
-      clockOutCoordinates,
-      workingHours: `${workingHours}:${workingMinutes}`,
-      workingStatus,
-    },
-    { new: true }
-  );
-
-  // if attendance not found
-  if (!attendance) {
-    return next(
-      new AppError("Attendance not found so clock in first then clock out", 404)
-    );
-  }
-
-  const response = generateResponse("success", attendance);
-  return res.status(200).json(response);
+  // let { attendanceId, clockOut, clockOutCoordinates } = req.body;
+  // let workingStatus;
+  // let attendanceData = await Attendance.findById(attendanceId);
+  // clockOut = new Date(clockOut);
+  // // calculating working hours
+  // let diffMilliseconds = clockOut.getTime() - attendanceData.clockIn.getTime();
+  // let workingHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
+  // let workingMinutes = Math.floor(
+  //   (diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+  // );
+  // // determining working status
+  // if (workingHours >= 8) {
+  //   workingStatus = "Present";
+  // } else if (workingHours < 8 && workingHours > 5) {
+  //   workingStatus = "Almost Present";
+  // } else if (workingHours <= 5 && workingHours >= 4) {
+  //   workingStatus = "Half Day";
+  // } else {
+  //   workingStatus = "Not Considerable";
+  // }
+  // // finding attendance and updating it
+  // let attendance = await Attendance.findByIdAndUpdate(
+  //   attendanceId,
+  //   {
+  //     clockOut,
+  //     clockOutCoordinates,
+  //     workingHours: `${workingHours}:${workingMinutes}`,
+  //     workingStatus,
+  //   },
+  //   { new: true }
+  // );
+  // // if attendance not found
+  // if (!attendance) {
+  //   return next(
+  //     new AppError("Attendance not found so clock in first then clock out", 404)
+  //   );
+  // }
+  // const response = generateResponse("success", attendance);
+  // return res.status(200).json(response);
 });
 
 const getAttendanceInfoOfAnyDate = catchAsync(async (req, res, next) => {
-  const date = req.query.date ? new Date(req.query.date) : new Date();
-  date.setUTCHours(0, 0, 0, 0);
-
-  const attendanceData = await Attendance.findOne({
-    user: req.body.userId,
-    date: date,
-  }).select("clockIn clockOut");
-
-  if (!attendanceData.clockIn) {
-    return next(new AppError("Data not found", 400));
-  }
-
-  const response = generateResponse("success", attendanceData);
-  return res.status(200).json(response);
+  // const date = req.query.date ? new Date(req.query.date) : new Date();
+  // date.setUTCHours(0, 0, 0, 0);
+  // const attendanceData = await Attendance.findOne({
+  //   user: req.body.userId,
+  //   date: date,
+  // }).select("clockIn clockOut");
+  // if (!attendanceData.clockIn) {
+  //   return next(new AppError("Data not found", 400));
+  // }
+  // const response = generateResponse("success", attendanceData);
+  // return res.status(200).json(response);
 });
 
 // const reportInExcel = catchAsync(async (req, res, next) => {
@@ -180,21 +166,20 @@ const getAttendanceInfoOfAnyDate = catchAsync(async (req, res, next) => {
 // });
 
 const reportInText = catchAsync(async (req, res, next) => {
-  const { fromDate, toDate } = req.query;
-
-  const attendanceInfo = await Attendance.find({
-    user: req.body.userId,
-    date: {
-      $gte: fromDate,
-      $lte: toDate,
-    },
-  });
-  const data = attendanceInfo.reduce((acc, info) => {
-    const formattedDate = moment(info.date).format("YYYY-MM-DD");
-    acc[formattedDate] = info.workingStatus;
-    return acc;
-  }, {});
-  res.send(data);
+  // const { fromDate, toDate } = req.query;
+  // const attendanceInfo = await Attendance.find({
+  //   user: req.body.userId,
+  //   date: {
+  //     $gte: fromDate,
+  //     $lte: toDate,
+  //   },
+  // });
+  // const data = attendanceInfo.reduce((acc, info) => {
+  //   const formattedDate = moment(info.date).format("YYYY-MM-DD");
+  //   acc[formattedDate] = info.workingStatus;
+  //   return acc;
+  // }, {});
+  // res.send(data);
 });
 
 // const remarkAsAbsent = catchAsync(async (req, res, next) => {
