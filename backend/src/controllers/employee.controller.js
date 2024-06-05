@@ -53,6 +53,8 @@ const createEmployee = catchAsync(async (req, res, next) => {
     password: hashedPassword,
   }).save();
 
+  newEmployee.password = undefined;
+
   return res
     .status(201)
     .json(new AppResponse(201, newEmployee, "User registered successfully"));
@@ -102,6 +104,8 @@ const updateEmployee = catchAsync(async (req, res, next) => {
   }
 
   await employee.save();
+
+  employee.password = undefined;
 
   return res
     .status(200)

@@ -37,13 +37,13 @@ const attendanceSchema = new Schema({
   workingStatus: {
     type: String,
     enum: [
+      "Overtime",
       "Present",
       "Almost Present",
       "Half Day",
       "Not Considerable",
       "Absent",
       "Holiday",
-      "Overtime",
       "",
     ],
   },

@@ -4,7 +4,7 @@ import {
   getAttendanceInfoOfAnyDate,
   // reportInExcel,
   reportInText,
-  // remarkAsAbsent,
+  remarkAsAbsent,
 } from "../controllers/attendance.controller.js";
 import express from "express";
 import { check } from "express-validator";
@@ -32,10 +32,6 @@ attendanceRoute
       check("clockInCoordinates")
         .notEmpty()
         .withMessage("Please provide clock in coordinates"),
-      check("userName")
-        .notEmpty()
-        .isString()
-        .withMessage("Please send userName"),
       check("day").notEmpty().isString().withMessage("Please send day"),
     ],
     checkErrors,
@@ -56,7 +52,8 @@ attendanceRoute
     ],
     checkErrors,
     clockOut
-  );
+  )
+  .patch("/remarkAsAbsent", remarkAsAbsent);
 
 // .get(
 //   "/reportInExcel",
@@ -68,6 +65,5 @@ attendanceRoute
 //   checkErrors,
 //   reportInExcel
 // )
-// .patch("/remarkAsAbsent",remarkAsAbsent)
 
 export default attendanceRoute;

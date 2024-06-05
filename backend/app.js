@@ -26,7 +26,7 @@ import attendanceRoute from "./src/routes/attendance.route.js";
 
 //routes declaration
 app.use("/api/v1/auth", authenticateRoute);
-// app.use(verifyToken)
+app.use(verifyToken);
 app.use("/api/v1/employee", employeeRoute);
 app.use("/api/v1/attendance", attendanceRoute);
 

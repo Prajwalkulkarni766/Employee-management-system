@@ -12,7 +12,7 @@ const leaveSchema = new Schema({
   },
   leaveType: {
     type: String,
-    enum: ["Vacation", "Sick Leave", "Parental Leave", "Casual"],
+    enum: ["Medical", "Casual"],
     required: true,
   },
   leaveReason: {
@@ -39,6 +39,7 @@ const leaveSchema = new Schema({
     type: String,
     enum: ["Pending", "Approved", "Rejected", "Cancelled"],
     required: true,
+    default: "Pending",
   },
 });
 

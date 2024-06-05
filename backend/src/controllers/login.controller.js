@@ -28,7 +28,7 @@ const login = catchAsync(async (req, res, next) => {
   return res
     .status(200)
     .cookie("Authorization", token, { httpOnly: true, secure: true })
-    .json(new AppResponse(200, employee, "Login successfully"));
+    .json(new AppResponse(200, { employee, token }, "Login successfully"));
 });
 
 export { login };

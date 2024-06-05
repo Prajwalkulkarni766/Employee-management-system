@@ -1,13 +1,13 @@
 import Attendance from "../models/attendance.model.js";
-// import User from "../models/user.model.js";
-// import excelJs from "exceljs";
+import excelJs from "exceljs";
 import moment from "moment";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
+import Employee from "../models/employee.model.js";
 
 const clockIn = catchAsync(async (req, res, next) => {
-  const { clockIn, clockInCoordinates, userName, userId, day } = req.body;
+  const { clockIn, clockInCoordinates, employee, empId, day } = req.body;
   const date = new Date(clockIn);
   date.setUTCHours(0, 0, 0, 0);
 
@@ -26,7 +26,7 @@ const clockIn = catchAsync(async (req, res, next) => {
     date: date.toISOString(),
     day,
     employee: empId,
-    userName,
+    employeeName: employee.name,
     clockIn,
     clockInCoordinates,
   }).save();
@@ -37,59 +37,80 @@ const clockIn = catchAsync(async (req, res, next) => {
 });
 
 const clockOut = catchAsync(async (req, res, next) => {
-  // let { attendanceId, clockOut, clockOutCoordinates } = req.body;
-  // let workingStatus;
-  // let attendanceData = await Attendance.findById(attendanceId);
-  // clockOut = new Date(clockOut);
-  // // calculating working hours
-  // let diffMilliseconds = clockOut.getTime() - attendanceData.clockIn.getTime();
-  // let workingHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
-  // let workingMinutes = Math.floor(
-  //   (diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-  // );
-  // // determining working status
-  // if (workingHours >= 8) {
-  //   workingStatus = "Present";
-  // } else if (workingHours < 8 && workingHours > 5) {
-  //   workingStatus = "Almost Present";
-  // } else if (workingHours <= 5 && workingHours >= 4) {
-  //   workingStatus = "Half Day";
-  // } else {
-  //   workingStatus = "Not Considerable";
-  // }
-  // // finding attendance and updating it
-  // let attendance = await Attendance.findByIdAndUpdate(
-  //   attendanceId,
-  //   {
-  //     clockOut,
-  //     clockOutCoordinates,
-  //     workingHours: `${workingHours}:${workingMinutes}`,
-  //     workingStatus,
-  //   },
-  //   { new: true }
-  // );
-  // // if attendance not found
-  // if (!attendance) {
-  //   return next(
-  //     new AppError("Attendance not found so clock in first then clock out", 404)
-  //   );
-  // }
-  // const response = generateResponse("success", attendance);
-  // return res.status(200).json(response);
+  let { attendanceId, clockOut, clockOutCoordinates } = req.body;
+  let workingStatus;
+  let attendanceData = await Attendance.findById(attendanceId);
+  clockOut = new Date(clockOut);
+
+  // if already clock out
+  const attendanceRecord = await Attendance.findById(attendanceId);
+
+  if (attendanceRecord.clockOut) {
+    return next(new AppError("You are already clocked out", 409));
+  }
+
+  // calculating working hours
+  let diffMilliseconds = clockOut.getTime() - attendanceData.clockIn.getTime();
+  let workingHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
+  let workingMinutes = Math.floor(
+    (diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
+  );
+
+  // determining working status
+  if (workingHours > 8) {
+    workingStatus = "Overtime";
+  } else if (workingHours === 8) {
+    workingStatus = "Present";
+  } else if (workingHours < 8 && workingHours > 5) {
+    workingStatus = "Almost Present";
+  } else if (workingHours <= 5 && workingHours >= 4) {
+    workingStatus = "Half Day";
+  } else {
+    workingStatus = "Not Considerable";
+  }
+
+  // finding attendance and updating it
+  let attendance = await Attendance.findByIdAndUpdate(
+    attendanceId,
+    {
+      clockOut,
+      clockOutCoordinates,
+      workingHours: `${workingHours}:${workingMinutes}`,
+      workingStatus,
+    },
+    { new: true }
+  );
+
+  // if attendance not found
+  if (!attendance) {
+    return next(
+      new AppError("Attendance not found so clock in first then clock out", 404)
+    );
+  }
+
+  return res
+    .status(200)
+    .json(new AppResponse(200, attendance, "Clocked out successfully"));
 });
 
 const getAttendanceInfoOfAnyDate = catchAsync(async (req, res, next) => {
-  // const date = req.query.date ? new Date(req.query.date) : new Date();
-  // date.setUTCHours(0, 0, 0, 0);
-  // const attendanceData = await Attendance.findOne({
-  //   user: req.body.userId,
-  //   date: date,
-  // }).select("clockIn clockOut");
-  // if (!attendanceData.clockIn) {
-  //   return next(new AppError("Data not found", 400));
-  // }
-  // const response = generateResponse("success", attendanceData);
-  // return res.status(200).json(response);
+  const date = req.query.date ? new Date(req.query.date) : new Date();
+  date.setUTCHours(0, 0, 0, 0);
+
+  // get attendance data
+  const attendanceData = await Attendance.findOne({
+    employee: req.body.empId,
+    date: date,
+  }).select("clockIn clockOut");
+
+  // if attendance data not found
+  if (!attendanceData.clockIn) {
+    return next(new AppError("Data not found", 400));
+  }
+
+  return res
+    .status(200)
+    .json(new AppResponse(200, attendanceData, "Data found"));
 });
 
 // const reportInExcel = catchAsync(async (req, res, next) => {
@@ -166,61 +187,72 @@ const getAttendanceInfoOfAnyDate = catchAsync(async (req, res, next) => {
 // });
 
 const reportInText = catchAsync(async (req, res, next) => {
-  // const { fromDate, toDate } = req.query;
-  // const attendanceInfo = await Attendance.find({
-  //   user: req.body.userId,
-  //   date: {
-  //     $gte: fromDate,
-  //     $lte: toDate,
-  //   },
-  // });
-  // const data = attendanceInfo.reduce((acc, info) => {
-  //   const formattedDate = moment(info.date).format("YYYY-MM-DD");
-  //   acc[formattedDate] = info.workingStatus;
-  //   return acc;
-  // }, {});
-  // res.send(data);
+  const { fromDate, toDate } = req.query;
+
+  // finding attendance data to append it in calendar
+  const attendanceInfo = await Attendance.find({
+    employee: req.body.empId,
+    date: {
+      $gte: fromDate,
+      $lte: toDate,
+    },
+  });
+
+  // formatting response
+  const data = attendanceInfo.reduce((acc, info) => {
+    const formattedDate = moment(info.date).format("YYYY-MM-DD");
+    acc[formattedDate] = info.workingStatus;
+    return acc;
+  }, {});
+
+  res.send(data);
 });
 
-// const remarkAsAbsent = catchAsync(async (req, res, next) => {
-//   // Generate date for which you want to mark absent
-//   const date = req.query.date ? new Date(req.query.date) : new Date();
-//   date.setUTCHours(0, 0, 0, 0);
-//   const day = moment(date).format("dddd");
+const remarkAsAbsent = catchAsync(async (req, res, next) => {
+  // Generate date for which you want to mark absent
+  const date = req.query.date ? new Date(req.query.date) : new Date();
+  date.setUTCHours(0, 0, 0, 0);
+  const day = moment(date).format("dddd");
 
-//   // Get all users and attendance records for that date
-//   const users = await User.find();
-//   const attendanceDataForThatDate = await Attendance.find({ date });
+  // Get all employees and attendance records for that date
+  const employees = await Employee.find();
+  const attendanceDataForThatDate = await Attendance.find({ date });
 
-//   for (const userData of users) {
-//     let userFound = false;
+  for (const employeeData of employees) {
+    let userFound = false;
 
-//     for (let i = 0; i < attendanceDataForThatDate.length; i++) {
-//       const attendanceData = attendanceDataForThatDate[i];
+    for (let i = 0; i < attendanceDataForThatDate.length; i++) {
+      const attendanceData = attendanceDataForThatDate[i];
 
-//       if (attendanceData.user == userData._id.toString()) {
-//         attendanceDataForThatDate.splice(i, 1);
-//         userFound = true;
-//         break;
-//       }
-//     }
+      if (attendanceData.user == employeeData._id.toString()) {
+        attendanceDataForThatDate.splice(i, 1);
+        userFound = true;
+        break;
+      }
+    }
 
-//     if (!userFound) {
-//       const newAttendanceRecord = new Attendance({
-//         user: userData._id,
-//         userName: userData.name,
-//         date,
-//         workingHours: "00:00",
-//         workingStatus: "Absent",
-//         day,
-//       });
+    if (!userFound) {
+      const newAttendanceRecord = new Attendance({
+        user: employeeData._id,
+        userName: employeeData.name,
+        date,
+        workingHours: "00:00",
+        workingStatus: "Absent",
+        day,
+      });
 
-//       // Save the new attendance record
-//       await newAttendanceRecord.save();
-//     }
-//   }
+      // Save the new attendance record
+      await newAttendanceRecord.save();
+    }
+  }
 
-//   res.send("ok");
-// });
+  res.send("ok");
+});
 
-export { clockIn, clockOut, getAttendanceInfoOfAnyDate, reportInText };
+export {
+  clockIn,
+  clockOut,
+  getAttendanceInfoOfAnyDate,
+  reportInText,
+  remarkAsAbsent,
+};
