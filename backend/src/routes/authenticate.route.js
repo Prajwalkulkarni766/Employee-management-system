@@ -1,21 +1,10 @@
 import { login } from "../controllers/login.controller.js";
 import express from "express";
-import { check } from "express-validator";
 import checkErrors from "../middlewares/checkErrors.middleware.js";
+import checkData from "../middlewares/checkRequestData.middleware.js";
 
 const authRoute = express.Router();
 
-authRoute.post(
-  "/login",
-  [
-    check("email")
-      .notEmpty()
-      .isEmail()
-      .withMessage("Please provide required data"),
-    check("password").notEmpty().withMessage("Please provide required data"),
-  ],
-  checkErrors,
-  login
-);
+authRoute.post("/login", checkData("login"), checkErrors, login);
 
 export default authRoute;
