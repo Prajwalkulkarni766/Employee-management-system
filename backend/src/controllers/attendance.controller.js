@@ -91,6 +91,8 @@ const clockOut = catchAsync(async (req, res, next) => {
     .json(new AppResponse(200, attendance, "Clocked out successfully"));
 });
 
+const attendance = catchAsync(async (req, res, next) => {});
+
 const getAttendanceInfoOfAnyDate = catchAsync(async (req, res, next) => {
   const date = req.query.date ? new Date(req.query.date) : new Date();
   date.setUTCHours(0, 0, 0, 0);

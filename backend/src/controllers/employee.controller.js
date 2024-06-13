@@ -5,13 +5,16 @@ import AppError from "../utils/appError.js";
 import fs, { unlink } from "fs";
 
 const getEmployee = catchAsync(async (req, res, next) => {
-  const employee = await Employee.find(req.query);
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 100;
+  const skip = (page - 1) * limit;
+
+  const employee = await Employee.find(req.query).skip(skip).limit(limit);
+
   return res.status(200).json(new AppResponse(200, employee));
 });
 
-const createSendToken = catchAsync(async (req, res, next) => {});
-
-const createEmployee = catchAsync(async (req, res, next) => {
+const isExistEmployee = catchAsync(async (req, res, next) => {
   const { email } = req.body;
 
   const employee = await Employee.findOne({ email: email });
@@ -21,14 +24,16 @@ const createEmployee = catchAsync(async (req, res, next) => {
   }
 
   req.body.image = req.file ? req.file.path : undefined;
-  const newEmployee = await new Employee(req.body).save();
 
-  newEmployee.password = undefined;
-  newEmployee._id = undefined;
+  next();
+});
+
+const createEmployee = catchAsync(async (req, res, next) => {
+  const employee = await Employee.create(req.body);
 
   return res
     .status(201)
-    .json(new AppResponse(201, newEmployee, "User registered successfully"));
+    .json(new AppResponse(201, employee, "Employee created successfully"));
 });
 
 const updateEmployee = catchAsync(async (req, res, next) => {
@@ -74,4 +79,10 @@ const deleteEmployee = catchAsync(async (req, res, next) => {
     .send(new AppResponse(204, undefined, "Employee deleted successfully"));
 });
 
-export { getEmployee, createEmployee, updateEmployee, deleteEmployee };
+export {
+  getEmployee,
+  createEmployee,
+  updateEmployee,
+  deleteEmployee,
+  isExistEmployee,
+};

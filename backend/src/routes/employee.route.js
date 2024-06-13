@@ -4,6 +4,7 @@ import {
   createEmployee,
   updateEmployee,
   deleteEmployee,
+  isExistEmployee,
 } from "../controllers/employee.controller.js";
 import { upload } from "../middlewares/multer.js";
 import checkErrors from "../middlewares/checkErrors.middleware.js";
@@ -13,6 +14,7 @@ import { verifyToken, restrictTo } from "../middlewares/auth.middleware.js";
 const employeeRoute = Router();
 
 employeeRoute
+  .use(verifyToken)
   .get("/", restrictTo("admin"), getEmployee)
   .post(
     "/",
@@ -20,9 +22,9 @@ employeeRoute
     upload.single("image"),
     checkData("createEmployee"),
     checkErrors,
+    isExistEmployee,
     createEmployee
   )
-  .use(verifyToken)
   .use(restrictTo("admin", "user"))
   .patch(
     "/",

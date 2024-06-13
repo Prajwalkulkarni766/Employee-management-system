@@ -13,9 +13,8 @@ const attendanceRoute = express.Router();
 
 attendanceRoute
   .get("/", getAttendanceInfoOfAnyDate)
+  .post("/", clockIn)
   .get("/reportInText", checkData("reportInText"), checkErrors, reportInText)
-  .post("/clockIn", checkData("clockIn"), checkErrors, clockIn)
-  .post("/clockOut", checkData("clockOut"), checkErrors, clockOut)
   .patch("/remarkAsAbsent", remarkAsAbsent);
 
 export default attendanceRoute;

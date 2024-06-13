@@ -16,13 +16,13 @@ const login = catchAsync(async (req, res, next) => {
 
   let employee = await Employee.findOne({
     email: email,
-  });
+  }).select("+password");
 
   if (!employee || !(await bcrypt.compare(password, employee.password))) {
     return next(new AppError("Wrong credentials", 400));
   }
 
-  const token = signToken(employee._id);
+  const token = signToken(employee.employeeId);
 
   employee.password = undefined;
 

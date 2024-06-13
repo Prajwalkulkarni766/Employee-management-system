@@ -6,10 +6,6 @@ const attendanceSchema = new Schema({
     ref: "employee",
     required: true,
   },
-  employeeName: {
-    type: String,
-    required: true,
-  },
   date: {
     type: Date,
     required: true,
@@ -19,16 +15,16 @@ const attendanceSchema = new Schema({
     enum: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
     required: true,
   },
-  clockIn: {
+  checkIn: {
     type: Date,
   },
-  clockInCoordinates: {
+  checkInCoordinates: {
     type: Object,
   },
-  clockOut: {
+  checkOut: {
     type: Date,
   },
-  clockOutCoordinates: {
+  checkOutCoordinates: {
     type: Object,
   },
   workingHours: {
@@ -51,8 +47,8 @@ const attendanceSchema = new Schema({
 
 // Function to calculate working hours and status
 attendanceSchema.methods.calculateWorkingHoursStatus = function () {
-  if (this.clockIn && this.clockOut) {
-    let diffMilliseconds = this.clockOut.getTime() - this.clockIn.getTime();
+  if (this.checkIn && this.checkOut) {
+    let diffMilliseconds = this.checkOut.getTime() - this.checkIn.getTime();
     let workingHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
     let workingMinutes = Math.floor(
       (diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
