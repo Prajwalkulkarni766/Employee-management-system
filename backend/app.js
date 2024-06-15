@@ -28,6 +28,9 @@ app.use((req, res, next) => {
     "firstName",
     "designation",
     "department",
+    "date",
+    "fromDate",
+    "toDate",
   ];
 
   const unknownParams = Object.keys(req.query).filter(
@@ -53,7 +56,7 @@ import AppError from "./src/utils/appError.js";
 
 //routes declaration
 app.use("/api/v1/auth", authenticateRoute);
-// app.use(verifyToken);
+app.use(verifyToken);
 app.use("/api/v1/employee", employeeRoute);
 app.use("/api/v1/attendance", attendanceRoute);
 

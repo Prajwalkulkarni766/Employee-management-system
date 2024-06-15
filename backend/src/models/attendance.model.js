@@ -1,9 +1,8 @@
 import mongoose, { Schema, model } from "mongoose";
 
 const attendanceSchema = new Schema({
-  employee: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "employee",
+  employeeId: {
+    type: String,
     required: true,
   },
   date: {
@@ -18,14 +17,8 @@ const attendanceSchema = new Schema({
   checkIn: {
     type: Date,
   },
-  checkInCoordinates: {
-    type: Object,
-  },
   checkOut: {
     type: Date,
-  },
-  checkOutCoordinates: {
-    type: Object,
   },
   workingHours: {
     type: String,
@@ -42,6 +35,10 @@ const attendanceSchema = new Schema({
       "Holiday",
       "",
     ],
+  },
+  shift: {
+    type: String,
+    enum: ["Day shift", "Night shift"],
   },
 });
 

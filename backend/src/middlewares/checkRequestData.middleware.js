@@ -32,34 +32,30 @@ function checkData(routeName) {
       check("fromDate", "Please provide from date").isISO8601(),
       check("toDate", "Please provide to date").isISO8601(),
     ],
-    clockIn: [
+    checkIn: [
       [
-        check("clockIn")
+        check("checkIn")
           .isISO8601()
-          .withMessage("Please provide clock in date time"),
-        check("clockInCoordinates")
-          .notEmpty()
-          .withMessage("Please provide clock in coordinates"),
+          .withMessage("Please provide check in date time"),
         check("day").notEmpty().isString().withMessage("Please send day"),
+        check("date").notEmpty().isDate().withMessage("Please send date"),
       ],
     ],
-    clockOut: [
+    checkOut: [
       [
-        check(
-          "attendanceId",
-          "Please provide attendance id of clock in"
-        ).isMongoId(),
-        check("clockOut", "Please provide clock out date time").isISO8601(),
-        check(
-          "clockOutCoordinates",
-          "Please provide clock out coordinates"
-        ).notEmpty(),
+        check("checkOut")
+          .isISO8601()
+          .withMessage("Please provide check out date time"),
+        check("date").notEmpty().isDate().withMessage("Please send date"),
       ],
     ],
     employeeId: [
       check("employeeId")
         .notEmpty()
         .withMessage("Please provide required data"),
+    ],
+    getAtteandanceOfDate: [
+      check("date").isDate().withMessage("Please provide date"),
     ],
   };
 

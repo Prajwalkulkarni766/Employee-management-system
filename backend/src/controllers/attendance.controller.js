@@ -4,107 +4,39 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
 
-const clockIn = catchAsync(async (req, res, next) => {
-  const { clockIn, clockInCoordinates, employee, empId, day } = req.body;
-  const date = new Date(clockIn);
-  date.setUTCHours(0, 0, 0, 0);
-
-  // if already clock in
-  const attendanceRecord = await Attendance.findOne({
-    employee: empId,
-    date: date.toISOString(),
+const attendance = catchAsync(async (req, res, next) => {
+  let attendanceData = await Attendance.findOne({
+    employeeId: req.body.employeeId,
+    date: req.body.date,
   });
 
-  if (attendanceRecord) {
-    return next(new AppError("You are already clocked In", 409));
-  }
-
-  // saving clock in
-  let attendance = await Attendance({
-    date: date.toISOString(),
-    day,
-    employee: empId,
-    employeeName: employee.name,
-    clockIn,
-    clockInCoordinates,
-  }).save();
-
-  return res
-    .status(201)
-    .json(new AppResponse(201, attendance, "Clocked in successfully"));
-});
-
-const clockOut = catchAsync(async (req, res, next) => {
-  let { attendanceId, clockOut, clockOutCoordinates } = req.body;
-  let workingStatus;
-  let attendanceData = await Attendance.findById(attendanceId);
-  clockOut = new Date(clockOut);
-
-  // if already clock out
-  const attendanceRecord = await Attendance.findById(attendanceId);
-
-  if (attendanceRecord.clockOut) {
-    return next(new AppError("You are already clocked out", 409));
-  }
-
-  // calculating working hours
-  let diffMilliseconds = clockOut.getTime() - attendanceData.clockIn.getTime();
-  let workingHours = Math.floor(diffMilliseconds / (1000 * 60 * 60));
-  let workingMinutes = Math.floor(
-    (diffMilliseconds % (1000 * 60 * 60)) / (1000 * 60)
-  );
-
-  // determining working status
-  if (workingHours > 8) {
-    workingStatus = "Overtime";
-  } else if (workingHours === 8) {
-    workingStatus = "Present";
-  } else if (workingHours < 8 && workingHours > 5) {
-    workingStatus = "Almost Present";
-  } else if (workingHours <= 5 && workingHours >= 4) {
-    workingStatus = "Half Day";
+  if (!attendanceData) {
+    // if attendance data not found means this is checkIn
+    attendanceData = await new Attendance(req.body).save();
   } else {
-    workingStatus = "Not Considerable";
+    // Existing attendance (check out)
+    attendanceData.checkOut = req.body.checkOut;
+    attendanceData.calculateWorkingHoursStatus();
+    attendanceData = await attendanceData.save();
   }
 
-  // finding attendance and updating it
-  let attendance = await Attendance.findByIdAndUpdate(
-    attendanceId,
-    {
-      clockOut,
-      clockOutCoordinates,
-      workingHours: `${workingHours}:${workingMinutes}`,
-      workingStatus,
-    },
-    { new: true }
-  );
-
-  // if attendance not found
-  if (!attendance) {
-    return next(
-      new AppError("Attendance not found so clock in first then clock out", 404)
-    );
-  }
-
-  return res
-    .status(200)
-    .json(new AppResponse(200, attendance, "Clocked out successfully"));
+  return res.status(200).json(new AppResponse(200, attendanceData, undefined));
 });
 
-const attendance = catchAsync(async (req, res, next) => {});
-
-const getAttendanceInfoOfAnyDate = catchAsync(async (req, res, next) => {
-  const date = req.query.date ? new Date(req.query.date) : new Date();
+const getAtteandanceOfDate = catchAsync(async (req, res, next) => {
+  const date = new Date(req.query.date);
   date.setUTCHours(0, 0, 0, 0);
+
+  console.log(date);
 
   // get attendance data
   const attendanceData = await Attendance.findOne({
     employee: req.body.empId,
     date: date,
-  }).select("clockIn clockOut");
+  });
 
   // if attendance data not found
-  if (!attendanceData.clockIn) {
+  if (!attendanceData) {
     return next(new AppError("Data not found", 400));
   }
 
@@ -159,10 +91,4 @@ const remarkAsAbsent = catchAsync(async (req, res, next) => {
     .json(new AppResponse(200, undefined, "Marked absent successfully"));
 });
 
-export {
-  clockIn,
-  clockOut,
-  getAttendanceInfoOfAnyDate,
-  reportInText,
-  remarkAsAbsent,
-};
+export { getAtteandanceOfDate, reportInText, remarkAsAbsent, attendance };
