@@ -57,6 +57,21 @@ function checkData(routeName) {
     getAtteandanceOfDate: [
       check("date").isDate().withMessage("Please provide date"),
     ],
+    createLeave: [
+      check("leaveType").notEmpty().withMessage("Please provide leave type"),
+      check("leaveReason")
+        .notEmpty()
+        .withMessage("Please provide leave reason"),
+      check("leaveStartDate")
+        .isDate()
+        .withMessage("Please provide leave start date"),
+      check("leaveEndDate")
+        .isDate()
+        .withMessage("Please provide leave end date"),
+    ],
+    updateLeaveStatus: [
+      check("leaveId").isMongoId().withMessage("Please provide valid leave id"),
+    ],
   };
 
   return checks[routeName] || [];

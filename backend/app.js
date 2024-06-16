@@ -52,6 +52,7 @@ import { verifyToken } from "./src/middlewares/auth.middleware.js";
 import authenticateRoute from "./src/routes/authenticate.route.js";
 import employeeRoute from "./src/routes/employee.route.js";
 import attendanceRoute from "./src/routes/attendance.route.js";
+import leaveRoute from "./src/routes/leave.route.js";
 import AppError from "./src/utils/appError.js";
 
 //routes declaration
@@ -59,6 +60,7 @@ app.use("/api/v1/auth", authenticateRoute);
 app.use(verifyToken);
 app.use("/api/v1/employee", employeeRoute);
 app.use("/api/v1/attendance", attendanceRoute);
+app.use("/api/v1/leave", leaveRoute);
 
 app.use(globalErrorHandler);
 

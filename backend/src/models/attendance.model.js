@@ -33,6 +33,7 @@ const attendanceSchema = new Schema({
       "Not Considerable",
       "Absent",
       "Holiday",
+      "Leave",
       "",
     ],
   },

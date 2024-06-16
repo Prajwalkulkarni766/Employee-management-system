@@ -14,8 +14,7 @@ const getLeave = catchAsync(async (req, res, next) => {
 });
 
 const createLeave = catchAsync(async (req, res, next) => {
-  const { empId, leaveType, leaveReason, leaveStartDate, leaveEndDate } =
-    req.body;
+  const { empId, leaveStartDate, leaveEndDate } = req.body;
 
   // leave exists
   const existingLeave = await Leave.findOne({
@@ -28,15 +27,7 @@ const createLeave = catchAsync(async (req, res, next) => {
     return next(new AppError("Already applied for leave", 409));
   }
 
-  const leave = await new Leave({
-    employee: empId,
-    employeeName: "",
-    leaveType,
-    leaveReason,
-    leaveStartDate,
-    leaveEndDate,
-    leaveDuration: leaveEndDate.getDate() - leaveStartDate.getDate(),
-  }).save();
+  const leave = await new Leave(req.body).save();
 
   return res
     .status(201)
@@ -44,53 +35,30 @@ const createLeave = catchAsync(async (req, res, next) => {
 });
 
 const updateLeave = catchAsync(async (req, res, next) => {
-  const { leaveId, leaveType, leaveReason, leaveStartDate, leaveEndDate } =
-    req.body;
-
-  const leave = await Leave.findById(leaveId);
-
-  // if leave not found
-  if (!leave) {
-    return next(new AppError("Leave not found", 404));
-  }
-
-  // if leave already Cancelled, Approved, Rejected
-  if (leave.leaveStatus.includes("Approved", "Rejected", "Cancelled")) {
-    return next(
-      new AppError(
-        "Leave that is Approved, Cancelled, Rejected can not be updated",
-        400
-      )
-    );
-  }
-
-  // update leave
-  leave.leaveType = leaveType || leave.leaveType;
-  leave.leaveReason = leaveReason || leave.leaveReason;
-  leave.leaveStartDate = leaveStartDate || leave.leaveStartDate;
-  leave.leaveEndDate = leaveEndDate || leave.leaveEndDate;
-  leave.leaveDuration = leaveEndDate.getDate() - leaveStartDate.getDate();
-
-  await leave.save();
-
-  return res
-    .status(200)
-    .json(new AppResponse(200, leave, "Leave updated successfully"));
-});
-
-const updateLeaveStatus = catchAsync(async (req, res, next) => {
   const { leaveId, leaveStatus } = req.body;
 
-  const leave = await Leave.findByIdAndUpdate(leaveId, leaveStatus);
+  let leave = await Leave.findById(leaveId);
 
   // leave not found
   if (!leave) {
     return next(new AppError("Leave not found", 404));
   }
 
+  // dont update it it is already approved or cancelled
+  if (
+    leave &&
+    (leave.leaveStatus === "Approved" || leave.leaveStatus === "Cancelled")
+  ) {
+    return next(
+      new AppError("Approved or cancelled leave cannot be updated", 400)
+    );
+  }
+
+  leave = await leave.updateOne(req.body);
+
   return res
     .status(200)
     .json(new AppResponse(200, leave, "Leave updated successfully"));
 });
 
-export { getLeave, createLeave, updateLeave, updateLeaveStatus };
+export { getLeave, createLeave, updateLeave };

@@ -9,12 +9,11 @@ import {
 import { upload } from "../middlewares/multer.js";
 import checkErrors from "../middlewares/checkErrors.middleware.js";
 import checkData from "../middlewares/checkRequestData.middleware.js";
-import { verifyToken, restrictTo } from "../middlewares/auth.middleware.js";
+import { restrictTo } from "../middlewares/auth.middleware.js";
 
 const employeeRoute = Router();
 
 employeeRoute
-  .use(verifyToken)
   .get("/", restrictTo("admin"), getEmployee)
   .post(
     "/",
@@ -25,14 +24,8 @@ employeeRoute
     isExistEmployee,
     createEmployee
   )
-  .use(restrictTo("admin", "user"))
-  .patch(
-    "/",
-    // upload.single("image"),
-    checkData("employeeId"),
-    checkErrors,
-    updateEmployee
-  )
+  .use(restrictTo("admin", "employee"))
+  .patch("/", checkData("employeeId"), checkErrors, updateEmployee)
   .use(restrictTo("admin"))
   .delete("/", checkData("employeeId"), checkErrors, deleteEmployee);
 
