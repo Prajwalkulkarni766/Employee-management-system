@@ -22,6 +22,7 @@ export default function Input({
         value={value}
         onChange={onChange}
         required
+        fullWidth
       />
 
       {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}

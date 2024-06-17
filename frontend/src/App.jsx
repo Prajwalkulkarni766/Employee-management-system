@@ -4,9 +4,17 @@ import DashBoard from "./pages/private/DashBoard";
 import PrivateRoute from "./pages/private/PrivateRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Signup from "./pages/public/Signup";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AddEmployee from "./pages/private/AddEmployee";
+import AllEmployee from "./pages/private/AllEmployee";
+import EmployeeProfile from "./pages/private/EmployeeProfile";
+import AllLeave from "./pages/private/AllLeave";
+import LeaveBalance from "./pages/private/LeaveBalance";
+import LeaveType from "./pages/private/LeaveType";
+import AllHoliday from "./pages/private/AllHoliday";
+import AddHoliday from "./pages/private/AddHoliday";
+import EditHoliday from "./pages/private/EditHoliday";
 
 const router = createBrowserRouter([
   {
@@ -14,23 +22,91 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
     path: "dashboard",
     element: (
-      <PrivateRoute>
-        <DashBoard />
-      </PrivateRoute>
+      <>
+        <Navbar component={DashBoard} />
+      </>
     ),
   },
   {
-    path: "employee",
+    path: "employees/allemployee",
     element: (
-      <PrivateRoute>
-        <EmployeeForm />
-      </PrivateRoute>
+      <>
+        <Navbar component={AllEmployee} />
+      </>
+    ),
+  },
+  {
+    path: "employees/addemployee",
+    element: (
+      <>
+        <Navbar component={AddEmployee} />
+      </>
+    ),
+  },
+  {
+    path: "employees/editemployee",
+    element: (
+      <>
+        <Navbar component={AddEmployee} />
+      </>
+    ),
+  },
+  {
+    path: "employees/employeeprofile",
+    element: (
+      <>
+        <Navbar component={EmployeeProfile} />
+      </>
+    ),
+  },
+  {
+    path: "leavemanagement/allleave",
+    element: (
+      <>
+        <Navbar component={AllLeave} />
+      </>
+    ),
+  },
+  {
+    path: "leavemanagement/leavebalance",
+    element: (
+      <>
+        <Navbar component={LeaveBalance} />
+      </>
+    ),
+  },
+  {
+    path: "leavemanagement/leavetype",
+    element: (
+      <>
+        <Navbar component={LeaveType} />
+      </>
+    ),
+  },
+  {
+    path: "holiday/allholiday",
+    element: (
+      <>
+        <Navbar component={AllHoliday} />
+      </>
+    ),
+  },
+  {
+    path: "holiday/addholiday",
+    element: (
+      <>
+        <Navbar component={AddHoliday} />
+      </>
+    ),
+  },
+  {
+    path: "holiday/editholiday",
+    element: (
+      <>
+        <Navbar component={EditHoliday} />
+      </>
     ),
   },
   {
@@ -46,7 +122,7 @@ function NotFound() {
 function App() {
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
       <RouterProvider router={router} />
       <ToastContainer />
     </>

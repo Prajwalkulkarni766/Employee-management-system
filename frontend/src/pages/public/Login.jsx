@@ -5,15 +5,23 @@ import { setToken } from "../../features/auth/auth.slice";
 import { useNavigate, Navigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import * as Yup from "yup";
-import { NavLink } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { Grid } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+import {
+  Grid,
+  Box,
+  Typography,
+  TextField,
+  Button,
+  FormControlLabel,
+  Checkbox,
+  Link,
+  Paper,
+} from "@mui/material";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Toast from "../../helper/Toast";
+import kuber from "../../assets/kuber.png";
+import Input from "../../components/Input";
 
-export default function Login() {
+const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const cookieToken = Cookies.get("authToken");
@@ -38,10 +46,9 @@ export default function Login() {
     onSubmit: async (values) => {
       const { email, password } = values;
       try {
-        console.log("request send");
         const response = await axios.post("/api/v1/login", {
           userName: email,
-          password: password,
+          password,
         });
         const token = response.data.token;
         dispatch(setToken(token));
@@ -58,66 +65,120 @@ export default function Login() {
   }
 
   return (
-    <>
-      <Box
+    <Grid container component="main" sx={{ height: "100vh" }}>
+      <Grid
+        item
+        xs={12}
+        sm={6}
         sx={{
           display: "flex",
-          justifyContent: "center",
           alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          backgroundImage: `url(${kuber})`,
+          backgroundRepeat: "no-repeat",
+          backgroundColor: (t) =>
+            t.palette.mode === "light"
+              ? t.palette.grey[50]
+              : t.palette.grey[900],
+          backgroundSize: "cover",
+          backgroundPosition: "center",
         }}
-      >
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item xs={12} md={6}>
-            <Typography variant="h4" gutterBottom>
-              Login form
-            </Typography>
-            <br />
-            <form onSubmit={formik.handleSubmit}>
-              <TextField
-                name={"email"}
-                type={"email"}
-                id={"email"}
-                label={"Email address"}
-                variant="outlined"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={() => {
-                  if (formik.touched.email || formik.errors.email) {
-                    Toast.error(formik.errors.email);
-                  }
-                }}
-                required
+      ></Grid>
+      <Grid item xs={12} sm={6} elevation={6}>
+        <Typography
+          component="h1"
+          variant="h5"
+          sx={{ marginLeft: "15%", marginTop: "5%", fontWeight: "bold" }}
+        >
+          WELCOME
+        </Typography>
+        <Box
+          sx={{
+            my: 8,
+            mx: 15,
+            marginLeft: "15%",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "left",
+          }}
+        >
+          <Typography component="h1" variant="h4" marginBottom={2}>
+            Login
+          </Typography>
+          <Box
+            component="form"
+            noValidate
+            sx={{ mt: 1 }}
+            onSubmit={formik.handleSubmit}
+          >
+            <Input
+              labelName="Email address"
+              inputType="email"
+              inputId="email"
+              onChange={formik.handleChange}
+              onBlur={() => {
+                if (formik.touched.email && formik.errors.email) {
+                  Toast.error(formik.errors.email);
+                }
+              }}
+              value={formik.values.email}
+              errors={formik.errors.email}
+              isTouched={formik.touched.email}
+            />
+            <Input
+              labelName="Password"
+              inputType="password"
+              inputId="password"
+              onChange={formik.handleChange}
+              onBlur={() => {
+                if (formik.touched.password && formik.errors.password) {
+                  Toast.error(formik.errors.password);
+                }
+              }}
+              value={formik.values.password}
+              errors={formik.errors.password}
+              isTouched={formik.touched.password}
+            />
+            <FormControlLabel
+              control={<Checkbox value="remember" color="primary" />}
+              label="Remember me"
+            />
+            <Grid container>
+              <Grid item xs>
+                <Link
+                  href="#"
+                  variant="body2"
+                  sx={{ float: "right", marginTop: "-6%" }}
+                >
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Button
+                type="submit"
                 fullWidth
-              />
-              <p></p>
-
-              <TextField
-                name={"password"}
-                type={"password"}
-                id={"password"}
-                label={"Password"}
-                variant="outlined"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={() => {
-                  if (formik.touched.password || formik.errors.password) {
-                    Toast.error(formik.errors.password);
-                  }
+                variant="text"
+                sx={{
+                  mt: 3,
+                  mb: 2,
+                  p: 1,
+                  borderRadius: "20px",
+                  backgroundColor: "#343dff",
+                  color: "#ffffff",
+                  "&:hover": {
+                    backgroundColor: "#ffffff",
+                    color: "#000000",
+                  },
                 }}
-                required
-                fullWidth
-              />
-              <p></p>
-
-              <Button type="submit" size="large" variant="contained" fullWidth>
+              >
                 Login
               </Button>
-            </form>
-            <br />
-            <NavLink to="/signup">Don&apos;t have an account? signup</NavLink>
-          </Grid>
-        </Grid>
-      </Box>
-    </>
+            </Grid>
+          </Box>
+        </Box>
+      </Grid>
+    </Grid>
   );
-}
+};
+
+export default Login;

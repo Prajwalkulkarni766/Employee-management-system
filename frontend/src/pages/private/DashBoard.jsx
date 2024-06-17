@@ -14,28 +14,5 @@ export default function DashBoard() {
         console.log(error);
       });
   });
-  return (
-    <>
-      <div className="container mt-5">
-        <div className="table-responsive">
-          <table className="table">
-            <TableHeader
-              columns={[
-                "Sr. No.",
-                "Image",
-                "Email",
-                "Mobile number",
-                "Designation",
-                "Gender",
-                "Course",
-                "Created Date",
-                "Action",
-              ]}
-            />
-            <TableBody rows={["1"]} />
-          </table>
-        </div>
-      </div>
-    </>
-  );
+  return <>Dashboard</>;
 }
