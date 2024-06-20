@@ -22,7 +22,6 @@ import EditEmployee from "./pages/private/employee/EditEmployee";
 // leave pages
 import AllLeave from "./pages/private/leave/AllLeave";
 import LeaveBalance from "./pages/private/leave/LeaveBalance";
-import LeaveType from "./pages/private/leave/LeaveType";
 
 // holiday pages
 import AllHoliday from "./pages/private/holiday/AllHoliday";
@@ -96,14 +95,6 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar component={LeaveBalance} />
-      </>
-    ),
-  },
-  {
-    path: "leavemanagement/leavetype",
-    element: (
-      <>
-        <Navbar component={LeaveType} />
       </>
     ),
   },

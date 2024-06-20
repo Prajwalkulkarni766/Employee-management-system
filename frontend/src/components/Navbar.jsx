@@ -60,7 +60,7 @@ const ListItemsWithTextAndIcon = () => {
       <MenuItem
         menuTitle="Leave Management"
         icon={FeedIcon}
-        menuItems={["All Leave", "Leave Balance", "Leave type"]}
+        menuItems={["All Leave", "Leave Balance"]}
         isOpen={openMenu === 2}
         onMenuOpen={() => handleMenuOpen(2)}
       />

@@ -4,7 +4,6 @@ import user1 from "../../../assets/user1.jpg";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@mui/material";
-import Input from "../../../components/Input";
 
 export default function AllEmployee() {
   const columns = [
