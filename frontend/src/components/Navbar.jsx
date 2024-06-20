@@ -282,8 +282,8 @@ export default function Navbar({ component: Component }) {
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
+          <Container maxWidth="full" sx={{ mt: 3, mb: 4 }}>
+            <Grid container>
               <Component />
             </Grid>
           </Container>

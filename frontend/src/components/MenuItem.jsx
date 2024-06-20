@@ -15,7 +15,10 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems, isOpen, onMenuOpen }) => {
   };
 
   const showExpandMore = menuItems.length > 0;
-  const path = `/${menuTitle.toLowerCase().replace(/ /g, "")}`;
+  const path = `/${menuTitle
+    .toLowerCase()
+    .replace(/ /g, "")
+    .replace(/'/g, "")}`;
 
   return (
     <>
@@ -49,7 +52,10 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems, isOpen, onMenuOpen }) => {
           <List component="div" disablePadding>
             {menuItems.map((item, index) => (
               <NavLink
-                to={`${path}/${item.toLowerCase().replace(/ /g, "")}`}
+                to={`${path}/${item
+                  .toLowerCase()
+                  .replace(/ /g, "")
+                  .replace(/'/g, "")}`}
                 key={index}
                 style={{ textDecoration: "none", color: "inherit" }}
               >

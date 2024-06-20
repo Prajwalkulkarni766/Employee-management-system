@@ -15,6 +15,7 @@
     "@fontsource/roboto": "^5.0.13",
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.18",
+    "@mui/x-data-grid": "^7.7.0",
     "@reduxjs/toolkit": "^2.2.3",
     "axios": "^1.6.8",
     "formik": "^2.4.6",
@@ -25,6 +26,7 @@
     "react-router-dom": "^6.23.0",
     "react-spinners": "^0.13.8",
     "react-toastify": "^10.0.5",
+    "x-data-grid": "^2.1.0",
     "yup": "^1.4.0"
   },
   "devDependencies": {

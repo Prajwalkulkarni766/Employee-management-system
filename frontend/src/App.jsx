@@ -1,20 +1,42 @@
-import EmployeeForm from "./pages/private/EmployeeForm";
-import Login from "./pages/public/Login";
-import DashBoard from "./pages/private/DashBoard";
 import PrivateRoute from "./pages/private/PrivateRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Navbar from "./components/Navbar";
+
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import AddEmployee from "./pages/private/AddEmployee";
-import AllEmployee from "./pages/private/AllEmployee";
-import EmployeeProfile from "./pages/private/EmployeeProfile";
-import AllLeave from "./pages/private/AllLeave";
-import LeaveBalance from "./pages/private/LeaveBalance";
-import LeaveType from "./pages/private/LeaveType";
-import AllHoliday from "./pages/private/AllHoliday";
-import AddHoliday from "./pages/private/AddHoliday";
-import EditHoliday from "./pages/private/EditHoliday";
+
+// navigation menu / bar
+import Navbar from "./components/Navbar";
+
+// login page
+import Login from "./pages/public/Login";
+
+// dashboard page
+import DashBoard from "./pages/private/DashBoard";
+
+// employee pages
+import AddEmployee from "./pages/private/employee/AddEmployee";
+import AllEmployee from "./pages/private/employee/AllEmployee";
+import EmployeeProfile from "./pages/private/employee/EmployeeProfile";
+import EditEmployee from "./pages/private/employee/EditEmployee";
+
+// leave pages
+import AllLeave from "./pages/private/leave/AllLeave";
+import LeaveBalance from "./pages/private/leave/LeaveBalance";
+import LeaveType from "./pages/private/leave/LeaveType";
+
+// holiday pages
+import AllHoliday from "./pages/private/holiday/AllHoliday";
+import AddHoliday from "./pages/private/holiday/AddHoliday";
+import EditHoliday from "./pages/private/holiday/EditHoliday";
+
+// attendance pages
+import AttendanceSheet from "./pages/private/attendance/AttendanceSheet";
+import EmployeeAttendance from "./pages/private/attendance/EmployeeAttendance";
+import TodayAttendance from "./pages/private/attendance/TodayAttendance";
+
+// payroll pages
+import EmployeeSalary from "./pages/private/payroll/EmployeeSalary";
+import Payslip from "./pages/private/payroll/Payslip";
 
 const router = createBrowserRouter([
   {
@@ -49,7 +71,7 @@ const router = createBrowserRouter([
     path: "employees/editemployee",
     element: (
       <>
-        <Navbar component={AddEmployee} />
+        <Navbar component={EditEmployee} />
       </>
     ),
   },
@@ -110,6 +132,46 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "attendence/todaysattendence",
+    element: (
+      <>
+        <Navbar component={TodayAttendance} />
+      </>
+    ),
+  },
+  {
+    path: "attendence/employeeattendence",
+    element: (
+      <>
+        <Navbar component={EmployeeAttendance} />
+      </>
+    ),
+  },
+  {
+    path: "attendence/attendencesheet",
+    element: (
+      <>
+        <Navbar component={AttendanceSheet} />
+      </>
+    ),
+  },
+  {
+    path: "payroll/employeesalary",
+    element: (
+      <>
+        <Navbar component={EmployeeSalary} />
+      </>
+    ),
+  },
+  {
+    path: "payroll/payslip",
+    element: (
+      <>
+        <Navbar component={Payslip} />
+      </>
+    ),
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
@@ -122,7 +184,6 @@ function NotFound() {
 function App() {
   return (
     <>
-      {/* <Navbar /> */}
       <RouterProvider router={router} />
       <ToastContainer />
     </>
