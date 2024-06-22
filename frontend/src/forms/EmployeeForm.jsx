@@ -3,7 +3,7 @@ import * as Yup from "yup";
 import Paper from "@mui/material/Paper";
 import { Grid, Typography } from "@mui/material";
 import Toast from "../helper/Toast";
-import Input from "./Input";
+import Input from "../components/Input";
 import MyButton from "../components/MyButton";
 import MySelect from "../components/MySelect";
 

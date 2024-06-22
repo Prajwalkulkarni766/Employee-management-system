@@ -1,13 +1,7 @@
 import PageHeading from "../../../components/PageHeading";
 import DataTable from "../../../components/DataTable";
 import user1 from "../../../assets/user1.jpg";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { Chip } from "@mui/material";
-import { IconButton } from "@mui/material";
-import { useState } from "react";
 import * as React from "react";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
 
 export default function LeaveType() {
   const columns = [
