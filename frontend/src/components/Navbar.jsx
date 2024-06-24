@@ -9,12 +9,11 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
+import Avatar from "@mui/material/Avatar";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PeopleIcon from "@mui/icons-material/People";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
@@ -22,6 +21,7 @@ import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FeedIcon from "@mui/icons-material/Feed";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import MenuItem from "./MenuItem";
+import Menu from "@mui/material/Menu";
 
 // nav bar menu list
 const ListItemsWithTextAndIcon = () => {
@@ -88,7 +88,7 @@ const ListItemsWithTextAndIcon = () => {
       <MenuItem
         menuTitle="Payroll"
         icon={PaymentsIcon}
-        menuItems={["Employee Salary", "Payslip"]}
+        menuItems={["Employee Salary"]}
         isOpen={openMenu === 5}
         onMenuOpen={() => handleMenuOpen(5)}
       />
@@ -208,10 +208,11 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Navbar({ component: Component }) {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -243,9 +244,7 @@ export default function Navbar({ component: Component }) {
               Employee Management System
             </Typography>
             <IconButton>
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
+              <Avatar sizes="medium"></Avatar>
             </IconButton>
           </Toolbar>
         </AppBar>

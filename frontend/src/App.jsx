@@ -35,7 +35,6 @@ import TodayAttendance from "./pages/private/attendance/TodayAttendance";
 
 // payroll pages
 import EmployeeSalary from "./pages/private/payroll/EmployeeSalary";
-import Payslip from "./pages/private/payroll/Payslip";
 
 const router = createBrowserRouter([
   {
@@ -151,14 +150,6 @@ const router = createBrowserRouter([
     element: (
       <>
         <Navbar component={EmployeeSalary} />
-      </>
-    ),
-  },
-  {
-    path: "payroll/payslip",
-    element: (
-      <>
-        <Navbar component={Payslip} />
       </>
     ),
   },

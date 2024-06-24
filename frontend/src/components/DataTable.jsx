@@ -5,6 +5,7 @@ import {
   GridToolbarFilterButton,
   GridToolbarExport,
 } from "@mui/x-data-grid";
+import { Paper } from "@mui/material";
 
 function CustomToolbar() {
   return (
@@ -22,7 +23,7 @@ function CustomToolbar() {
 
 export default function DataTable({ columns, rows }) {
   return (
-    <div style={{ width: "100%" }}>
+    <Paper elevation={3} sx={{ p: 2, width: "100%" }}>
       <DataGrid
         rows={rows}
         columns={columns}
@@ -41,6 +42,6 @@ export default function DataTable({ columns, rows }) {
           toolbar: CustomToolbar,
         }}
       />
-    </div>
+    </Paper>
   );
 }

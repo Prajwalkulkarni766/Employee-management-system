@@ -110,21 +110,29 @@ export default function LoginForm() {
               errors={formik.errors.password}
               isTouched={formik.touched.password}
             />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Grid container>
-              <Grid item xs>
-                <Link
+            <Grid
+              container
+              spacing={2}
+              sx={{ display: "flex", alignItems: "center" }}
+            >
+              <Grid item xs={6}>
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+              </Grid>
+              <Grid item xs={6}>
+                {/* <Link
                   href="#"
                   variant="body2"
                   sx={{ float: "right", marginTop: "-6%" }}
                 >
                   Forgot password?
-                </Link>
+                </Link> */}
               </Grid>
-              <MyButton labelName={"Login"} />
+              <Grid item xs={12}>
+                <MyButton labelName={"Login"} />
+              </Grid>
             </Grid>
           </Box>
         </Box>
