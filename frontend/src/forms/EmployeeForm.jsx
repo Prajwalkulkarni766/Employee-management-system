@@ -1,13 +1,29 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Paper from "@mui/material/Paper";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import Toast from "../helper/Toast";
 import Input from "../components/Input";
-import MyButton from "../components/MyButton";
 import MySelect from "../components/MySelect";
+import Button from "@mui/material/Button";
+import MyDatePicker from "../components/MyDatePicker";
+import { MuiFileInput } from "mui-file-input";
+import { useState } from "react";
+import CloseIcon from "@mui/icons-material/Close";
+import dayjs from "dayjs";
+import axiosInstance from "../axios/axiosInstance";
+import { useSelector } from "react-redux";
 
-export default function EmployeeForm() {
+export default function EmployeeForm({ statusOfIsEditing }) {
+  const [isEditing, setIsEditing] = useState(statusOfIsEditing);
+  const [file, setFile] = useState(null);
+
+  const employee = useSelector((state) => state.employee.employee);
+
+  const handleChange = (newFile) => {
+    setFile(newFile);
+  };
+
   const employeeSchema = Yup.object({
     firstName: Yup.string().required("Employee First Name Required"),
     lastName: Yup.string().required("Employee Last Name Required"),
@@ -32,25 +48,40 @@ export default function EmployeeForm() {
 
   const formik = useFormik({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      gender: "",
-      mobileNumber: "",
-      password: "",
-      designation: "",
-      department: "",
-      address: "",
-      email: "",
-      dateOfBirth: new Date().toISOString(),
-      education: "",
-      joiningDate: new Date().toISOString(),
-      salary: "",
-      role: "",
-      profileImage: undefined,
+      employeeId: isEditing ? employee.employeeId : "",
+      firstName: isEditing ? employee.firstName : "",
+      lastName: isEditing ? employee.lastName : "",
+      gender: isEditing ? employee.gender : "",
+      mobileNumber: isEditing ? employee.mobileNumber : "",
+      password: isEditing ? "********" : "",
+      designation: isEditing ? employee.designation : "",
+      department: isEditing ? employee.department : "",
+      address: isEditing ? employee.address : "",
+      email: isEditing ? employee.email : "",
+      dateOfBirth: isEditing ? dayjs(employee.dateOfBirth) : dayjs(),
+      education: isEditing ? employee.education : "",
+      joiningDate: isEditing ? dayjs(employee.joiningDate) : dayjs(),
+      salary: isEditing ? employee.salary : "",
+      role: isEditing ? employee.role : "",
     },
     validationSchema: employeeSchema,
     onSubmit: async (values) => {
-      const { email, password } = values;
+      try {
+        const response = isEditing
+          ? await axiosInstance.patch("/api/v1/employee", values)
+          : await axiosInstance.post("/api/v1/employee", values);
+
+        if (response.status === 200 || response.status === 201) {
+          Toast.success("Employee created successfully");
+          formik.resetForm();
+        } else {
+          throw new Error("Unexpected status code received");
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "An error occurred.";
+        Toast.error(errorMessage);
+      }
     },
   });
 
@@ -63,7 +94,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.firstName || formik.errors.firstName) {
-          Toast.error(formik.errors.firstName);
+          // Toast.error(formik.errors.firstName);
         }
       },
       value: formik.values.firstName,
@@ -78,7 +109,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.lastName || formik.errors.lastName) {
-          Toast.error(formik.errors.lastName);
+          // Toast.error(formik.errors.lastName);
         }
       },
       value: formik.values.lastName,
@@ -93,7 +124,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.mobileNumber || formik.errors.mobileNumber) {
-          Toast.error(formik.errors.mobileNumber);
+          // Toast.error(formik.errors.mobileNumber);
         }
       },
       value: formik.values.mobileNumber,
@@ -108,7 +139,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.password || formik.errors.password) {
-          Toast.error(formik.errors.password);
+          // Toast.error(formik.errors.password);
         }
       },
       value: formik.values.password,
@@ -123,7 +154,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.designation || formik.errors.designation) {
-          Toast.error(formik.errors.designation);
+          // Toast.error(formik.errors.designation);
         }
       },
       value: formik.values.designation,
@@ -138,7 +169,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.address || formik.errors.address) {
-          Toast.error(formik.errors.address);
+          // Toast.error(formik.errors.address);
         }
       },
       value: formik.values.address,
@@ -153,7 +184,7 @@ export default function EmployeeForm() {
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.email || formik.errors.email) {
-          Toast.error(formik.errors.email);
+          // Toast.error(formik.errors.email);
         }
       },
       value: formik.values.email,
@@ -162,28 +193,13 @@ export default function EmployeeForm() {
     },
     {
       id: 8,
-      labelName: "Date of Birth",
-      inputType: "date",
-      inputId: "dateOfBirth",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.dateOfBirth || formik.errors.dateOfBirth) {
-          Toast.error(formik.errors.dateOfBirth);
-        }
-      },
-      value: formik.values.dateOfBirth,
-      errors: formik.errors.dateOfBirth,
-      isTouched: formik.touched.dateOfBirth,
-    },
-    {
-      id: 9,
       labelName: "Education",
       inputType: "text",
       inputId: "education",
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.education || formik.errors.education) {
-          Toast.error(formik.errors.education);
+          // Toast.error(formik.errors.education);
         }
       },
       value: formik.values.education,
@@ -191,51 +207,52 @@ export default function EmployeeForm() {
       isTouched: formik.touched.education,
     },
     {
-      id: 10,
-      labelName: "Joining Date",
-      inputType: "date",
-      inputId: "joiningDate",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.joiningDate || formik.errors.joiningDate) {
-          Toast.error(formik.errors.joiningDate);
-        }
-      },
-      value: formik.values.joiningDate,
-      errors: formik.errors.joiningDate,
-      isTouched: formik.touched.joiningDate,
-    },
-    {
-      id: 11,
+      id: 9,
       labelName: "Salary",
       inputType: "number",
       inputId: "salary",
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.salary || formik.errors.salary) {
-          Toast.error(formik.errors.salary);
+          // Toast.error(formik.errors.salary);
         }
       },
       value: formik.values.salary,
       errors: formik.errors.salary,
       isTouched: formik.touched.salary,
     },
+  ];
+
+  const dateFields = [
     {
-      id: 12,
-      labelName: "Profile Image",
-      inputType: "file",
-      inputId: "profileImage",
-      onChange: (event) => {
-        formik.setFieldValue("profileImage", event.currentTarget.files[0]);
-      },
+      id: 1,
+      labelName: "Date of Birth",
+      inputType: "date",
+      inputId: "dateOfBirth",
+      onChange: formik.handleChange,
       onBlur: () => {
-        if (formik.touched.profileImage || formik.errors.profileImage) {
-          Toast.error(formik.errors.profileImage);
+        if (formik.touched.dateOfBirth || formik.errors.dateOfBirth) {
+          // Toast.error(formik.errors.dateOfBirth);
         }
       },
-      value: undefined,
-      errors: formik.errors.profileImage,
-      isTouched: formik.touched.profileImage,
+      value: formik.values.dateOfBirth,
+      errors: formik.errors.dateOfBirth,
+      isTouched: formik.touched.dateOfBirth,
+    },
+    {
+      id: 2,
+      labelName: "Joining Date",
+      inputType: "date",
+      inputId: "joiningDate",
+      onChange: formik.handleChange,
+      onBlur: () => {
+        if (formik.touched.joiningDate || formik.errors.joiningDate) {
+          // Toast.error(formik.errors.joiningDate);
+        }
+      },
+      value: formik.values.joiningDate,
+      errors: formik.errors.joiningDate,
+      isTouched: formik.touched.joiningDate,
     },
   ];
 
@@ -243,12 +260,12 @@ export default function EmployeeForm() {
     {
       id: 1,
       labelName: "Gender",
-      inputType: "text",
+      inputType: "select",
       inputId: "gender",
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.gender || formik.errors.gender) {
-          Toast.error(formik.errors.gender);
+          // Toast.error(formik.errors.gender);
         }
       },
       value: formik.values.gender,
@@ -259,12 +276,12 @@ export default function EmployeeForm() {
     {
       id: 2,
       labelName: "Department",
-      inputType: "text",
+      inputType: "select",
       inputId: "department",
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.department || formik.errors.department) {
-          Toast.error(formik.errors.department);
+          // Toast.error(formik.errors.department);
         }
       },
       value: formik.values.department,
@@ -275,12 +292,12 @@ export default function EmployeeForm() {
     {
       id: 3,
       labelName: "Role",
-      inputType: "text",
+      inputType: "select",
       inputId: "role",
       onChange: formik.handleChange,
       onBlur: () => {
         if (formik.touched.role || formik.errors.role) {
-          Toast.error(formik.errors.role);
+          // Toast.error(formik.errors.role);
         }
       },
       value: formik.values.role,
@@ -292,30 +309,74 @@ export default function EmployeeForm() {
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>
-      <Grid container component="main" spacing={2}>
-        {inputFields.map((obj) => (
-          <Grid key={obj.id} item xs={6}>
-            <Input
-              labelName={obj.labelName}
-              inputType={obj.inputType}
-              inputId={obj.inputId}
-              onChange={obj.onChange}
-              onBlur={obj.onBlur}
-              value={obj.value}
-              errors={obj.errors}
-              isTouched={obj.isTouched}
-            />
-          </Grid>
-        ))}
-
-        {selectFields.map((obj) => (
-          <Grid key={obj.id} item xs={6}>
-            <MySelect labelName={obj.labelName} options={obj.options} />
-          </Grid>
-        ))}
-      </Grid>
-      &nbsp;
-      <MyButton type="submit" labelName="Create Employee" />
+      <form onSubmit={formik.handleSubmit} autoComplete="off">
+        <Grid container spacing={2}>
+          {inputFields.map((obj) => (
+            <Grid key={obj.id} item xs={6}>
+              <Input
+                labelName={obj.labelName}
+                inputType={obj.inputType}
+                inputId={obj.inputId}
+                onChange={obj.onChange}
+                onBlur={obj.onBlur}
+                value={obj.value}
+                errors={obj.errors}
+                isTouched={obj.isTouched}
+              />
+            </Grid>
+          ))}
+          {dateFields.map((obj) => (
+            <Grid key={obj.id} item xs={6}>
+              <MyDatePicker
+                labelName={obj.labelName}
+                inputId={obj.inputId}
+                onChange={obj.onChange}
+                onBlur={obj.onBlur}
+                errors={obj.errors}
+                isTouched={obj.isTouched}
+                value={obj.value}
+              />
+            </Grid>
+          ))}
+          {selectFields.map((obj) => (
+            <Grid key={obj.id} item xs={6}>
+              <MySelect
+                labelName={obj.labelName}
+                inputId={obj.inputId}
+                options={obj.options}
+                onChange={obj.onChange}
+                onBlur={obj.onBlur}
+                value={obj.value}
+                errors={obj.errors}
+                isTouched={obj.isTouched}
+              />
+            </Grid>
+          ))}
+        </Grid>
+        &nbsp;
+        <MuiFileInput
+          inputProps={{ accept: ".png, .jpeg" }}
+          label="Profile image"
+          value={file}
+          onChange={handleChange}
+          hideSizeText={false}
+          clearIconButtonProps={{
+            title: "Remove",
+            children: <CloseIcon fontSize="small" />,
+          }}
+          fullWidth
+        />
+        &nbsp;
+        <Button
+          sx={{ padding: "13px 15px" }}
+          variant="contained"
+          type="submit"
+          onClick={formik.handleSubmit}
+          fullWidth
+        >
+          {isEditing ? `Edit Employee` : `Create Employee`}
+        </Button>
+      </form>
     </Paper>
   );
 }

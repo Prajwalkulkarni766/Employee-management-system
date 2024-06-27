@@ -22,18 +22,20 @@ function CustomToolbar() {
 }
 
 export default function DataTable({ columns, rows }) {
+  const initialState = {
+    rows: rows,
+    columns: columns.filter((col) => col.field !== "_id"),
+    pagination: { paginationModel: { pageSize: 5 } },
+  };
   return (
     <Paper elevation={3} sx={{ p: 2, width: "100%" }}>
       <DataGrid
-        rows={rows}
-        columns={columns}
+        initialState={initialState}
+        rows={initialState.rows}
+        columns={initialState.columns}
         pageSize={5}
         disableSelectionOnClick
         disableColumnSelector
-        initialState={{
-          ...rows.initialState,
-          pagination: { paginationModel: { pageSize: 5 } },
-        }}
         pageSizeOptions={[5, 10, 25]}
         disableColumnMenu
         disableColumnResize={true}

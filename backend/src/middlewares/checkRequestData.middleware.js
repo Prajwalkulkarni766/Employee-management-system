@@ -21,10 +21,10 @@ function checkData(routeName) {
         .withMessage("Please provide your department"),
       check("email").isEmail().withMessage("Please provide your email"),
       check("dateOfBirth")
-        .isDate()
+        .isISO8601()
         .withMessage("Please provide your dateOfBirth"),
       check("joiningDate")
-        .isDate()
+        .isISO8601()
         .withMessage("Please provide your joining date"),
       check("salary").notEmpty().withMessage("Please provide your salary"),
     ],

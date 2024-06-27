@@ -4,12 +4,16 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 
-export default function MySelect({ labelName, options }) {
-  const [value, setValue] = React.useState("");
-
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+export default function MySelect({
+  labelName,
+  options,
+  isTouched,
+  errors,
+  value,
+  onChange,
+  onBlur,
+}) {
+  const name = labelName.toLowerCase();
   return (
     <FormControl fullWidth>
       <InputLabel id={`${labelName}`}>{labelName}</InputLabel>
@@ -17,13 +21,16 @@ export default function MySelect({ labelName, options }) {
         labelId={`${labelName}`}
         value={value}
         label={`${labelName}`}
-        onChange={handleChange}
+        onChange={onChange}
+        onBlur={onBlur}
+        name={name}
         fullWidth
       >
         {options.map((option) => (
           <MenuItem value={option}>{option}</MenuItem>
         ))}
       </Select>
+      {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}
     </FormControl>
   );
 }

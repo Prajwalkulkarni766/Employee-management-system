@@ -3,35 +3,83 @@ import DataTable from "../../../components/DataTable";
 import user1 from "../../../assets/user1.jpg";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { IconButton } from "@mui/material";
+import axiosInstance from "../../../axios/axiosInstance";
+import { useEffect, useState } from "react";
+import Toast from "../../../helper/Toast";
+import { useDispatch } from "react-redux";
+import { setEmployee } from "../../../features/employee/employee.slice";
+import { useNavigate } from "react-router-dom";
 
 export default function AllEmployee() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const setEmployeeInStore = (employee) => {
+    dispatch(setEmployee(employee));
+  };
+
+  const handleEdit = (employee) => {
+    setEmployeeInStore(employee);
+    navigate("/employees/editemployee");
+  };
+
+  const handleView = (employee) => {
+    setEmployeeInStore(employee);
+    navigate("/employees/employeeprofile");
+  };
+
+  const handleDelete = async (employee) => {
+    try {
+      const { employeeId } = employee;
+
+      const response = await axiosInstance.delete(
+        `/api/v1/employee?employeeId=${employeeId}`
+      );
+
+      if (response.status === 204) {
+        setRows((prevRows) =>
+          prevRows.filter((row) => row.employeeId !== employeeId)
+        );
+        Toast.success("Employee deleted successfully");
+      } else {
+        throw new Error("Unexpected status code received");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred.";
+      Toast.error(errorMessage);
+    }
+  };
+
   const columns = [
     { field: "id", headerName: "Sr. No", flex: 1 },
-    {
-      field: "image",
-      headerName: "Image",
-      flex: 1,
-      sortable: false,
-      filterable: false,
-      renderCell: (params) => (
-        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-          {" "}
-          <img
-            src={params.value}
-            style={{ borderRadius: "50%" }}
-            alt="Employee"
-          />
-        </div>
-      ),
-    },
-    { field: "Name", headerName: "Name", flex: 1 },
-    { field: "Department", headerName: "Department", flex: 1 },
-    { field: "Role", headerName: "Role", flex: 1 },
-    { field: "Degree", headerName: "Degree", flex: 1 },
-    { field: "Mobile", headerName: "Mobile", flex: 1 },
-    { field: "Email", headerName: "Email", flex: 1 },
-    { field: "JoiningDate", headerName: "Joining Date", flex: 1 },
+    { field: "_id", headerName: "_id", flex: 1, hide: true },
+    // {
+    //   field: "image",
+    //   headerName: "Image",
+    //   flex: 1,
+    //   sortable: false,
+    //   filterable: false,
+    //   renderCell: (params) => (
+    //     <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+    //       {" "}
+    //       <img
+    //         src={params.value}
+    //         style={{ borderRadius: "50%" }}
+    //         alt="Employee"
+    //       />
+    //     </div>
+    //   ),
+    // },
+    { field: "firstName", headerName: "Name", flex: 1 },
+    { field: "department", headerName: "Department", flex: 1 },
+    { field: "role", headerName: "Role", flex: 1 },
+    { field: "education", headerName: "Degree", flex: 1 },
+    { field: "mobileNumber", headerName: "Mobile", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1 },
+    { field: "joiningDate", headerName: "Joining Date", flex: 1 },
     {
       field: "edit",
       headerName: "Edit",
@@ -42,7 +90,21 @@ export default function AllEmployee() {
       headerAlign: "center",
       renderCell: (params) => (
         <IconButton>
-          <EditIcon onClick={() => handleEdit(params.row.id)} />
+          <EditIcon onClick={() => handleEdit(params.row)} />
+        </IconButton>
+      ),
+    },
+    {
+      field: "view",
+      headerName: "View",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <IconButton>
+          <VisibilityIcon onClick={() => handleView(params.row)} />
         </IconButton>
       ),
     },
@@ -56,113 +118,38 @@ export default function AllEmployee() {
       headerAlign: "center",
       renderCell: (params) => (
         <IconButton>
-          <DeleteIcon onClick={() => handleDelete(params.row.id)} />
+          <DeleteIcon onClick={() => handleDelete(params.row)} />
         </IconButton>
       ),
     },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      image: user1,
-      Name: "Snow",
-      Department: "Accounting",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 2,
-      image: user1,
-      Name: "Lannister",
-      Department: "Developer",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 3,
-      image: user1,
-      Name: "Lannister",
-      Department: "Accounting",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 4,
-      image: user1,
-      Name: "Stark",
-      Department: "Developer",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 5,
-      image: user1,
-      Name: "Targaryen",
-      Department: "Accounting",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 6,
-      image: user1,
-      Name: "Melisandre",
-      Department: "Developer",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 7,
-      image: user1,
-      Name: "Clifford",
-      Department: "Accounting",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 8,
-      image: user1,
-      Name: "Frances",
-      Department: "Accounting",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-    {
-      id: 9,
-      image: user1,
-      Name: "Roxie",
-      Department: "Developer",
-      Role: "Designer",
-      Degree: "C.E.",
-      Mobile: "1234567890",
-      Email: "test@email.com",
-      JoiningDate: "02/25/2018",
-    },
-  ];
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    // fetching data from server
+    (async () => {
+      try {
+        const response = await axiosInstance.get("/api/v1/employee");
+        let i = 1;
+
+        if (response.status === 200 || response.status === 201) {
+          // add new attribute id
+          for (const employee of response.data.data) {
+            employee.id = i++;
+          }
+
+          setRows(response.data.data);
+        } else {
+          throw new Error("Unexpected status code received");
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "An error occurred.";
+        Toast.error(errorMessage);
+      }
+    })();
+  }, []);
 
   return (
     <>

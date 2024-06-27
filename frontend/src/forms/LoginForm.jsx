@@ -2,14 +2,26 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import Toast from "../helper/Toast";
 import Input from "../components/Input";
-import MyButton from "../components/MyButton";
-import axios from "axios";
+import Button from "@mui/material/Button";
+import axiosInstance from "../axios/axiosInstance";
 import { Grid, Box, FormControlLabel, Checkbox, Link } from "@mui/material";
 import kuber from "../assets/kuber.png";
 import React from "react";
 import PageHeading from "../components/PageHeading";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToken } from "../features/auth/auth.slice";
+import { useState } from "react";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [isChecked, setIsChecked] = useState(false);
+
+  const changeCheckboxState = () => {
+    setIsChecked(!isChecked);
+  };
+
   const loginSchema = Yup.object({
     email: Yup.string()
       .email("Invalid Email Address")
@@ -27,19 +39,28 @@ export default function LoginForm() {
     },
     validationSchema: loginSchema,
     onSubmit: async (values) => {
-      const { email, password } = values;
-      //   try {
-      //     const response = await axios.post("/api/v1/login", {
-      //       userName: email,
-      //       password,
-      //     });
-      //     const token = response.data.token;
-      //     dispatch(setToken(token));
-      //     Cookies.set("authToken", token);
-      //     navigate("/dashboard");
-      //   } catch (error) {
-      //     Toast.error(error.response?.data?.message || "Something went wrong");
-      //   }
+      try {
+        const response = await axiosInstance.post("/api/v1/auth/login", values);
+
+        console.log(response);
+        if (response.status === 200) {
+          Toast.success("Login successfully");
+          const token = response.data.data.token;
+          dispatch(setToken(token));
+
+          if (isChecked) {
+            localStorage.setItem("authToken", token);
+          }
+
+          navigate("/dashboard");
+        } else {
+          throw new Error("Unexpected status code received");
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "An error occurred.";
+        Toast.error(errorMessage);
+      }
     },
   });
 
@@ -81,6 +102,7 @@ export default function LoginForm() {
             noValidate
             sx={{ mt: 1 }}
             onSubmit={formik.handleSubmit}
+            autoComplete="off"
           >
             <Input
               labelName="Email address"
@@ -117,21 +139,26 @@ export default function LoginForm() {
             >
               <Grid item xs={6}>
                 <FormControlLabel
-                  control={<Checkbox value="remember" color="primary" />}
+                  control={
+                    <Checkbox
+                      value="remember"
+                      color="primary"
+                      onChange={changeCheckboxState}
+                    />
+                  }
                   label="Remember me"
                 />
               </Grid>
-              <Grid item xs={6}>
-                {/* <Link
-                  href="#"
-                  variant="body2"
-                  sx={{ float: "right", marginTop: "-6%" }}
-                >
-                  Forgot password?
-                </Link> */}
-              </Grid>
               <Grid item xs={12}>
-                <MyButton labelName={"Login"} />
+                <Button
+                  sx={{ padding: "13px 15px" }}
+                  variant="contained"
+                  type="submit"
+                  onClick={formik.handleSubmit}
+                  fullWidth
+                >
+                  Login
+                </Button>
               </Grid>
             </Grid>
           </Box>

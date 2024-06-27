@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { Divider, Box, LinearProgress, Container } from "@mui/material";
 import * as React from "react";
 import Grid from "@mui/material/Grid";
+import { useSelector } from "react-redux";
 
 function SkillProgress({ skill, value, color }) {
   return (
@@ -62,7 +63,7 @@ function EmployeeProfileCard() {
   );
 }
 
-function EmployeeAbout() {
+function EmployeeAbout({ employee }) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event, newValue) => {
@@ -76,16 +77,34 @@ function EmployeeAbout() {
           <b>About</b>
         </Typography>
         <Typography variant="body1">
-          <b>Full Name</b> Emily Smith
+          <b>Full Name</b> {`${employee.firstName} ${employee.lastName}`}
         </Typography>
         <Typography variant="body1">
-          <b>Mobile</b> (123) 456 7890
+          <b>Mobile</b> {`${employee.mobileNumber}`}
         </Typography>
         <Typography variant="body1">
-          <b>Email</b> johndoe@example.com
+          <b>Email</b> {`${employee.email}`}
         </Typography>
         <Typography variant="body1">
-          <b>Location</b> India
+          <b>Gender</b> {`${employee.gender}`}
+        </Typography>
+        <Typography variant="body1">
+          <b>Address</b> {`${employee.address}`}
+        </Typography>
+        <Typography variant="body1">
+          <b>Role</b> {`${employee.role}`}
+        </Typography>
+        <Typography variant="body1">
+          <b>Designation</b> {`${employee.designation}`}
+        </Typography>
+        <Typography variant="body1">
+          <b>Date of birth</b> {`${employee.dateOfBirth}`}
+        </Typography>
+        <Typography variant="body1">
+          <b>Date of joining</b> {`${employee.joiningDate}`}
+        </Typography>
+        <Typography variant="body1">
+          <b>Salary</b> {`${employee.salary}`}
         </Typography>
       </Box>
       <Divider />
@@ -108,80 +127,29 @@ function EmployeeAbout() {
         <b>Education</b>
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        <p>M.B.B.S., Gujarat University, Ahmedabad, India.</p>
-        <p>M.S., Gujarat University, Ahmedabad, India.</p>
-        <p>
-          SPINAL FELLOWSHIP Dr. John Adam, Allegimeines Krakenhaus, Schwerin,
-          Germany.
-        </p>
-        <p>Fellowship in Endoscopic Spine Surgery Phoenix, USA.</p>
+        {`${employee.education}`}
       </Typography>
 
       <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
         <b>Experience</b>
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        <p>
-          One year rotatory internship from April-2009 to March-2010 at B. J.
-          Medical College, Ahmedabad.
-        </p>
-        <p>
-          Three year residency at V.S. General Hospital as a resident in
-          orthopedics from April - 2008 to April - 2011.
-        </p>
-        <p>
-          I have worked as a part-time physiotherapist in Apang manav mandal
-          from 1st June 2004 to 31st Jan 2005.
-        </p>
-        <p>
-          Clinical and Research fellowship in Scoliosis at Shaurashtra
-          University and Medical Centre (KUMC), Krishna Hospital, Rajkot from
-          April 2013 to June 2013.
-        </p>
-        <p>
-          2.5 Years Worked at Mahatma Gandhi General Hospital, Surendranagar.
-          Consultant Orthopedics Surgeon Jalna 2 years.
-        </p>
-      </Typography>
-
-      <Typography variant="h6" sx={{ mt: 3, mb: 1 }}>
-        <b>Conferences, Courses & Workshop Attended</b>
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
-        Lorem Ipsum is simply dummy text of the printing and typesetting
-        industry.
-        <br />
+        {/* experience */}
       </Typography>
     </Card>
   );
 }
 
 export default function EmployeeCard() {
+  const employee = useSelector((state) => state.employee.employee);
+
   return (
     <Grid container spacing={2}>
       <Grid item xs={4}>
         <EmployeeProfileCard />
       </Grid>
       <Grid item xs={8}>
-        <EmployeeAbout />
+        <EmployeeAbout employee={employee} />
       </Grid>
     </Grid>
   );

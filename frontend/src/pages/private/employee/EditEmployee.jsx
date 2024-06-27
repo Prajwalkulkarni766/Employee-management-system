@@ -5,7 +5,7 @@ export default function EditEmployee() {
   return (
     <>
       <PageHeading pageName="Edit Employee" />
-      <EmployeeForm />
+      <EmployeeForm statusOfIsEditing={true} />
     </>
   );
 }

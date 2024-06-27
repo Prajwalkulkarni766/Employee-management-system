@@ -1,0 +1,22 @@
+{
+  "name": "employee-management-system",
+  "version": "1.0.0",
+  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "main": "index.js",
+  "scripts": {
+     "both": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Prajwalkulkarni766/Employee-management-system.git"
+  },
+  "author": "Prajwal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Prajwalkulkarni766/Employee-management-system/issues"
+  },
+  "homepage": "https://github.com/Prajwalkulkarni766/Employee-management-system#readme",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

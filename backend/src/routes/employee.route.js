@@ -14,19 +14,19 @@ import { restrictTo } from "../middlewares/auth.middleware.js";
 const employeeRoute = Router();
 
 employeeRoute
-  .get("/", restrictTo("admin"), getEmployee)
+  .get("/", restrictTo("Admin"), getEmployee)
   .post(
     "/",
-    restrictTo("admin"),
+    restrictTo("Admin"),
     upload.single("image"),
     checkData("createEmployee"),
     checkErrors,
     isExistEmployee,
     createEmployee
   )
-  .use(restrictTo("admin", "employee"))
+  .use(restrictTo("Admin", "Employee"))
   .patch("/", checkData("employeeId"), checkErrors, updateEmployee)
-  .use(restrictTo("admin"))
+  .use(restrictTo("Admin"))
   .delete("/", checkData("employeeId"), checkErrors, deleteEmployee);
 
 export default employeeRoute;

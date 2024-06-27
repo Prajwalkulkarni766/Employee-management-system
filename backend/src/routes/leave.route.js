@@ -14,8 +14,8 @@ leaveRouter
   .get("/", getLeave)
   .post("/", checkData("createLeave"), checkErrors, createLeave)
   .patch(
-    "/updateLeave",
-    restrictTo("admin"),
+    "/",
+    restrictTo("Admin"),
     checkData("updateLeaveStatus"),
     checkErrors,
     updateLeave

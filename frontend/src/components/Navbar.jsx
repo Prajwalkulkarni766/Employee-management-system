@@ -47,12 +47,7 @@ const ListItemsWithTextAndIcon = () => {
       <MenuItem
         menuTitle="Employees"
         icon={PeopleIcon}
-        menuItems={[
-          "All Employee",
-          "Add Employee",
-          "Edit Employee",
-          "Employee Profile",
-        ]}
+        menuItems={["All Employee", "Add Employee"]}
         isOpen={openMenu === 1}
         onMenuOpen={() => handleMenuOpen(1)}
       />
