@@ -10,7 +10,7 @@ import React from "react";
 import PageHeading from "../components/PageHeading";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setToken } from "../features/auth/auth.slice";
+import { setToken } from "../redux/auth/index.slice";
 import { useState } from "react";
 
 export default function LoginForm() {
@@ -42,17 +42,27 @@ export default function LoginForm() {
       try {
         const response = await axiosInstance.post("/api/v1/auth/login", values);
 
-        console.log(response);
+        // successful login
         if (response.status === 200) {
           Toast.success("Login successfully");
           const token = response.data.data.token;
           dispatch(setToken(token));
 
+          // if checkbox is check
           if (isChecked) {
             localStorage.setItem("authToken", token);
           }
 
-          navigate("/dashboard");
+          // if login user is admin
+          if (response.data.data.employee.role === "Admin") {
+            console.log("admin");
+            navigate("/admin/dashboard");
+          } else if (response.data.data.employee.role === "Employee") {
+            console.log("employee");
+            navigate("/employee/dashboard");
+          } else {
+            throw new Error("Unexpected user role received");
+          }
         } else {
           throw new Error("Unexpected status code received");
         }

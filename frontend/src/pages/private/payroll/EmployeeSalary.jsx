@@ -1,7 +1,6 @@
 import PageHeading from "../../../components/PageHeading";
 import DataTable from "../../../components/DataTable";
 import user1 from "../../../assets/user1.jpg";
-import EditIcon from "@mui/icons-material/Edit";
 import { IconButton } from "@mui/material";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Menu from "@mui/material/Menu";

@@ -72,6 +72,15 @@ function checkData(routeName) {
     updateLeaveStatus: [
       check("leaveId").isMongoId().withMessage("Please provide valid leave id"),
     ],
+    createHoliday: [
+      check("name").notEmpty().withMessage("Please provide valid holiday name"),
+      check("date")
+        .isISO8601()
+        .withMessage("Please provide valid holiday date"),
+    ],
+    holidayId: [
+      check("holidayId").notEmpty().withMessage("Please provide required data"),
+    ],
   };
 
   return checks[routeName] || [];

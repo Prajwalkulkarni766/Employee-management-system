@@ -15,7 +15,6 @@ import axiosInstance from "../axios/axiosInstance";
 import { useSelector } from "react-redux";
 
 export default function EmployeeForm({ statusOfIsEditing }) {
-  const [isEditing, setIsEditing] = useState(statusOfIsEditing);
   const [file, setFile] = useState(null);
 
   const employee = useSelector((state) => state.employee.employee);
@@ -48,26 +47,26 @@ export default function EmployeeForm({ statusOfIsEditing }) {
 
   const formik = useFormik({
     initialValues: {
-      employeeId: isEditing ? employee.employeeId : "",
-      firstName: isEditing ? employee.firstName : "",
-      lastName: isEditing ? employee.lastName : "",
-      gender: isEditing ? employee.gender : "",
-      mobileNumber: isEditing ? employee.mobileNumber : "",
-      password: isEditing ? "********" : "",
-      designation: isEditing ? employee.designation : "",
-      department: isEditing ? employee.department : "",
-      address: isEditing ? employee.address : "",
-      email: isEditing ? employee.email : "",
-      dateOfBirth: isEditing ? dayjs(employee.dateOfBirth) : dayjs(),
-      education: isEditing ? employee.education : "",
-      joiningDate: isEditing ? dayjs(employee.joiningDate) : dayjs(),
-      salary: isEditing ? employee.salary : "",
-      role: isEditing ? employee.role : "",
+      employeeId: statusOfIsEditing ? employee.employeeId : "",
+      firstName: statusOfIsEditing ? employee.firstName : "",
+      lastName: statusOfIsEditing ? employee.lastName : "",
+      gender: statusOfIsEditing ? employee.gender : "",
+      mobileNumber: statusOfIsEditing ? employee.mobileNumber : "",
+      password: statusOfIsEditing ? "********" : "",
+      designation: statusOfIsEditing ? employee.designation : "",
+      department: statusOfIsEditing ? employee.department : "",
+      address: statusOfIsEditing ? employee.address : "",
+      email: statusOfIsEditing ? employee.email : "",
+      dateOfBirth: statusOfIsEditing ? dayjs(employee.dateOfBirth) : null,
+      education: statusOfIsEditing ? employee.education : "",
+      joiningDate: statusOfIsEditing ? dayjs(employee.joiningDate) : null,
+      salary: statusOfIsEditing ? employee.salary : "",
+      role: statusOfIsEditing ? employee.role : "",
     },
     validationSchema: employeeSchema,
     onSubmit: async (values) => {
       try {
-        const response = isEditing
+        const response = statusOfIsEditing
           ? await axiosInstance.patch("/api/v1/employee", values)
           : await axiosInstance.post("/api/v1/employee", values);
 
@@ -374,7 +373,7 @@ export default function EmployeeForm({ statusOfIsEditing }) {
           onClick={formik.handleSubmit}
           fullWidth
         >
-          {isEditing ? `Edit Employee` : `Create Employee`}
+          {statusOfIsEditing ? `Edit Employee` : `Create Employee`}
         </Button>
       </form>
     </Paper>

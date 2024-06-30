@@ -5,7 +5,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // navigation menu / bar
-import Navbar from "./components/Navbar";
+import AdminNavbar from "./components/AdminNavbar";
+import EmployeeNavBar from "./components/EmployeeNavBar";
 
 // login page
 import Login from "./pages/public/Login";
@@ -29,9 +30,7 @@ import AddHoliday from "./pages/private/holiday/AddHoliday";
 import EditHoliday from "./pages/private/holiday/EditHoliday";
 
 // attendance pages
-import AttendanceSheet from "./pages/private/attendance/AttendanceSheet";
 import EmployeeAttendance from "./pages/private/attendance/EmployeeAttendance";
-import TodayAttendance from "./pages/private/attendance/TodayAttendance";
 
 // payroll pages
 import EmployeeSalary from "./pages/private/payroll/EmployeeSalary";
@@ -42,114 +41,107 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
-    path: "dashboard",
+    path: "admin/dashboard",
+    element: (
+      <PrivateRoute>
+        <AdminNavbar component={DashBoard} />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "employee/dashboard",
+    element: (
+      <PrivateRoute>
+        <EmployeeNavBar component={DashBoard} />
+        {/* <p>hello</p> */}
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "admin/employees/allemployee",
     element: (
       <>
-        <Navbar component={DashBoard} />
+        <AdminNavbar component={AllEmployee} />
       </>
     ),
   },
   {
-    path: "employees/allemployee",
+    path: "admin/employees/addemployee",
     element: (
       <>
-        <Navbar component={AllEmployee} />
+        <AdminNavbar component={AddEmployee} />
       </>
     ),
   },
   {
-    path: "employees/addemployee",
+    path: "admin/employees/editemployee",
     element: (
       <>
-        <Navbar component={AddEmployee} />
+        <AdminNavbar component={EditEmployee} />
       </>
     ),
   },
   {
-    path: "employees/editemployee",
+    path: "admin/employees/employeeprofile",
     element: (
       <>
-        <Navbar component={EditEmployee} />
+        <AdminNavbar component={EmployeeProfile} />
       </>
     ),
   },
   {
-    path: "employees/employeeprofile",
+    path: "admin/leavemanagement/allleave",
     element: (
       <>
-        <Navbar component={EmployeeProfile} />
+        <AdminNavbar component={AllLeave} />
       </>
     ),
   },
   {
-    path: "leavemanagement/allleave",
+    path: "admin/leavemanagement/leavebalance",
     element: (
       <>
-        <Navbar component={AllLeave} />
+        <AdminNavbar component={LeaveBalance} />
       </>
     ),
   },
   {
-    path: "leavemanagement/leavebalance",
+    path: "admin/holiday/allholiday",
     element: (
       <>
-        <Navbar component={LeaveBalance} />
+        <AdminNavbar component={AllHoliday} />
       </>
     ),
   },
   {
-    path: "holiday/allholiday",
+    path: "admin/holiday/addholiday",
     element: (
       <>
-        <Navbar component={AllHoliday} />
+        <AdminNavbar component={AddHoliday} />
       </>
     ),
   },
   {
-    path: "holiday/addholiday",
+    path: "admin/holiday/editholiday",
     element: (
       <>
-        <Navbar component={AddHoliday} />
+        <AdminNavbar component={EditHoliday} />
       </>
     ),
   },
   {
-    path: "holiday/editholiday",
+    path: "admin/attendence/employeeattendence",
     element: (
       <>
-        <Navbar component={EditHoliday} />
+        <AdminNavbar component={EmployeeAttendance} />
       </>
     ),
   },
   {
-    path: "attendence/todaysattendence",
+    path: "admin/payroll/employeesalary",
     element: (
       <>
-        <Navbar component={TodayAttendance} />
-      </>
-    ),
-  },
-  {
-    path: "attendence/employeeattendence",
-    element: (
-      <>
-        <Navbar component={EmployeeAttendance} />
-      </>
-    ),
-  },
-  {
-    path: "attendence/attendencesheet",
-    element: (
-      <>
-        <Navbar component={AttendanceSheet} />
-      </>
-    ),
-  },
-  {
-    path: "payroll/employeesalary",
-    element: (
-      <>
-        <Navbar component={EmployeeSalary} />
+        <AdminNavbar component={EmployeeSalary} />
       </>
     ),
   },

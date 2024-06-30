@@ -1,12 +1,11 @@
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import Cookies from "js-cookie";
 
 const PrivateRoute = ({ children }) => {
-  const token = useSelector((state) => state.token.token);
-  const cookieToken = Cookies.get("authToken");
+  const tokenFromStore = useSelector((state) => state.token.token);
+  const tokenFromLocalStorage = localStorage.getItem("authToken");
 
-  if (!token && !cookieToken) {
+  if (!tokenFromStore && !tokenFromLocalStorage) {
     return <Navigate to="/" />;
   }
 

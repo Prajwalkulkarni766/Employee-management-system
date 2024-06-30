@@ -1,22 +1,14 @@
-import { useFormik } from "formik";
-import { useDispatch, useSelector } from "react-redux";
-import axios from "axios";
-import { setToken } from "../../features/auth/auth.slice";
-import { useNavigate, Navigate } from "react-router-dom";
-import Cookies from "js-cookie";
-import * as Yup from "yup";
-import Toast from "../../helper/Toast";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 import LoginForm from "../../forms/LoginForm";
 
 const Login = () => {
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-  const cookieToken = Cookies.get("authToken");
-  const token = useSelector((state) => state.token.token);
+  const tokenFromStore = useSelector((state) => state.token.token);
+  const tokenFromLocalStorage = localStorage.getItem("authToken");
 
-  if (token || cookieToken) {
-    return <Navigate to="/dashboard" />;
-  }
+  // if (tokenFromStore || tokenFromLocalStorage) {
+  //   return <Navigate to="/admin/dashboard" />;
+  // }
 
   return <LoginForm />;
 };

@@ -39,6 +39,8 @@ const createEmployee = catchAsync(async (req, res, next) => {
 const updateEmployee = catchAsync(async (req, res, next) => {
   const { employeeId } = req.body;
 
+  if (req.body.password === "********") req.body.password = undefined;
+
   const employee = await Employee.findOneAndUpdate({ employeeId }, req.body, {
     new: true,
   });

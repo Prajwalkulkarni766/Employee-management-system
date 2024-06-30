@@ -1,6 +1,5 @@
 import axios from "axios";
-// import { useSelector } from "react-redux";
-import { store } from "../app/store";
+import { store } from "../store/store";
 
 export const getReduxToken = () => {
   return store.getState().token.token || "";

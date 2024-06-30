@@ -31,6 +31,7 @@ app.use((req, res, next) => {
     "date",
     "fromDate",
     "toDate",
+    "holidayId",
   ];
 
   const unknownParams = Object.keys(req.query).filter(
@@ -53,6 +54,7 @@ import authenticateRoute from "./src/routes/authenticate.route.js";
 import employeeRoute from "./src/routes/employee.route.js";
 import attendanceRoute from "./src/routes/attendance.route.js";
 import leaveRoute from "./src/routes/leave.route.js";
+import holidayRoute from "./src/routes/holiday.route.js";
 import AppError from "./src/utils/appError.js";
 
 //routes declaration
@@ -61,6 +63,7 @@ app.use(verifyToken);
 app.use("/api/v1/employee", employeeRoute);
 app.use("/api/v1/attendance", attendanceRoute);
 app.use("/api/v1/leave", leaveRoute);
+app.use("/api/v1/holiday", holidayRoute);
 
 app.use(globalErrorHandler);
 

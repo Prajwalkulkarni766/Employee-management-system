@@ -7,6 +7,7 @@ import {
 import express from "express";
 import checkErrors from "../middlewares/checkErrors.middleware.js";
 import checkData from "../middlewares/checkRequestData.middleware.js";
+import { restrictTo } from "../middlewares/auth.middleware.js";
 
 const attendanceRoute = express.Router();
 

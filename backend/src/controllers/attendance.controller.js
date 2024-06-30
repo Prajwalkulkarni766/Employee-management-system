@@ -3,6 +3,7 @@ import moment from "moment";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
+import Employee from "../models/employee.model.js";
 
 const attendance = catchAsync(async (req, res, next) => {
   let attendanceData = await Attendance.findOne({
@@ -27,13 +28,25 @@ const getAtteandanceOfDate = catchAsync(async (req, res, next) => {
   const date = new Date(req.query.date);
   date.setUTCHours(0, 0, 0, 0);
 
-  console.log(date);
-
   // get attendance data
-  const attendanceData = await Attendance.findOne({
-    employee: req.body.empId,
-    date: date,
-  });
+  let attendanceData;
+
+  if (req.role === "Admin") {
+    attendanceData = await Attendance.findByIdAndUpdate({
+      date: date,
+    });
+  } else {
+    attendanceData = await Attendance.find({
+      employeeId: req.body.employeeId,
+      date: date,
+    });
+  }
+
+  attendanceData = await Promise.all(
+    attendanceData.map(async (data) => {
+      data.employee = await Employee.findOne({ employeeId: data.employeeId });
+    })
+  );
 
   // if attendance data not found
   if (!attendanceData) {
@@ -49,22 +62,29 @@ const reportInText = catchAsync(async (req, res, next) => {
   const { fromDate, toDate } = req.query;
 
   // finding attendance data to append it in calendar
-  const attendanceInfo = await Attendance.find({
-    employee: req.body.empId,
+  let attendanceInfo = await Attendance.find({
     date: {
       $gte: fromDate,
       $lte: toDate,
     },
-  });
+  }).select("-__v -_id");
 
-  // formatting response
-  const data = attendanceInfo.reduce((acc, info) => {
-    const formattedDate = moment(info.date).format("YYYY-MM-DD");
-    acc[formattedDate] = info.workingStatus;
-    return acc;
-  }, {});
+  attendanceInfo = await Promise.all(
+    attendanceInfo.map(async (data) => {
+      const employee = await Employee.findOne({
+        employeeId: data.employeeId,
+      }).select(
+        "-email -dateOfBirth -education -joiningDate -salary -address -designation -mobileNumber -gender -password -_id -__v"
+      );
 
-  res.send(data);
+      return {
+        ...data.toObject(),
+        ...employee.toObject(),
+      };
+    })
+  );
+
+  res.send(attendanceInfo);
 });
 
 const remarkAsAbsent = catchAsync(async (req, res, next) => {

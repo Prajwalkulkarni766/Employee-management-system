@@ -15,7 +15,7 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems, isOpen, onMenuOpen }) => {
   };
 
   const showExpandMore = menuItems.length > 0;
-  const path = `/${menuTitle
+  const path = `/admin/${menuTitle
     .toLowerCase()
     .replace(/ /g, "")
     .replace(/'/g, "")}`;

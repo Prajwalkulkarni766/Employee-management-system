@@ -1,92 +1,52 @@
 import PageHeading from "../../../components/PageHeading";
 import DataTable from "../../../components/DataTable";
+import axiosInstance from "../../../axios/axiosInstance";
+import { useEffect, useState } from "react";
+import Toast from "../../../helper/Toast";
+import dayjs from "dayjs";
 
 export default function EmployeeAttendance() {
+  const [rows, setRows] = useState([]);
+
   const columns = [
     { field: "id", headerName: "Sr. No", flex: 1 },
-    { field: "Name", headerName: "Name", flex: 1 },
-    { field: "Department", headerName: "Department", flex: 1 },
-    { field: "Role", headerName: "Role", flex: 1 },
-    { field: "CheckIn", headerName: "Check In", flex: 1 },
-    { field: "CheckOut", headerName: "Check Out", flex: 1 },
+    { field: "name", headerName: "Name", flex: 1 },
+    { field: "department", headerName: "Department", flex: 1 },
+    { field: "role", headerName: "Role", flex: 1 },
+    { field: "checkIn", headerName: "Check In", flex: 1 },
+    { field: "checkOut", headerName: "Check Out", flex: 1 },
+    { field: "workingHours", headerName: "Working Hours", flex: 1 },
+    { field: "workingStatus", headerName: "Working Status", flex: 1 },
   ];
 
-  const rows = [
-    {
-      id: 1,
-      Name: "Snow",
-      Department: "Accounting",
-      Role: "Designer",
-      CheckIn: "10:30",
-      CheckOut: "6:30",
-    },
-    {
-      id: 2,
-      Name: "Lannister",
-      Department: "Developer",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 3,
-      Name: "Lannister",
-      Department: "Accounting",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 4,
-      Name: "Stark",
-      Department: "Developer",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 5,
-      Name: "Targaryen",
-      Department: "Accounting",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 6,
-      Name: "Melisandre",
-      Department: "Developer",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 7,
-      Name: "Clifford",
-      Department: "Accounting",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 8,
+  useEffect(() => {
+    // fetching data from server
+    (async () => {
+      try {
+        let formattedToday = dayjs().format("YYYY-MM-DD");
 
-      Name: "Frances",
-      Department: "Accounting",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-    {
-      id: 9,
+        const response = await axiosInstance.get(
+          `/api/v1/attendance/reportInText?fromDate=${formattedToday}&toDate=${formattedToday}`
+        );
+        let i = 1;
 
-      Name: "Roxie",
-      Department: "Developer",
-      Role: "Designer",
-      CheckIn: "10",
-      CheckOut: "6",
-    },
-  ];
+        if (response.status === 200) {
+          for (const attendanceData of response.data) {
+            attendanceData.id = i++;
+            attendanceData.name =
+              attendanceData.firstName + attendanceData.lastName;
+          }
+          setRows(response.data);
+        } else {
+          throw new Error("Unexpected status code received");
+        }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "An error occurred.";
+        Toast.error(errorMessage);
+      }
+    })();
+  }, []);
 
   return (
     <>

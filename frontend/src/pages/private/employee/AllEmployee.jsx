@@ -1,6 +1,5 @@
 import PageHeading from "../../../components/PageHeading";
 import DataTable from "../../../components/DataTable";
-import user1 from "../../../assets/user1.jpg";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -9,12 +8,13 @@ import axiosInstance from "../../../axios/axiosInstance";
 import { useEffect, useState } from "react";
 import Toast from "../../../helper/Toast";
 import { useDispatch } from "react-redux";
-import { setEmployee } from "../../../features/employee/employee.slice";
+import { setEmployee } from "../../../redux/employee/index.slice";
 import { useNavigate } from "react-router-dom";
 
 export default function AllEmployee() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [rows, setRows] = useState([]);
 
   const setEmployeeInStore = (employee) => {
     dispatch(setEmployee(employee));
@@ -22,12 +22,12 @@ export default function AllEmployee() {
 
   const handleEdit = (employee) => {
     setEmployeeInStore(employee);
-    navigate("/employees/editemployee");
+    navigate("/admin/employees/editemployee");
   };
 
   const handleView = (employee) => {
     setEmployeeInStore(employee);
-    navigate("/employees/employeeprofile");
+    navigate("/admin/employees/employeeprofile");
   };
 
   const handleDelete = async (employee) => {
@@ -123,8 +123,6 @@ export default function AllEmployee() {
       ),
     },
   ];
-
-  const [rows, setRows] = useState([]);
 
   useEffect(() => {
     // fetching data from server

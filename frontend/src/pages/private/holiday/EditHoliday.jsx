@@ -5,7 +5,7 @@ export default function EditHoliday() {
   return (
     <>
       <PageHeading pageName="Edit Holiday" />
-      <AddHolidayForm />
+      <AddHolidayForm statusOfIsEditing={true} />
     </>
   );
 }
