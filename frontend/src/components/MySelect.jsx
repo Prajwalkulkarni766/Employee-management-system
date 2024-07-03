@@ -30,7 +30,7 @@ export default function MySelect({
           <MenuItem value={option}>{option}</MenuItem>
         ))}
       </Select>
-      {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}
+      {isTouched && errors ? <p className="error-text">{errors}</p> : <></>}
     </FormControl>
   );
 }

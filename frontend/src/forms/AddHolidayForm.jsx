@@ -26,9 +26,8 @@ export default function AddHolidayForm({ statusOfIsEditing }) {
     },
     validationSchema: holidaySchema,
     onSubmit: async (values) => {
-      console.log(values);
       try {
-        const response = await axiosInstance.post("/api/v1/holiday", values);
+        const response = await axiosInstance.post("/v1/holiday", values);
         if (response.status === 201 || response.status === 200) {
           Toast.success("Holiday created successfully");
           formik.resetForm();

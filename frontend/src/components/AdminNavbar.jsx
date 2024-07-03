@@ -40,7 +40,7 @@ const ListItemsWithTextAndIcon = () => {
       <MenuItem
         menuTitle="Leave Management"
         icon={FeedIcon}
-        menuItems={["All Leave", "Leave Balance"]}
+        menuItems={["All Leave"]}
         isOpen={openMenu === 2}
         onMenuOpen={() => handleMenuOpen(2)}
       />
@@ -64,7 +64,7 @@ const ListItemsWithTextAndIcon = () => {
       <MenuItem
         menuTitle="Payroll"
         icon={PaymentsIcon}
-        menuItems={["Employee Salary"]}
+        menuItems={["Employee Salary", "Release Salary"]}
         isOpen={openMenu === 5}
         onMenuOpen={() => handleMenuOpen(5)}
       />

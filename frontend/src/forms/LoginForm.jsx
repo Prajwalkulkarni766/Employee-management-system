@@ -40,13 +40,17 @@ export default function LoginForm() {
     validationSchema: loginSchema,
     onSubmit: async (values) => {
       try {
-        const response = await axiosInstance.post("/api/v1/auth/login", values);
+        const response = await axiosInstance.post("/v1/auth/login", values);
 
         // successful login
         if (response.status === 200) {
           Toast.success("Login successfully");
           const token = response.data.data.token;
           dispatch(setToken(token));
+          localStorage.setItem(
+            "employeeName",
+            response.data.data.employee.firstName
+          );
 
           // if checkbox is check
           if (isChecked) {
@@ -55,10 +59,8 @@ export default function LoginForm() {
 
           // if login user is admin
           if (response.data.data.employee.role === "Admin") {
-            console.log("admin");
             navigate("/admin/dashboard");
           } else if (response.data.data.employee.role === "Employee") {
-            console.log("employee");
             navigate("/employee/dashboard");
           } else {
             throw new Error("Unexpected user role received");

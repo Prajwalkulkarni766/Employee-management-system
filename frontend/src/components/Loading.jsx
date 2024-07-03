@@ -1,16 +1,28 @@
+import React from "react";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import { useSelector } from "react-redux";
 
-export default function Loading() {
+const Loading = () => {
+  const isLoading = useSelector((state) => state.loading.isLoading);
   return (
-    <ScaleLoader
-      color="#36d7b7"
-      style={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        zIndex: 1000,
-      }}
-    />
+    isLoading && (
+      <div
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "rgba(0, 0, 0, 0.3)", // Adjust opacity as needed
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <ScaleLoader color="rgb(25, 118, 210)" size={900} />
+      </div>
+    )
   );
-}
+};
+
+export default Loading;

@@ -12,7 +12,6 @@ const signToken = (id) => {
 };
 
 const login = catchAsync(async (req, res, next) => {
-  console.log("login");
   let { email, password } = req.body;
 
   let employee = await Employee.findOne({

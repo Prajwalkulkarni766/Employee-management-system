@@ -14,6 +14,11 @@ import Grid from "@mui/material/Grid";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import Avatar from "@mui/material/Avatar";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Tooltip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToken } from "../redux/auth/index.slice";
 
 export const drawerWidth = 280;
 
@@ -69,8 +74,19 @@ export default function NavBar({
   ListItemWithLogoOnly,
 }) {
   const [open, setOpen] = useState(true);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+
+  const logOut = () => {
+    if (localStorage.getItem("authToken")) {
+      localStorage.removeItem("authToken");
+    }
+    dispatch(setToken(null));
+    navigate("/");
   };
 
   return (
@@ -80,7 +96,7 @@ export default function NavBar({
         <AppBar position="absolute" open={open}>
           <Toolbar
             sx={{
-              pr: "24px",
+              color: "#000",
             }}
           >
             <IconButton
@@ -94,18 +110,30 @@ export default function NavBar({
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="black"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
+            <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
               Employee Management System
             </Typography>
-            <IconButton>
-              <Avatar sizes="medium"></Avatar>
-            </IconButton>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography
+                variant="subtitle1"
+                sx={{ color: "#000", marginRight: "12px" }}
+              >
+                {localStorage.getItem("employeeName")}
+              </Typography>
+              <Avatar
+                sx={{
+                  bgcolor: "secondary.main",
+                  marginRight: "12px",
+                }}
+              >
+                {localStorage.getItem("employeeName").charAt(0).toUpperCase()}
+              </Avatar>
+              <Tooltip title="Log out">
+                <IconButton color="inherit">
+                  <LogoutIcon onClick={logOut} />
+                </IconButton>
+              </Tooltip>
+            </Box>
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>

@@ -4,9 +4,12 @@ import axiosInstance from "../../../axios/axiosInstance";
 import { useEffect, useState } from "react";
 import Toast from "../../../helper/Toast";
 import dayjs from "dayjs";
+import MyDatePicker from "../../../components/MyDatePicker";
+import { Paper } from "@mui/material";
 
 export default function EmployeeAttendance() {
   const [rows, setRows] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(dayjs());
 
   const columns = [
     { field: "id", headerName: "Sr. No", flex: 1 },
@@ -19,38 +22,46 @@ export default function EmployeeAttendance() {
     { field: "workingStatus", headerName: "Working Status", flex: 1 },
   ];
 
-  useEffect(() => {
-    // fetching data from server
-    (async () => {
-      try {
-        let formattedToday = dayjs().format("YYYY-MM-DD");
+  const fetchAttendanceData = async (selectedDate) => {
+    try {
+      const formattedDate = selectedDate.format("YYYY-MM-DD");
 
-        const response = await axiosInstance.get(
-          `/api/v1/attendance/reportInText?fromDate=${formattedToday}&toDate=${formattedToday}`
-        );
+      const response = await axiosInstance.get(
+        `/v1/attendance/reportInText?fromDate=${formattedDate}&toDate=${formattedDate}`
+      );
+
+      if (response.status === 200) {
         let i = 1;
-
-        if (response.status === 200) {
-          for (const attendanceData of response.data) {
-            attendanceData.id = i++;
-            attendanceData.name =
-              attendanceData.firstName + attendanceData.lastName;
-          }
-          setRows(response.data);
-        } else {
-          throw new Error("Unexpected status code received");
-        }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.message || "An error occurred.";
-        Toast.error(errorMessage);
+        const formattedData = response.data.map((attendanceData) => ({
+          ...attendanceData,
+          id: i++,
+          name: `${attendanceData.firstName} ${attendanceData.lastName}`,
+        }));
+        setRows(formattedData);
+      } else {
+        throw new Error("Unexpected status code received");
       }
-    })();
-  }, []);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred.";
+      Toast.error(errorMessage);
+    }
+  };
+
+  useEffect(() => {
+    fetchAttendanceData(selectedDate);
+  }, [selectedDate]);
+
+  const handleDateChange = (date) => {
+    setSelectedDate(dayjs(date));
+  };
 
   return (
     <>
       <PageHeading pageName="Employee Attendance" />
+      <Paper elevation={0} sx={{ p: 2, mb: 2 }}>
+        <MyDatePicker value={selectedDate} onChange={handleDateChange} />
+      </Paper>
       <DataTable rows={rows} columns={columns} />
     </>
   );

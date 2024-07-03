@@ -12,10 +12,12 @@ import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import axiosInstance from "../axios/axiosInstance";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { addEmployee, updateEmployee } from "../redux/employees/index.slice";
 
 export default function EmployeeForm({ statusOfIsEditing }) {
   const [file, setFile] = useState(null);
+  const dispatch = useDispatch();
 
   const employee = useSelector((state) => state.employee.employee);
 
@@ -57,9 +59,9 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       department: statusOfIsEditing ? employee.department : "",
       address: statusOfIsEditing ? employee.address : "",
       email: statusOfIsEditing ? employee.email : "",
-      dateOfBirth: statusOfIsEditing ? dayjs(employee.dateOfBirth) : null,
+      dateOfBirth: statusOfIsEditing ? dayjs(employee.dateOfBirth) : dayjs(),
       education: statusOfIsEditing ? employee.education : "",
-      joiningDate: statusOfIsEditing ? dayjs(employee.joiningDate) : null,
+      joiningDate: statusOfIsEditing ? dayjs(employee.joiningDate) : dayjs(),
       salary: statusOfIsEditing ? employee.salary : "",
       role: statusOfIsEditing ? employee.role : "",
     },
@@ -67,12 +69,16 @@ export default function EmployeeForm({ statusOfIsEditing }) {
     onSubmit: async (values) => {
       try {
         const response = statusOfIsEditing
-          ? await axiosInstance.patch("/api/v1/employee", values)
-          : await axiosInstance.post("/api/v1/employee", values);
+          ? await axiosInstance.patch("/v1/employee", values)
+          : await axiosInstance.post("/v1/employee", values);
 
-        if (response.status === 200 || response.status === 201) {
+        if (response.status === 201) {
           Toast.success("Employee created successfully");
+          dispatch(addEmployee(response.data.data));
           formik.resetForm();
+        } else if (response.status === 200) {
+          Toast.success("Employee updated successfully");
+          dispatch(updateEmployee(response.data.data));
         } else {
           throw new Error("Unexpected status code received");
         }

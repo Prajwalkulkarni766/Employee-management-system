@@ -4,21 +4,16 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function MyDatePicker({
+  value,
+  onChange,
   inputId,
   labelName,
   onBlur,
-  value,
-  onChange,
   errors,
   isTouched,
 }) {
   const handleDateChange = (date) => {
-    onChange({
-      target: {
-        id: inputId,
-        value: date,
-      },
-    });
+    onChange(date);
   };
 
   return (

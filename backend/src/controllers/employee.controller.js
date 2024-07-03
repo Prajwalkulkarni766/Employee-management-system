@@ -5,13 +5,14 @@ import AppError from "../utils/appError.js";
 import fs, { unlink } from "fs";
 
 const getEmployee = catchAsync(async (req, res, next) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 100;
-  const skip = (page - 1) * limit;
+  let employees = await Employee.find({ role: { $ne: "Admin" } });
 
-  const employee = await Employee.find(req.query).skip(skip).limit(limit);
+  employees = employees.map((employee, index) => ({
+    id: index + 1,
+    ...employee.toJSON(),
+  }));
 
-  return res.status(200).json(new AppResponse(200, employee));
+  return res.status(200).json(new AppResponse(200, employees));
 });
 
 const isExistEmployee = catchAsync(async (req, res, next) => {
@@ -30,10 +31,19 @@ const isExistEmployee = catchAsync(async (req, res, next) => {
 
 const createEmployee = catchAsync(async (req, res, next) => {
   const employee = await Employee.create(req.body);
+  const totalEmployees = await Employee.find({ role: { $ne: "Admin" } });
+
+  const id = totalEmployees.length + 1;
 
   return res
     .status(201)
-    .json(new AppResponse(201, employee, "Employee created successfully"));
+    .json(
+      new AppResponse(
+        201,
+        { ...employee._doc, id },
+        "Employee created successfully"
+      )
+    );
 });
 
 const updateEmployee = catchAsync(async (req, res, next) => {

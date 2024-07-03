@@ -1,8 +1,7 @@
-import Leave from "../models/leave.model";
-import Attendance from "../models/attendance.model";
-import catchAsync from "../utils/catchAsync";
-import AppError from "../utils/appError";
-import AppResponse from "../utils/appResponse";
+import Payroll from "../models/payroll.model.js";
+import catchAsync from "../utils/catchAsync.js";
+import AppError from "../utils/appError.js";
+import AppResponse from "../utils/appResponse.js";
 
 const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   async (req, res, next) => {
@@ -12,7 +11,12 @@ const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
 
 const generatePayrollSlip = undefined;
 
-const payrollProcess = undefined;
+const payrollProcess = catchAsync(async (req, res, next) => {
+  const salary = await new Payroll(req.body).save();
+  return res
+    .status(200)
+    .json(new AppResponse(200, salary, "Salary paid successfully"));
+});
 
 export {
   getEmployeePayrollDataOfSpecifiedMonth,

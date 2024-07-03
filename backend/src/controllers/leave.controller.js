@@ -2,15 +2,24 @@ import Leave from "../models/leave.model.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
+import Employee from "../models/employee.model.js";
 
 const getLeave = catchAsync(async (req, res, next) => {
-  const leaves = await Leave.find();
+  const { fromDate, toDate } = req.query;
 
-  if (leaves.length <= 0) {
-    return next(new AppError("Leave not found", 404));
-  }
+  let leaves = await Leave.find({
+    createdAt: {
+      $gte: fromDate,
+      $lte: toDate,
+    },
+  });
 
-  return res.status(201).json(new AppResponse(201, leaves, undefined));
+  leaves = leaves.map((leaveData, index) => ({
+    id: index + 1,
+    ...leaveData.toJSON(),
+  }));
+
+  return res.status(200).json(new AppResponse(200, leaves));
 });
 
 const createLeave = catchAsync(async (req, res, next) => {
@@ -54,7 +63,7 @@ const updateLeave = catchAsync(async (req, res, next) => {
     );
   }
 
-  leave = await leave.updateOne(req.body);
+  leave = await Leave.updateOne(req.body);
 
   return res
     .status(200)

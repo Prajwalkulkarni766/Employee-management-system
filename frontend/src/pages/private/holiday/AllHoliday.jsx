@@ -115,7 +115,7 @@ export default function AllHoliday() {
     // fetching data from server
     (async () => {
       try {
-        const response = await axiosInstance.get("/api/v1/holiday");
+        const response = await axiosInstance.get("/v1/holiday");
 
         let i = 1;
 

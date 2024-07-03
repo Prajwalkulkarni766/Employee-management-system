@@ -1,6 +1,6 @@
 import PrivateRoute from "./pages/private/PrivateRoute";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-
+import Loading from "./components/Loading";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -22,7 +22,6 @@ import EditEmployee from "./pages/private/employee/EditEmployee";
 
 // leave pages
 import AllLeave from "./pages/private/leave/AllLeave";
-import LeaveBalance from "./pages/private/leave/LeaveBalance";
 
 // holiday pages
 import AllHoliday from "./pages/private/holiday/AllHoliday";
@@ -34,6 +33,7 @@ import EmployeeAttendance from "./pages/private/attendance/EmployeeAttendance";
 
 // payroll pages
 import EmployeeSalary from "./pages/private/payroll/EmployeeSalary";
+import ReleaseSalary from "./pages/private/payroll/ReleaseSalary";
 
 const router = createBrowserRouter([
   {
@@ -97,14 +97,7 @@ const router = createBrowserRouter([
       </>
     ),
   },
-  {
-    path: "admin/leavemanagement/leavebalance",
-    element: (
-      <>
-        <AdminNavbar component={LeaveBalance} />
-      </>
-    ),
-  },
+
   {
     path: "admin/holiday/allholiday",
     element: (
@@ -146,6 +139,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "admin/payroll/releasesalary",
+    element: (
+      <>
+        <AdminNavbar component={ReleaseSalary} />
+      </>
+    ),
+  },
+  {
     path: "*",
     element: <NotFound />,
   },
@@ -160,6 +161,7 @@ function App() {
     <>
       <RouterProvider router={router} />
       <ToastContainer />
+      <Loading />
     </>
   );
 }

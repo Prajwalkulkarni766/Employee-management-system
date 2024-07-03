@@ -2,22 +2,15 @@ import mongoose, { Schema, model } from "mongoose";
 
 const deductionSchema = new Schema(
   {
-    reasonForDeduction: { type: String, required: true },
-    amount: { type: Number, required: true },
-  },
-  { _id: false }
-);
-
-const overtimeSchema = new Schema(
-  {
-    amount: { type: Number, required: true },
+    reasonForDeduction: { type: String },
+    amount: { type: Number   },
   },
   { _id: false }
 );
 
 const payrollSchema = new Schema(
   {
-    employee: {
+    employeeId: {
       type: String,
       required: true,
     },
@@ -35,7 +28,6 @@ const payrollSchema = new Schema(
       required: true,
     },
     deduction: [deductionSchema],
-    overTime: [overtimeSchema],
     totalAmountPaid: {
       type: Number,
       required: true,
