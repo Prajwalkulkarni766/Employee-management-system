@@ -45,6 +45,7 @@ export default function EmployeeForm({ statusOfIsEditing }) {
     joiningDate: Yup.date().required("Joining Date Required"),
     salary: Yup.number().required("Salary Required"),
     role: Yup.string().required("Role Required"),
+    isworking: Yup.string().required("Is working Required"),
   });
 
   const formik = useFormik({
@@ -64,13 +65,42 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       joiningDate: statusOfIsEditing ? dayjs(employee.joiningDate) : dayjs(),
       salary: statusOfIsEditing ? employee.salary : "",
       role: statusOfIsEditing ? employee.role : "",
+      isworking: statusOfIsEditing ? (employee.isWorking ? "Yes" : "No") : "",
     },
     validationSchema: employeeSchema,
     onSubmit: async (values) => {
       try {
+        const formData = new FormData();
+        formData.append("employeeId", values.employeeId);
+        formData.append("firstName", values.firstName);
+        formData.append("lastName", values.lastName);
+        formData.append("gender", values.gender);
+        formData.append("mobileNumber", values.mobileNumber);
+        formData.append("password", values.password);
+        formData.append("designation", values.designation);
+        formData.append("department", values.department);
+        formData.append("address", values.address);
+        formData.append("email", values.email);
+        formData.append(
+          "dateOfBirth",
+          dayjs(values.dateOfBirth).format("YYYY-MM-DD")
+        );
+        formData.append("education", values.education);
+        formData.append(
+          "joiningDate",
+          dayjs(values.joiningDate).format("YYYY-MM-DD")
+        );
+        formData.append("salary", values.salary);
+        formData.append("role", values.role);
+        formData.append("isWorking", values.isworking === "Yes" ? true : false);
+
+        if (file) {
+          formData.append("image", file);
+        }
+
         const response = statusOfIsEditing
-          ? await axiosInstance.patch("/v1/employee", values)
-          : await axiosInstance.post("/v1/employee", values);
+          ? await axiosInstance.patch("/v1/employee", formData)
+          : await axiosInstance.post("/v1/employee", formData);
 
         if (response.status === 201) {
           Toast.success("Employee created successfully");
@@ -96,12 +126,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "First Name",
       inputType: "text",
       inputId: "firstName",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.firstName || formik.errors.firstName) {
-          // Toast.error(formik.errors.firstName);
-        }
-      },
       value: formik.values.firstName,
       errors: formik.errors.firstName,
       isTouched: formik.touched.firstName,
@@ -111,12 +135,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Last Name",
       inputType: "text",
       inputId: "lastName",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.lastName || formik.errors.lastName) {
-          // Toast.error(formik.errors.lastName);
-        }
-      },
       value: formik.values.lastName,
       errors: formik.errors.lastName,
       isTouched: formik.touched.lastName,
@@ -126,12 +144,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Mobile Number",
       inputType: "number",
       inputId: "mobileNumber",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.mobileNumber || formik.errors.mobileNumber) {
-          // Toast.error(formik.errors.mobileNumber);
-        }
-      },
       value: formik.values.mobileNumber,
       errors: formik.errors.mobileNumber,
       isTouched: formik.touched.mobileNumber,
@@ -141,12 +153,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Password",
       inputType: "password",
       inputId: "password",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.password || formik.errors.password) {
-          // Toast.error(formik.errors.password);
-        }
-      },
       value: formik.values.password,
       errors: formik.errors.password,
       isTouched: formik.touched.password,
@@ -156,12 +162,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Designation",
       inputType: "text",
       inputId: "designation",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.designation || formik.errors.designation) {
-          // Toast.error(formik.errors.designation);
-        }
-      },
       value: formik.values.designation,
       errors: formik.errors.designation,
       isTouched: formik.touched.designation,
@@ -171,12 +171,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Address",
       inputType: "text",
       inputId: "address",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.address || formik.errors.address) {
-          // Toast.error(formik.errors.address);
-        }
-      },
       value: formik.values.address,
       errors: formik.errors.address,
       isTouched: formik.touched.address,
@@ -186,12 +180,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Email",
       inputType: "email",
       inputId: "email",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.email || formik.errors.email) {
-          // Toast.error(formik.errors.email);
-        }
-      },
       value: formik.values.email,
       errors: formik.errors.email,
       isTouched: formik.touched.email,
@@ -201,12 +189,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Education",
       inputType: "text",
       inputId: "education",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.education || formik.errors.education) {
-          // Toast.error(formik.errors.education);
-        }
-      },
       value: formik.values.education,
       errors: formik.errors.education,
       isTouched: formik.touched.education,
@@ -216,12 +198,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Salary",
       inputType: "number",
       inputId: "salary",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.salary || formik.errors.salary) {
-          // Toast.error(formik.errors.salary);
-        }
-      },
       value: formik.values.salary,
       errors: formik.errors.salary,
       isTouched: formik.touched.salary,
@@ -234,12 +210,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Date of Birth",
       inputType: "date",
       inputId: "dateOfBirth",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.dateOfBirth || formik.errors.dateOfBirth) {
-          // Toast.error(formik.errors.dateOfBirth);
-        }
-      },
       value: formik.values.dateOfBirth,
       errors: formik.errors.dateOfBirth,
       isTouched: formik.touched.dateOfBirth,
@@ -249,12 +219,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Joining Date",
       inputType: "date",
       inputId: "joiningDate",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.joiningDate || formik.errors.joiningDate) {
-          // Toast.error(formik.errors.joiningDate);
-        }
-      },
       value: formik.values.joiningDate,
       errors: formik.errors.joiningDate,
       isTouched: formik.touched.joiningDate,
@@ -267,12 +231,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Gender",
       inputType: "select",
       inputId: "gender",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.gender || formik.errors.gender) {
-          // Toast.error(formik.errors.gender);
-        }
-      },
       value: formik.values.gender,
       errors: formik.errors.gender,
       isTouched: formik.touched.gender,
@@ -283,12 +241,6 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Department",
       inputType: "select",
       inputId: "department",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.department || formik.errors.department) {
-          // Toast.error(formik.errors.department);
-        }
-      },
       value: formik.values.department,
       errors: formik.errors.department,
       isTouched: formik.touched.department,
@@ -299,16 +251,20 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       labelName: "Role",
       inputType: "select",
       inputId: "role",
-      onChange: formik.handleChange,
-      onBlur: () => {
-        if (formik.touched.role || formik.errors.role) {
-          // Toast.error(formik.errors.role);
-        }
-      },
       value: formik.values.role,
       errors: formik.errors.role,
       isTouched: formik.touched.role,
       options: ["Employee", "Admin"],
+    },
+    {
+      id: 4,
+      labelName: "Isworking",
+      inputType: "select",
+      inputId: "isworking",
+      value: formik.values.isworking,
+      errors: formik.errors.isworking,
+      isTouched: formik.touched.isworking,
+      options: ["Yes", "No"],
     },
   ];
 
@@ -322,8 +278,7 @@ export default function EmployeeForm({ statusOfIsEditing }) {
                 labelName={obj.labelName}
                 inputType={obj.inputType}
                 inputId={obj.inputId}
-                onChange={obj.onChange}
-                onBlur={obj.onBlur}
+                onChange={formik.handleChange}
                 value={obj.value}
                 errors={obj.errors}
                 isTouched={obj.isTouched}
@@ -335,8 +290,7 @@ export default function EmployeeForm({ statusOfIsEditing }) {
               <MyDatePicker
                 labelName={obj.labelName}
                 inputId={obj.inputId}
-                onChange={obj.onChange}
-                onBlur={obj.onBlur}
+                onChange={formik.handleChange}
                 errors={obj.errors}
                 isTouched={obj.isTouched}
                 value={obj.value}
@@ -349,8 +303,7 @@ export default function EmployeeForm({ statusOfIsEditing }) {
                 labelName={obj.labelName}
                 inputId={obj.inputId}
                 options={obj.options}
-                onChange={obj.onChange}
-                onBlur={obj.onBlur}
+                onChange={formik.handleChange}
                 value={obj.value}
                 errors={obj.errors}
                 isTouched={obj.isTouched}

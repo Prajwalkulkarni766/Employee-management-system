@@ -5,7 +5,6 @@ export default function Input({
   inputType,
   inputId,
   onChange,
-  onBlur,
   value,
   errors,
   isTouched,
@@ -18,10 +17,8 @@ export default function Input({
         id={inputId}
         label={labelName}
         variant="outlined"
-        onBlur={onBlur}
         value={value}
         onChange={onChange}
-        required
         fullWidth
       />
 

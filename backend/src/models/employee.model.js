@@ -68,6 +68,10 @@ const employeeSchema = new mongoose.Schema({
     enum: ["Employee", "Admin"],
     default: "employee",
   },
+  isWorking: {
+    type: Boolean,
+    default: true,
+  },
   passwordChangedAt: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,

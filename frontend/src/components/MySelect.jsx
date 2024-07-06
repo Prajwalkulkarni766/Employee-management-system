@@ -11,26 +11,42 @@ export default function MySelect({
   errors,
   value,
   onChange,
-  onBlur,
 }) {
-  const name = labelName.toLowerCase();
+  const name = labelName.toLowerCase().replace(/\s+/g, "-");
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
     <FormControl fullWidth>
-      <InputLabel id={`${labelName}`}>{labelName}</InputLabel>
+      <InputLabel id={`${name}-label`}>{labelName}</InputLabel>
       <Select
-        labelId={`${labelName}`}
+        labelId={`${name}-label`}
         value={value}
-        label={`${labelName}`}
         onChange={onChange}
-        onBlur={onBlur}
         name={name}
+        label={labelName}
+        open={open}
+        onClose={handleClose}
+        onOpen={handleOpen}
         fullWidth
       >
-        {options.map((option) => (
-          <MenuItem value={option}>{option}</MenuItem>
+        <MenuItem value="">
+          <em>None</em>
+        </MenuItem>
+        {options.map((option, index) => (
+          <MenuItem key={index} value={`${option}`}>
+            {option}
+          </MenuItem>
         ))}
       </Select>
-      {isTouched && errors ? <p className="error-text">{errors}</p> : <></>}
+      {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}
     </FormControl>
   );
 }

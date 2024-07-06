@@ -21,7 +21,7 @@ export default function AddHolidayForm({ statusOfIsEditing }) {
   const formik = useFormik({
     initialValues: {
       name: statusOfIsEditing ? holiday.name : "",
-      date: statusOfIsEditing ? dayjs(holiday.date) : null,
+      date: statusOfIsEditing ? dayjs(holiday.date) : dayjs(),
       details: statusOfIsEditing ? holiday.details : "",
     },
     validationSchema: holidaySchema,

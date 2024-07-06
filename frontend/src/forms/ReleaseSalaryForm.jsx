@@ -1,44 +1,33 @@
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Toast from "../helper/Toast";
-import Input from "../components/Input";
 import Button from "@mui/material/Button";
 import axiosInstance from "../axios/axiosInstance";
-import {
-  Grid,
-  Box,
-  FormControlLabel,
-  Checkbox,
-  Link,
-  Paper,
-} from "@mui/material";
+import { Box, Paper } from "@mui/material";
 import React from "react";
 import { useState } from "react";
-import MyDatePicker from "../components/MyDatePicker";
 import dayjs from "dayjs";
-import MySelect from "../components/MySelect";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 export default function ReleaseSalaryForm() {
+  const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
+  const [selectedYear, setSelectedYear] = useState(dayjs().year());
+
   const salarySchema = Yup.object({
-    payStartDate: Yup.date().required("Payment from date"),
-    payEndDate: Yup.date().required("Payment to date"),
-    payStatus: Yup.string().required("Payment status is required"),
-    totalAmountPaid: Yup.number().required("Total payable amount required"),
+    payMonth: Yup.date().required("Payment of which month is required"),
   });
 
   const formik = useFormik({
     initialValues: {
-      payStartDate: dayjs(),
-      payEndDate: dayjs(),
-      payStatus: "",
-      totalAmountPaid: "",
+      payMonth: dayjs(`${selectedYear}-${selectedMonth}-01`),
     },
     validationSchema: salarySchema,
     onSubmit: async (values) => {
       try {
         const response = await axiosInstance.post("/v1/payroll", values);
 
-        // successful login
         if (response.status === 200) {
           // handle successful salary
         } else {
@@ -62,62 +51,18 @@ export default function ReleaseSalaryForm() {
         autoComplete="off"
       >
         <Box sx={{ mb: 2 }}>
-          <MySelect
-            labelName={"Employee"}
-            inputId="payStatus"
-            options={["Paid"]}
-            onChange={formik.handleChange}
-            onBlur={formik.onBlur}
-            value={formik.values.payStatus}
-            errors={formik.errors}
-            isTouched={formik.touched.payStatus}
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <MyDatePicker
-            labelName="Payment from date"
-            inputId={"payStartDate"}
-            onChange={formik.handleChange}
-            onBlur={formik.onBlur}
-            errors={formik.errors}
-            isTouched={formik.touched.payStartDate}
-            value={formik.values.payStartDate}
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <MyDatePicker
-            labelName="Payment to date"
-            inputId={"payEndDate"}
-            onChange={formik.handleChange}
-            onBlur={formik.onBlur}
-            errors={formik.errors}
-            isTouched={formik.touched.payEndDate}
-            value={formik.values.payEndDate}
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <MySelect
-            labelName={"Payment status"}
-            inputId="payStatus"
-            options={["Pending", "Processed", "Paid"]}
-            onChange={formik.handleChange}
-            onBlur={formik.onBlur}
-            value={formik.values.payStatus}
-            errors={formik.errors}
-            isTouched={formik.touched.payStatus}
-          />
-        </Box>
-        <Box sx={{ mb: 2 }}>
-          <Input
-            labelName="Total payable amount"
-            inputType="number"
-            inputId="totalAmountPaid"
-            onChange={formik.handleChange}
-            onBlur={formik.onBlur}
-            value={formik.values.totalAmountPaid}
-            errors={formik.errors.totalAmountPaid}
-            isTouched={formik.touched.totalAmountPaid}
-          />
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label={"Month"}
+              openTo="month"
+              views={["year", "month"]}
+              value={formik.values.payMonth}
+              onChange={(newValue) => {
+                setSelectedMonth(newValue.month() + 1);
+                setSelectedYear(newValue.year());
+              }}
+            />
+          </LocalizationProvider>
         </Box>
         <Button
           sx={{ padding: "13px 15px" }}
@@ -126,7 +71,7 @@ export default function ReleaseSalaryForm() {
           onClick={formik.handleSubmit}
           fullWidth
         >
-          Release Salary
+          Release Salary of Selected Month
         </Button>
       </Box>
     </Paper>

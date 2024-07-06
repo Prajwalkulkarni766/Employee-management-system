@@ -2,6 +2,7 @@ import Payroll from "../models/payroll.model.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
+import Employee from "../models/employee.model.js";
 
 const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   async (req, res, next) => {

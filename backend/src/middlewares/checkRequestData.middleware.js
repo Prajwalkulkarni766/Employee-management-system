@@ -21,7 +21,7 @@ function checkData(routeName) {
         .withMessage("Please provide your department"),
       check("email").isEmail().withMessage("Please provide your email"),
       check("dateOfBirth")
-        .isISO8601()
+        .isDate()
         .withMessage("Please provide your dateOfBirth"),
       check("joiningDate")
         .isISO8601()

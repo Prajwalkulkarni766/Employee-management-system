@@ -29,7 +29,7 @@ export default function MyDatePicker({
         disableFuture
         format="DD/MM/YYYY"
       />
-      {isTouched && errors ? <p className="error-text">{errors}</p> : null}
+      {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}
     </LocalizationProvider>
   );
 }
