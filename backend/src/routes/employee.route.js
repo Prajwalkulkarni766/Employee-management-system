@@ -25,7 +25,13 @@ employeeRoute
     createEmployee
   )
   .use(restrictTo("Admin", "Employee"))
-  .patch("/", checkData("employeeId"), checkErrors, updateEmployee)
+  .patch(
+    "/",
+    upload.single("image"),
+    checkData("employeeId"),
+    checkErrors,
+    updateEmployee
+  )
   .use(restrictTo("Admin"))
   .delete("/", checkData("employeeId"), checkErrors, deleteEmployee);
 

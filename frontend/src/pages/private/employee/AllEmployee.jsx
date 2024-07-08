@@ -62,23 +62,21 @@ export default function AllEmployee() {
   const columns = [
     { field: "id", headerName: "Sr. No", flex: 1 },
     { field: "_id", headerName: "_id", flex: 1, hide: true },
-    // {
-    //   field: "image",
-    //   headerName: "Image",
-    //   flex: 1,
-    //   sortable: false,
-    //   filterable: false,
-    //   renderCell: (params) => (
-    //     <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
-    //       {" "}
-    //       <img
-    //         src={params.value}
-    //         style={{ borderRadius: "50%" }}
-    //         alt="Employee"
-    //       />
-    //     </div>
-    //   ),
-    // },
+    {
+      field: "image",
+      headerName: "Image",
+      flex: 1,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <div style={{ display: "flex", alignItems: "center", height: "100%" }}>
+          <img
+            src={`http://localhost:8000/${params.value}`}
+            style={{ borderRadius: "50%" }}
+          />
+        </div>
+      ),
+    },
     { field: "firstName", headerName: "Name", flex: 1 },
     { field: "department", headerName: "Department", flex: 1 },
     { field: "role", headerName: "Role", flex: 1 },

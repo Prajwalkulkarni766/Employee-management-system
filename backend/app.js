@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import { xss } from "express-xss-sanitizer";
@@ -8,6 +9,8 @@ import { xss } from "express-xss-sanitizer";
 const app = express();
 
 app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(
   cors({
     origin: true,
@@ -61,6 +64,7 @@ import payrollRoute from "./src/routes/payroll.route.js";
 import AppError from "./src/utils/appError.js";
 
 //routes declaration
+app.use(express.static("public"));
 app.use("/api/v1/auth", authenticateRoute);
 app.use(verifyToken);
 app.use("/api/v1/employee", employeeRoute);

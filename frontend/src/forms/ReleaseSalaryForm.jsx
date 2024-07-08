@@ -26,10 +26,23 @@ export default function ReleaseSalaryForm() {
     validationSchema: salarySchema,
     onSubmit: async (values) => {
       try {
-        const response = await axiosInstance.post("/v1/payroll", values);
+        const month = values.payMonth.$M;
+        const year = values.payMonth.$y;
+
+        const startOfMonth = dayjs(`${year}-${month}-01`)
+          .startOf("month")
+          .format("YYYY-MM-DD");
+        const endOfMonth = dayjs(`${year}-${month}-01`)
+          .endOf("month")
+          .format("YYYY-MM-DD");
+
+        const response = await axiosInstance.post("/v1/payroll", {
+          startOfMonth,
+          endOfMonth,
+        });
 
         if (response.status === 200) {
-          // handle successful salary
+          Toast.success("Payment released successfully");
         } else {
           throw new Error("Unexpected status code received");
         }
