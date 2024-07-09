@@ -7,9 +7,12 @@ import { useEffect } from "react";
 import axiosInstance from "../../../axios/axiosInstance";
 import dayjs from "dayjs";
 import Toast from "../../../helper/Toast";
+import MyMonthSelector from "../../../components/MyMonthSelector";
 
 export default function EmployeeSalary() {
   const [rows, setRows] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
+  const [selectedYear, setSelectedYear] = useState(dayjs().year());
 
   const columns = [
     { field: "id", headerName: "Sr. No", flex: 1 },
@@ -35,25 +38,17 @@ export default function EmployeeSalary() {
     },
   ];
 
-  // const rows = [
-  //   {
-  //     id: 3,
-  //     image: user1,
-  //     Name: "Lannister",
-  //     Department: "Accounting",
-  //     Role: "Designer",
-  //     Degree: "C.E.",
-  //     Mobile: "1234567890",
-  //     Email: "test@email.com",
-  //     Salary: 1000,
-  //   },
-  // ];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fromDate = dayjs().startOf("month").format("YYYY-MM-DD");
-        const toDate = dayjs().endOf("month").format("YYYY-MM-DD");
+        const fromDate = dayjs(`${selectedYear}-${selectedMonth}-01`).format(
+          "YYYY-MM-DD"
+        );
+        const toDate = dayjs(
+          `${selectedYear}-${selectedMonth}-${dayjs(
+            `${selectedYear}-${selectedMonth}`
+          ).daysInMonth()}`
+        ).format("YYYY-MM-DD");
 
         const response = await axiosInstance(
           `/v1/payroll?fromDate=${fromDate}&toDate=${toDate}`
@@ -72,11 +67,17 @@ export default function EmployeeSalary() {
     };
 
     fetchData();
-  }, []);
+  }, [selectedYear, selectedMonth]);
 
   return (
     <>
       <PageHeading pageName="Employee Salary" />
+      <MyMonthSelector
+        selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
+        setSelectedMonth={setSelectedMonth}
+        setSelectedYear={setSelectedYear}
+      />
       <DataTable columns={columns} rows={rows} />
     </>
   );

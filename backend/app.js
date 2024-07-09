@@ -37,6 +37,8 @@ app.use((req, res, next) => {
     "holidayId",
     "page",
     "limit",
+    "date[gte]",
+    "date[lte]",
   ];
 
   const unknownParams = Object.keys(req.query).filter(

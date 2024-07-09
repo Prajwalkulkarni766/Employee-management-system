@@ -2,16 +2,10 @@ import Holiday from "../models/holiday.model.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppResponse from "../utils/appResponse.js";
 import AppError from "../utils/appError.js";
+import APIFeatures from "../utils/apiFeatures.js";
+import { getAll } from "./handlerFactory.js";
 
-const getHoliday = catchAsync(async (req, res, next) => {
-  const page = req.query.page * 1 || 1;
-  const limit = req.query.limit * 1 || 100;
-  const skip = (page - 1) * limit;
-
-  const holiday = await Holiday.find(req.query).skip(skip).limit(limit);
-
-  return res.status(200).json(new AppResponse(200, holiday));
-});
+const getHoliday = getAll(Holiday);
 
 const isExistHoliday = catchAsync(async (req, res, next) => {
   const { date } = req.body;
@@ -36,7 +30,7 @@ const createHoliday = catchAsync(async (req, res, next) => {
 const updateHoliday = catchAsync(async (req, res, next) => {
   const { holidayId } = req.body;
 
-  const holiday = await Holiday.findOneAndUpdate({ holidayId }, req.body, {
+  const holiday = await Holiday.findByIdAndUpdate(holidayId, req.body, {
     new: true,
   });
 

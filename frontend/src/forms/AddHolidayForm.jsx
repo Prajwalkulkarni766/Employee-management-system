@@ -20,6 +20,7 @@ export default function AddHolidayForm({ statusOfIsEditing }) {
 
   const formik = useFormik({
     initialValues: {
+      holidayId: statusOfIsEditing ? holiday._id : "",
       name: statusOfIsEditing ? holiday.name : "",
       date: statusOfIsEditing ? dayjs(holiday.date) : dayjs(),
       details: statusOfIsEditing ? holiday.details : "",
@@ -27,10 +28,15 @@ export default function AddHolidayForm({ statusOfIsEditing }) {
     validationSchema: holidaySchema,
     onSubmit: async (values) => {
       try {
-        const response = await axiosInstance.post("/v1/holiday", values);
-        if (response.status === 201 || response.status === 200) {
+        const response = statusOfIsEditing
+          ? await axiosInstance.patch("/v1/holiday", values)
+          : await axiosInstance.post("/v1/holiday", values);
+
+        if (response.status === 201) {
           Toast.success("Holiday created successfully");
           formik.resetForm();
+        } else if (response.status === 200) {
+          Toast.success("Holiday updated successfully");
         } else {
           throw new Error("Unexpected status code received");
         }
@@ -130,7 +136,7 @@ export default function AddHolidayForm({ statusOfIsEditing }) {
           onClick={formik.handleSubmit}
           fullWidth
         >
-          Create Holiday
+          {statusOfIsEditing ? "Edit Holiday" : "Create Holiday"}
         </Button>
       </form>
     </Paper>

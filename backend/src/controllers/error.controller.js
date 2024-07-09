@@ -40,17 +40,17 @@ const sendErrorProd = (err, req, res) => {
     });
   }
 
-  if (err.isOperational) {
-    return res.status(err.statusCode).render("error", {
-      title: "Something went wrong!",
-      msg: err.message,
-    });
-  }
+  // if (err.isOperational) {
+  //   return res.status(err.statusCode).render("error", {
+  //     title: "Something went wrong!",
+  //     msg: err.message,
+  //   });
+  // }
   console.error("ERROR 💥", err);
-  return res.status(err.statusCode).render("error", {
-    title: "Something went wrong!",
-    msg: "Please try again later.",
-  });
+  // return res.status(err.statusCode).render("error", {
+  //   title: "Something went wrong!",
+  //   msg: "Please try again later.",
+  // });
 };
 
 export default (err, req, res, next) => {

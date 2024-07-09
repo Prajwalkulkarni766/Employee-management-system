@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
@@ -7,11 +7,14 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import List from "@mui/material/List";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
-const MenuItem = ({ menuTitle, icon: Icon, menuItems, isOpen, onMenuOpen }) => {
+const MenuItem = ({ menuTitle, icon: Icon, menuItems }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation(); // Get current location
+
   const handleOpen = () => {
-    onMenuOpen();
+    setIsOpen(!isOpen);
   };
 
   const showExpandMore = menuItems.length > 0;
@@ -20,13 +23,18 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems, isOpen, onMenuOpen }) => {
     .replace(/ /g, "")
     .replace(/'/g, "")}`;
 
+  const isActive = location.pathname.startsWith(path); // Check if path matches
+
   return (
     <>
       <Tooltip title={menuTitle} placement="right">
         {!showExpandMore ? (
           <NavLink
             to={path}
-            style={{ textDecoration: "none", color: "inherit" }}
+            style={{
+              textDecoration: "none",
+              // color: isActive ? "red" : "inherit",
+            }}
           >
             <ListItemButton onClick={handleOpen}>
               <ListItemIcon>
@@ -57,7 +65,11 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems, isOpen, onMenuOpen }) => {
                   .replace(/ /g, "")
                   .replace(/'/g, "")}`}
                 key={index}
-                style={{ textDecoration: "none", color: "inherit" }}
+                style={{
+                  textDecoration: "none",
+                  // color: "inherit",
+                  // color: isActive ? "red" : "inherit",
+                }}
               >
                 <ListItemButton sx={{ pl: 6 }}>
                   <ListItemText primary={item} />

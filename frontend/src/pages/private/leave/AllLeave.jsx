@@ -1,6 +1,5 @@
 import PageHeading from "../../../components/PageHeading";
 import DataTable from "../../../components/DataTable";
-import user1 from "../../../assets/user1.jpg";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Chip } from "@mui/material";
 import { IconButton } from "@mui/material";
@@ -10,11 +9,8 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import axiosInstance from "../../../axios/axiosInstance";
 import Toast from "../../../helper/Toast";
-import Paper from "@mui/material/Paper";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import MyMonthSelector from "../../../components/MyMonthSelector";
 
 export default function AllLeave() {
   const [rows, setRows] = useState([]);
@@ -133,22 +129,12 @@ export default function AllLeave() {
   return (
     <>
       <PageHeading pageName="All Leave" />
-
-      <Paper elevation={0} sx={{ p: 2, mb: 2 }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            label={"Month"}
-            openTo="month"
-            views={["year", "month"]}
-            value={dayjs(`${selectedYear}-${selectedMonth}-01`)}
-            onChange={(newValue) => {
-              setSelectedMonth(newValue.month() + 1);
-              setSelectedYear(newValue.year());
-            }}
-          />
-        </LocalizationProvider>
-      </Paper>
-
+      <MyMonthSelector
+        selectedMonth={selectedMonth}
+        selectedYear={selectedYear}
+        setSelectedMonth={setSelectedMonth}
+        setSelectedYear={setSelectedYear}
+      />
       <DataTable columns={columns} rows={rows} />
     </>
   );

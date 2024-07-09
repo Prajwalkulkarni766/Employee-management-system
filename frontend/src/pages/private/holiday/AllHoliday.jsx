@@ -10,11 +10,14 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setHoliday } from "../../../redux/holiday/index.slice";
+import MyYearPicker from "../../../components/MyYearPicker";
+import dayjs from "dayjs";
 
 export default function AllHoliday() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [rows, setRows] = useState([]);
+  const [selectedYear, setSelectedYear] = useState(dayjs());
 
   const setHolidayInStore = (holiday) => {
     dispatch(setHoliday(holiday));
@@ -111,35 +114,55 @@ export default function AllHoliday() {
     },
   ];
 
-  useEffect(() => {
-    // fetching data from server
-    (async () => {
-      try {
-        const response = await axiosInstance.get("/v1/holiday");
+  const fetchHolidayData = async (selectedYear) => {
+    try {
+      const startingOfYear = dayjs()
+        .year(selectedYear.year())
+        .startOf("year")
+        .format("YYYY-MM-DD");
+      const endingOfYear = dayjs()
+        .year(selectedYear.year())
+        .endOf("year")
+        .format("YYYY-MM-DD");
 
-        let i = 1;
+      const response = await axiosInstance.get(
+        `/v1/holiday?date[gte]=${startingOfYear}&date[lte]=${endingOfYear}`
+      );
 
-        if (response.status === 200 || response.status === 201) {
-          // add new attribute id
-          for (const holiday of response.data.data) {
-            holiday.id = i++;
-          }
+      let i = 1;
 
-          setRows(response.data.data);
-        } else {
-          throw new Error("Unexpected status code received");
+      if (response.status === 200 || response.status === 201) {
+        // add new attribute id
+        for (const holiday of response.data.data) {
+          holiday.id = i++;
         }
-      } catch (error) {
-        const errorMessage =
-          error.response?.data?.message || "An error occurred.";
-        Toast.error(errorMessage);
+
+        setRows(response.data.data);
+      } else {
+        throw new Error("Unexpected status code received");
       }
-    })();
-  }, []);
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred.";
+      Toast.error(errorMessage);
+    }
+  };
+
+  useEffect(() => {
+    fetchHolidayData(selectedYear);
+  }, [selectedYear]);
+
+  const changeSelectedYear = (date) => {
+    setSelectedYear(dayjs(date));
+  };
 
   return (
     <>
       <PageHeading pageName="All Holiday" />
+      <MyYearPicker
+        selectedYear={selectedYear}
+        setSelectedYear={changeSelectedYear}
+      />
       <DataTable columns={columns} rows={rows} />
     </>
   );
