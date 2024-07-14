@@ -10,16 +10,11 @@ import Toast from "../../../helper/Toast";
 import { useDispatch } from "react-redux";
 import { setEmployee } from "../../../redux/employee/index.slice";
 import { useNavigate } from "react-router-dom";
-import { setEmployees } from "../../../redux/employees/index.slice";
-import { useSelector } from "react-redux";
-import { removeEmployee } from "../../../redux/employees/index.slice";
 
 export default function AllEmployee() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [rows, setRows] = useState([]);
-
-  const employees = useSelector((state) => state.employees.employees);
 
   const setEmployeeInStore = (employee) => {
     dispatch(setEmployee(employee));
@@ -44,7 +39,6 @@ export default function AllEmployee() {
       );
 
       if (response.status === 204) {
-        dispatch(removeEmployee(employeeId));
         setRows((prevRows) =>
           prevRows.filter((row) => row.employeeId !== employeeId)
         );
@@ -129,28 +123,22 @@ export default function AllEmployee() {
   ];
 
   useEffect(() => {
-    // if employees data is already present in the store else fetch that
-    if (employees.length > 0) {
-      setRows(employees);
-    } else {
-      (async () => {
-        try {
-          const response = await axiosInstance.get("/v1/employee");
-          let i = 1;
+    (async () => {
+      try {
+        const response = await axiosInstance.get("/v1/employee");
+        let i = 1;
 
-          if (response.status === 200) {
-            setRows(response.data.data);
-            dispatch(setEmployees(response.data.data));
-          } else {
-            throw new Error("Unexpected status code received");
-          }
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.message || "An error occurred.";
-          Toast.error(errorMessage);
+        if (response.status === 200) {
+          setRows(response.data.data);
+        } else {
+          throw new Error("Unexpected status code received");
         }
-      })();
-    }
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "An error occurred.";
+        Toast.error(errorMessage);
+      }
+    })();
   }, []);
 
   return (

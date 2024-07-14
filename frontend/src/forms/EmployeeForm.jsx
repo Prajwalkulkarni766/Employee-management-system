@@ -13,11 +13,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import dayjs from "dayjs";
 import axiosInstance from "../axios/axiosInstance";
 import { useSelector, useDispatch } from "react-redux";
-import { addEmployee, updateEmployee } from "../redux/employees/index.slice";
 
 export default function EmployeeForm({ statusOfIsEditing }) {
   const [file, setFile] = useState(null);
-  const dispatch = useDispatch();
 
   const employee = useSelector((state) => state.employee.employee);
 
@@ -104,11 +102,9 @@ export default function EmployeeForm({ statusOfIsEditing }) {
 
         if (response.status === 201) {
           Toast.success("Employee created successfully");
-          dispatch(addEmployee(response.data.data));
           formik.resetForm();
         } else if (response.status === 200) {
           Toast.success("Employee updated successfully");
-          dispatch(updateEmployee(response.data.data));
         } else {
           throw new Error("Unexpected status code received");
         }

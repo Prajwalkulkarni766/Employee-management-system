@@ -26,7 +26,7 @@ export default function ReleaseSalaryForm() {
     validationSchema: salarySchema,
     onSubmit: async (values) => {
       try {
-        const month = values.payMonth.$M;
+        const month = values.payMonth.$M+1;
         const year = values.payMonth.$y;
 
         const startOfMonth = dayjs(`${year}-${month}-01`)

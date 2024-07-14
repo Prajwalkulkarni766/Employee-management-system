@@ -18,6 +18,8 @@ const login = catchAsync(async (req, res, next) => {
     email: email,
   }).select("+password");
 
+  console.log((await bcrypt.compare(password, employee.password)))
+
   if (!employee || !(await bcrypt.compare(password, employee.password))) {
     return next(new AppError("Wrong credentials", 400));
   }
@@ -35,4 +37,16 @@ const login = catchAsync(async (req, res, next) => {
     .json(new AppResponse(200, { employee, token }, "Login successfully"));
 });
 
-export { login };
+const signup = catchAsync(async (req, res, next) => {
+
+  let employee = new  Employee(req.body);
+
+  await employee.save();
+
+  return res
+    .status(201)
+    .json(new AppResponse(200, undefined, "Signup successfully"));
+});
+
+
+export { login,signup };

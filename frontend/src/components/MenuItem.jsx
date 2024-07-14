@@ -33,7 +33,7 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems }) => {
             to={path}
             style={{
               textDecoration: "none",
-              // color: isActive ? "red" : "inherit",
+              color: "inherit",
             }}
           >
             <ListItemButton onClick={handleOpen}>
@@ -67,8 +67,7 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems }) => {
                 key={index}
                 style={{
                   textDecoration: "none",
-                  // color: "inherit",
-                  // color: isActive ? "red" : "inherit",
+                  color: "inherit",
                 }}
               >
                 <ListItemButton sx={{ pl: 6 }}>

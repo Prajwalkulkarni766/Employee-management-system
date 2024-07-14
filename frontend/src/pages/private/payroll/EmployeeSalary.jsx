@@ -11,7 +11,7 @@ import MyMonthSelector from "../../../components/MyMonthSelector";
 
 export default function EmployeeSalary() {
   const [rows, setRows] = useState([]);
-  const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
+  const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
 
   const columns = [
