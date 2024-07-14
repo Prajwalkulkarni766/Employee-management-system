@@ -1,5 +1,5 @@
-import PageHeading from "../../../components/PageHeading";
-import ReleaseSalaryForm from "../../../forms/ReleaseSalaryForm";
+import PageHeading from "../../../../components/PageHeading";
+import ReleaseSalaryForm from "../../../../forms/ReleaseSalaryForm";
 
 export default function ReleaseSalary() {
   return (

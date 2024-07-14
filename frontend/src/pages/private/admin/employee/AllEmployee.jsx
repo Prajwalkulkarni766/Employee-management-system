@@ -1,14 +1,13 @@
-import PageHeading from "../../../components/PageHeading";
-import DataTable from "../../../components/DataTable";
+import PageHeading from "../../../../components/PageHeading";
+import DataTable from "../../../../components/DataTable";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { IconButton } from "@mui/material";
-import axiosInstance from "../../../axios/axiosInstance";
+import axiosInstance from "../../../../axios/axiosInstance";
 import { useEffect, useState } from "react";
-import Toast from "../../../helper/Toast";
 import { useDispatch } from "react-redux";
-import { setEmployee } from "../../../redux/employee/index.slice";
+import { setEmployee } from "../../../../redux/employee/index.slice";
 import { useNavigate } from "react-router-dom";
 
 export default function AllEmployee() {

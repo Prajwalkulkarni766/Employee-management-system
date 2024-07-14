@@ -1,5 +1,5 @@
-import PageHeading from "../../../components/PageHeading";
-import DataTable from "../../../components/DataTable";
+import PageHeading from "../../../../components/PageHeading";
+import DataTable from "../../../../components/DataTable";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Chip } from "@mui/material";
 import { IconButton } from "@mui/material";
@@ -7,10 +7,9 @@ import { useState, useEffect } from "react";
 import * as React from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import axiosInstance from "../../../axios/axiosInstance";
-import Toast from "../../../helper/Toast";
+import axiosInstance from "../../../../axios/axiosInstance";
 import dayjs from "dayjs";
-import MyMonthSelector from "../../../components/MyMonthSelector";
+import MyMonthSelector from "../../../../components/MyMonthSelector"
 
 export default function AllLeave() {
   const [rows, setRows] = useState([]);
@@ -29,7 +28,6 @@ export default function AllLeave() {
         leaveId: row._id,
         leaveStatus: leaveStatus,
       });
-      console.log(response);
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "An error occurred.";

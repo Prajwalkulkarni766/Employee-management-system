@@ -18,8 +18,6 @@ const login = catchAsync(async (req, res, next) => {
     email: email,
   }).select("+password");
 
-  console.log((await bcrypt.compare(password, employee.password)))
-
   if (!employee || !(await bcrypt.compare(password, employee.password))) {
     return next(new AppError("Wrong credentials", 400));
   }

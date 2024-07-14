@@ -7,23 +7,21 @@ import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 import List from "@mui/material/List";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 const MenuItem = ({ menuTitle, icon: Icon, menuItems }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const location = useLocation(); // Get current location
+  const employeeRole = localStorage.getItem("employeeRole")
 
   const handleOpen = () => {
     setIsOpen(!isOpen);
   };
 
   const showExpandMore = menuItems.length > 0;
-  const path = `/admin/${menuTitle
+  const path = `/${employeeRole.toLowerCase()}/${menuTitle
     .toLowerCase()
     .replace(/ /g, "")
     .replace(/'/g, "")}`;
-
-  const isActive = location.pathname.startsWith(path); // Check if path matches
 
   return (
     <>

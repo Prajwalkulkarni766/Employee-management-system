@@ -11,29 +11,35 @@ import EmployeeNavBar from "./components/EmployeeNavBar";
 // login page
 import Login from "./pages/public/Login";
 
+// admin page
 // dashboard page
 import DashBoard from "./pages/private/DashBoard";
 
 // employee pages
-import AddEmployee from "./pages/private/employee/AddEmployee";
-import AllEmployee from "./pages/private/employee/AllEmployee";
-import EmployeeProfile from "./pages/private/employee/EmployeeProfile";
-import EditEmployee from "./pages/private/employee/EditEmployee";
+import AddEmployee from "./pages/private/admin/employee/AddEmployee";
+import AllEmployee from "./pages/private/admin/employee/AllEmployee";
+import EmployeeProfile from "./pages/private/admin/employee/EmployeeProfile";
+import EditEmployee from "./pages/private/admin/employee/EditEmployee";
 
 // leave pages
-import AllLeave from "./pages/private/leave/AllLeave";
+import AllLeave from "./pages/private/admin/leave/AllLeave";
 
 // holiday pages
-import AllHoliday from "./pages/private/holiday/AllHoliday";
-import AddHoliday from "./pages/private/holiday/AddHoliday";
-import EditHoliday from "./pages/private/holiday/EditHoliday";
+import AllHoliday from "./pages/private/admin/holiday/AllHoliday";
+import AddHoliday from "./pages/private/admin/holiday/AddHoliday";
+import EditHoliday from "./pages/private/admin/holiday/EditHoliday";
 
 // attendance pages
-import EmployeeAttendance from "./pages/private/attendance/EmployeeAttendance";
+import EmployeeAttendance from "./pages/private/admin/attendance/EmployeeAttendance";
 
 // payroll pages
-import EmployeeSalary from "./pages/private/payroll/EmployeeSalary";
-import ReleaseSalary from "./pages/private/payroll/ReleaseSalary";
+import EmployeeSalary from "./pages/private/admin/payroll/EmployeeSalary";
+import ReleaseSalary from "./pages/private/admin/payroll/ReleaseSalary";
+
+
+// employee page
+// attendance page
+import TodayAttendance from "./pages/private/employee/attendance/TodayAttendance"
 
 const router = createBrowserRouter([
   {
@@ -45,15 +51,6 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <AdminNavbar component={DashBoard} />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "employee/dashboard",
-    element: (
-      <PrivateRoute>
-        <EmployeeNavBar component={DashBoard} />
-        {/* <p>hello</p> */}
       </PrivateRoute>
     ),
   },
@@ -97,7 +94,6 @@ const router = createBrowserRouter([
       </>
     ),
   },
-
   {
     path: "admin/holiday/allholiday",
     element: (
@@ -143,6 +139,67 @@ const router = createBrowserRouter([
     element: (
       <>
         <AdminNavbar component={ReleaseSalary} />
+      </>
+    ),
+  },
+  {
+    path: "employee/dashboard",
+    element: (
+      <PrivateRoute>
+        <EmployeeNavBar component={DashBoard} />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "employee/attendence/todaysattendence",
+    element: (
+      <>
+        <EmployeeNavBar component={TodayAttendance} />
+      </>
+    ),
+  },
+  {
+    path: "employee/attendence/attendencesheet",
+    element: (
+      <>
+        {/* <EmployeeNavBar component={AllLeave} /> */}
+        this is attendencesheet
+      </>
+    ),
+  },
+  {
+    path: "employee/leavemanagement/allleave",
+    element: (
+      <>
+        {/* <EmployeeNavBar component={AllLeave} /> */}
+        this is all leave 
+      </>
+    ),
+  },
+  {
+    path: "employee/leavemanagement/leavebalance",
+    element: (
+      <>
+        {/* <EmployeeNavBar component={AllLeave} /> */}
+        this is leavebalance 
+      </>
+    ),
+  },
+  {
+    path: "employee/holiday/allholiday",
+    element: (
+      <>
+        {/* <EmployeeNavBar component={AllLeave} /> */}
+        this is all holiday 
+      </>
+    ),
+  },
+  {
+    path: "employee/payroll/employeesalary",
+    element: (
+      <>
+        {/* <EmployeeNavBar component={AllLeave} /> */}
+        this is salary
       </>
     ),
   },

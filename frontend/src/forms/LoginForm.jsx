@@ -51,6 +51,9 @@ export default function LoginForm() {
             "employeeName",
             response.data.data.employee.firstName
           );
+          localStorage.setItem("employeeRole",
+            response.data.data.employee.role
+          )
 
           // if checkbox is check
           if (isChecked) {
