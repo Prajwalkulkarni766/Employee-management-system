@@ -4,7 +4,7 @@
   "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
   "main": "index.js",
   "scripts": {
-     "both": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\""
+    "both": "concurrently \"cd frontend && npm run dev\" \"cd backend && npm run dev\""
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Prajwalkulkarni766/Employee-management-system#readme",
   "dependencies": {
+    "@mui/styles": "^5.16.1",
     "concurrently": "^8.2.2"
   }
 }

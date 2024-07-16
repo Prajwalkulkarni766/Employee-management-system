@@ -39,7 +39,18 @@ import ReleaseSalary from "./pages/private/admin/payroll/ReleaseSalary";
 
 // employee page
 // attendance page
-import TodayAttendance from "./pages/private/employee/attendance/TodayAttendance"
+import EmployeeTodayAttendance from "./pages/private/employee/attendance/EmployeeTodayAttendance";
+import EmployeeAttendanceSheet from "./pages/private/employee/attendance/EmployeeAttendanceSheet";
+
+// leave page
+import EmployeeAllLeave from "./pages/private/employee/leave/EmployeeAllLeave";
+import ApplyForLeave from "./pages/private/employee/leave/ApplyForLeave";
+
+// holiday page
+import EmployeeHoliday from "./pages/private/employee/holiday/EmployeeAllHoliday";
+
+// salary page
+import Salary from "./pages/private/employee/payroll/EmployeeSalary";
 
 const router = createBrowserRouter([
   {
@@ -154,7 +165,7 @@ const router = createBrowserRouter([
     path: "employee/attendence/todaysattendence",
     element: (
       <>
-        <EmployeeNavBar component={TodayAttendance} />
+        <EmployeeNavBar component={EmployeeTodayAttendance} />
       </>
     ),
   },
@@ -162,8 +173,7 @@ const router = createBrowserRouter([
     path: "employee/attendence/attendencesheet",
     element: (
       <>
-        {/* <EmployeeNavBar component={AllLeave} /> */}
-        this is attendencesheet
+        <EmployeeNavBar component={EmployeeAttendanceSheet} />
       </>
     ),
   },
@@ -171,17 +181,15 @@ const router = createBrowserRouter([
     path: "employee/leavemanagement/allleave",
     element: (
       <>
-        {/* <EmployeeNavBar component={AllLeave} /> */}
-        this is all leave 
+        <EmployeeNavBar component={EmployeeAllLeave} />
       </>
     ),
   },
   {
-    path: "employee/leavemanagement/leavebalance",
+    path: "employee/leavemanagement/applyforleave",
     element: (
       <>
-        {/* <EmployeeNavBar component={AllLeave} /> */}
-        this is leavebalance 
+        <EmployeeNavBar component={ApplyForLeave} />
       </>
     ),
   },
@@ -189,8 +197,7 @@ const router = createBrowserRouter([
     path: "employee/holiday/allholiday",
     element: (
       <>
-        {/* <EmployeeNavBar component={AllLeave} /> */}
-        this is all holiday 
+        <EmployeeNavBar component={EmployeeHoliday} />
       </>
     ),
   },
@@ -198,8 +205,7 @@ const router = createBrowserRouter([
     path: "employee/payroll/employeesalary",
     element: (
       <>
-        {/* <EmployeeNavBar component={AllLeave} /> */}
-        this is salary
+        <EmployeeNavBar component={Salary} />
       </>
     ),
   },

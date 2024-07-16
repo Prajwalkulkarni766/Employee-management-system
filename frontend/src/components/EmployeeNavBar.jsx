@@ -29,7 +29,7 @@ const ListItemsWithTextAndIcon = () => {
         onMenuOpen={() => handleMenuOpen(0)}
       />
 
-<MenuItem
+      <MenuItem
         menuTitle="Attendence"
         icon={DriveFileRenameOutlineIcon}
         menuItems={["Today's Attendence", "Attendence Sheet"]}
@@ -40,7 +40,7 @@ const ListItemsWithTextAndIcon = () => {
       <MenuItem
         menuTitle="Leave Management"
         icon={FeedIcon}
-        menuItems={["All Leave", "Leave Balance"]}
+        menuItems={["All Leave", "Apply For Leave"]}
         isOpen={openMenu === 2}
         onMenuOpen={() => handleMenuOpen(2)}
       />
