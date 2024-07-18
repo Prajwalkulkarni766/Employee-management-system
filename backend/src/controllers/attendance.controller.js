@@ -4,8 +4,13 @@ import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
 import Employee from "../models/employee.model.js";
+import { getAll } from "../controllers/handlerFactory.js";
+
+const getAllAtteandanceData = getAll(Attendance);
 
 const attendance = catchAsync(async (req, res, next) => {
+  req.body.employeeId = req.body.employee.employeeId;
+
   let attendanceData = await Attendance.findOne({
     employeeId: req.body.employeeId,
     date: req.body.date,
@@ -25,8 +30,10 @@ const attendance = catchAsync(async (req, res, next) => {
 });
 
 const getAtteandanceOfDate = catchAsync(async (req, res, next) => {
-  const date = new Date(req.query.date);
-  date.setUTCHours(0, 0, 0, 0);
+  // const date = new Date(req.query.date);
+  // date.setUTCHours(0, 0, 0, 0);
+
+  const date = req.query.date;
 
   // get attendance data
   let attendanceData;
@@ -35,18 +42,18 @@ const getAtteandanceOfDate = catchAsync(async (req, res, next) => {
     attendanceData = await Attendance.findByIdAndUpdate({
       date: date,
     });
-  } else {
-    attendanceData = await Attendance.find({
-      employeeId: req.body.employeeId,
-      date: date,
-    });
-  }
 
-  attendanceData = await Promise.all(
-    attendanceData.map(async (data) => {
-      data.employee = await Employee.findOne({ employeeId: data.employeeId });
-    })
-  );
+    attendanceData = await Promise.all(
+      attendanceData.map(async (data) => {
+        data.employee = await Employee.findOne({ employeeId: data.employeeId });
+      })
+    );
+  } else {
+    attendanceData = await Attendance.findOne({
+      employeeId: req.body.employee.employeeId,
+      date: date,
+    }).select("-_id");
+  }
 
   // if attendance data not found
   if (!attendanceData) {
@@ -111,4 +118,10 @@ const remarkAsAbsent = catchAsync(async (req, res, next) => {
     .json(new AppResponse(200, undefined, "Marked absent successfully"));
 });
 
-export { getAtteandanceOfDate, reportInText, remarkAsAbsent, attendance };
+export {
+  getAtteandanceOfDate,
+  reportInText,
+  remarkAsAbsent,
+  attendance,
+  getAllAtteandanceData,
+};

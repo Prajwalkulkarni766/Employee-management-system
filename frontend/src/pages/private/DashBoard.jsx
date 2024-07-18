@@ -113,17 +113,17 @@ function EmpAttendence() {
 const cards = [
   {
     icon: <BadgeIcon fontSize="large" />,
-    title: "Total Employees Working",
+    title: "Employees Working",
     content: "100",
   },
   {
     icon: <TimerIcon fontSize="large" />,
-    title: "Average Working Hours",
+    title: "Avg Working Hours",
     content: "8",
   },
   {
     icon: <AttachMoneyIcon fontSize="large" />,
-    title: "Total Expenditure On Salary",
+    title: "Salary Expenditure",
     content: "100",
   },
   {

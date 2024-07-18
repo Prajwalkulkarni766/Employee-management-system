@@ -111,7 +111,7 @@ export default function NavBar({
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
-              Employee Management System
+              EMS
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
