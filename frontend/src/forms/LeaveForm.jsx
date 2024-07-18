@@ -4,16 +4,18 @@ import Paper from "@mui/material/Paper";
 import Toast from "../helper/Toast";
 import Input from "../components/Input";
 import axiosInstance from "../axios/axiosInstance";
-import MyDatePicker from "../components/MyDatePicker";
 import dayjs from "dayjs";
 import { Button } from "@mui/material";
-import { Grid } from "@mui/material";
 import MySelect from "../components/MySelect";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+
 
 export default function LeaveForm({ statusOfIsEditing }) {
 
     const leaveSchema = Yup.object({
-        leaveType: Yup.string().required("Leave Type is required"),
+        leavetype: Yup.string().required("Leave Type is required"),
         leaveReason: Yup.string().required("Leave Reason is required"),
         leaveStartDate: Yup.date().required("Leave Start Date Required"),
         leaveEndDate: Yup.date().required("Leave End Date Required"),
@@ -21,24 +23,31 @@ export default function LeaveForm({ statusOfIsEditing }) {
 
     const formik = useFormik({
         initialValues: {
-            leaveType: "",
-            leaveReason: ""
+            leavetype: "",
+            leaveReason: "",
+            leaveStartDate: dayjs(),
+            leaveEndDate: dayjs().add(1, 'day')
         },
         validationSchema: leaveSchema,
         onSubmit: async (values) => {
             try {
-                // const response = statusOfIsEditing
-                //     ? await axiosInstance.patch("/v1/holiday", values)
-                //     : await axiosInstance.post("/v1/holiday", values);
+                // console.log("Leave start date", dayjs(values.leaveStartDate).format("DD-MM-YYYY"))
+                // console.log("Leave end date", dayjs(values.leaveEndDate).format("DD-MM-YYYY"))
+                values.leaveType = values.leavetype
+                values.leaveStartDate = dayjs(values.leaveStartDate).format("YYYY-MM-DD")
+                values.leaveEndDate = dayjs(values.leaveEndDate).format("YYYY-MM-DD")
+                const response = statusOfIsEditing
+                    ? await axiosInstance.patch("/v1/holiday", values)
+                    : await axiosInstance.post("/v1/leave", values);
 
-                // if (response.status === 201) {
-                //     Toast.success("Holiday created successfully");
-                //     formik.resetForm();
-                // } else if (response.status === 200) {
-                //     Toast.success("Holiday updated successfully");
-                // } else {
-                //     throw new Error("Unexpected status code received");
-                // }
+                if (response.status === 201) {
+                    Toast.success("Leave created successfully");
+                    formik.resetForm();
+                } else if (response.status === 200) {
+                    Toast.success("Leave updated successfully");
+                } else {
+                    throw new Error("Unexpected status code received");
+                }
             } catch (error) {
                 const errorMessage =
                     error.response?.data?.message || "An error occurred.";
@@ -54,11 +63,6 @@ export default function LeaveForm({ statusOfIsEditing }) {
             inputType: "text",
             inputId: "leaveReason",
             onChange: formik.handleChange,
-            // onBlur: () => {
-            //     if (formik.touched.leaveReason || formik.errors.leaveReason) {
-            //         // Toast.error(formik.errors.leaveReason);
-            //     }
-            // },
             value: formik.values.leaveReason,
             errors: formik.errors.leaveReason,
             isTouched: formik.touched.leaveReason,
@@ -69,14 +73,8 @@ export default function LeaveForm({ statusOfIsEditing }) {
         {
             id: 1,
             labelName: "Leave Start Date",
-            inputType: "date",
             inputId: "leaveStartDate",
-            onChange: formik.handleChange,
-            // onBlur: () => {
-            //     if (formik.touched.leaveStartDate || formik.errors.leaveStartDate) {
-            //         Toast.error(formik.errors.leaveStartDate);
-            //     }
-            // },
+            onChange: (date) => formik.setFieldValue("leaveStartDate", date),
             value: formik.values.leaveStartDate,
             errors: formik.errors.leaveStartDate,
             isTouched: formik.touched.leaveStartDate,
@@ -84,14 +82,8 @@ export default function LeaveForm({ statusOfIsEditing }) {
         {
             id: 2,
             labelName: "Leave End Date",
-            inputType: "date",
             inputId: "leaveEndDate",
-            onChange: formik.handleChange,
-            // onBlur: () => {
-            //     if (formik.touched.leaveEndDate || formik.errors.leaveEndDate) {
-            //         Toast.error(formik.errors.leaveEndDate);
-            //     }
-            // },
+            onChange: (date) => formik.setFieldValue("leaveEndDate", date),
             value: formik.values.leaveEndDate,
             errors: formik.errors.leaveEndDate,
             isTouched: formik.touched.leaveEndDate,
@@ -101,12 +93,12 @@ export default function LeaveForm({ statusOfIsEditing }) {
     const selectFields = [
         {
             id: 1,
-            labelName: "Leave Type",
+            labelName: "Leavetype",
             inputType: "select",
-            inputId: "leaveType",
-            value: formik.values.leaveType,
-            errors: formik.errors.leaveType,
-            isTouched: formik.touched.leaveType,
+            inputId: "leavetype",
+            value: formik.values.leavetype,
+            errors: formik.errors.leavetype,
+            isTouched: formik.touched.leavetype,
             options: ["Medical", "Casual"],
         },
     ];
@@ -128,17 +120,19 @@ export default function LeaveForm({ statusOfIsEditing }) {
                     />
                 ))}
                 {dateFields.map((obj) => (
-                    <MyDatePicker
-                        key={obj.id}
-                        labelName={obj.labelName}
-                        inputType={obj.inputType}
-                        inputId={obj.inputId}
-                        onChange={obj.onChange}
-                        onBlur={obj.onBlur}
-                        value={obj.value}
-                        errors={obj.errors}
-                        isTouched={obj.isTouched}
-                    />
+                    <LocalizationProvider key={obj.id} dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                            key={obj.id}
+                            id={obj.inputId}
+                            label={obj.labelName}
+                            value={obj.value}
+                            onChange={obj.onChange}
+                            sx={{ width: "100%" }}
+                            format="DD/MM/YYYY"
+                            disablePast
+                        />
+                        {obj.errors ? <p className="error-text">{obj.errors}</p> : <p></p>}
+                    </LocalizationProvider>
                 ))}
                 {selectFields.map((obj) => (
                     <MySelect

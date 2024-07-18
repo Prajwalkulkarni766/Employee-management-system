@@ -2,13 +2,6 @@ import PageHeading from "../../../../components/PageHeading";
 import DataTable from "../../../../components/DataTable";
 import { useState, useEffect } from "react";
 import axiosInstance from "../../../../axios/axiosInstance";
-import { IconButton } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { setHoliday } from "../../../../redux/holiday/index.slice";
 import MyYearPicker from "../../../../components/MyYearPicker";
 import dayjs from "dayjs";
 
@@ -37,9 +30,53 @@ export default function AddHoliday() {
         }
     ];
 
+    const fetchHolidayData = async (selectedYear) => {
+        try {
+            const startingOfYear = dayjs()
+                .year(selectedYear.year())
+                .startOf("year");
+            const endingOfYear = dayjs()
+                .year(selectedYear.year())
+                .endOf("year");
+
+            const response = await axiosInstance.get(
+                `/v1/holiday?date[gte]=${startingOfYear}&date[lte]=${endingOfYear}`
+            );
+
+            let i = 1;
+
+            if (response.status === 200 || response.status === 201) {
+                // add new attribute id
+                for (const holiday of response.data.data) {
+                    holiday.id = i++;
+                }
+
+                setRows(response.data.data);
+            } else {
+                throw new Error("Unexpected status code received");
+            }
+        } catch (error) {
+            const errorMessage =
+                error.response?.data?.message || "An error occurred.";
+            Toast.error(errorMessage);
+        }
+    };
+
+    const changeSelectedYear = (date) => {
+        setSelectedYear(dayjs(date));
+    };
+
+    useEffect(() => {
+        fetchHolidayData(selectedYear);
+    }, [selectedYear]);
+
     return (
         <>
             <PageHeading pageName={"All Holiday"} />
+            <MyYearPicker
+                selectedYear={selectedYear}
+                setSelectedYear={changeSelectedYear}
+            />
             <DataTable columns={columns} rows={rows} />
         </>
     )

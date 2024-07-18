@@ -17,6 +17,11 @@ const verifyToken = catchAsync(async (req, res, next) => {
     return next(new AppError("Unauthorized request", 401));
   }
   // req.body.employeeId = employee.employeeId;
+
+  // append employee id when request received from employee
+  if (employee.role === "Employee") {
+    req.query.employeeId = employee.employeeId;
+  }
   req.body.employee = employee;
   req.role = employee.role;
   next();

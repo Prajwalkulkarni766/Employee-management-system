@@ -2,32 +2,18 @@ import Leave from "../models/leave.model.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppError from "../utils/appError.js";
 import AppResponse from "../utils/appResponse.js";
-import Employee from "../models/employee.model.js";
+import { getAll } from "./handlerFactory.js";
 
-const getLeave = catchAsync(async (req, res, next) => {
-  const { fromDate, toDate } = req.query;
-
-  let leaves = await Leave.find({
-    createdAt: {
-      $gte: fromDate,
-      $lte: toDate,
-    },
-  });
-
-  leaves = leaves.map((leaveData, index) => ({
-    id: index + 1,
-    ...leaveData.toJSON(),
-  }));
-
-  return res.status(200).json(new AppResponse(200, leaves));
-});
+const getLeave = getAll(Leave);
 
 const createLeave = catchAsync(async (req, res, next) => {
-  const { empId, leaveStartDate, leaveEndDate } = req.body;
+  req.body.employeeId = req.body.employee.employeeId;
+
+  const { employeeId, leaveStartDate, leaveEndDate } = req.body;
 
   // leave exists
   const existingLeave = await Leave.findOne({
-    employee: empId,
+    employeeId: employeeId,
     leaveStartDate: leaveStartDate,
     leaveEndDate: leaveEndDate,
   });
