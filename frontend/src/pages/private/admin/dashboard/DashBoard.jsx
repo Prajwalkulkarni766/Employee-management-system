@@ -1,4 +1,4 @@
-import PageHeading from "../../components/PageHeading";
+import PageHeading from "../../../../components/PageHeading";
 import React from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -128,7 +128,7 @@ const cards = [
   },
   {
     icon: <LuggageIcon fontSize="large" />,
-    title: "Next Holiday",
+    title: "Upcoming Holiday",
     content: "13-01-2024",
   },
 ];

@@ -42,6 +42,9 @@ export default function EmployeeForm({ statusOfIsEditing }) {
     education: Yup.string().required("Education Required"),
     joiningDate: Yup.date().required("Joining Date Required"),
     salary: Yup.number().required("Salary Required"),
+    hra: Yup.number().required("HRA Required"),
+    da: Yup.number().required("DA Required"),
+    specialAllowances: Yup.number().required("Special Allowances Required"),
     role: Yup.string().required("Role Required"),
     isworking: Yup.string().required("Is working Required"),
   });
@@ -62,6 +65,9 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       education: statusOfIsEditing ? employee.education : "",
       joiningDate: statusOfIsEditing ? dayjs(employee.joiningDate) : dayjs(),
       salary: statusOfIsEditing ? employee.salary : "",
+      hra: statusOfIsEditing ? employee.hra : "",
+      da: statusOfIsEditing ? employee.da : "",
+      specialAllowances: statusOfIsEditing ? employee.specialAllowances : 0,
       role: statusOfIsEditing ? employee.role : "",
       isworking: statusOfIsEditing ? (employee.isWorking ? "Yes" : "No") : "",
     },
@@ -89,6 +95,9 @@ export default function EmployeeForm({ statusOfIsEditing }) {
           dayjs(values.joiningDate).format("YYYY-MM-DD")
         );
         formData.append("salary", values.salary);
+        formData.append("hra", values.hra);
+        formData.append("da", values.da);
+        formData.append("specialAllowances", values.specialAllowances);
         formData.append("role", values.role);
         formData.append("isWorking", values.isworking === "Yes" ? true : false);
 
@@ -197,6 +206,33 @@ export default function EmployeeForm({ statusOfIsEditing }) {
       value: formik.values.salary,
       errors: formik.errors.salary,
       isTouched: formik.touched.salary,
+    },
+    {
+      id: 10,
+      labelName: "HRA",
+      inputType: "number",
+      inputId: "hra",
+      value: formik.values.hra,
+      errors: formik.errors.hra,
+      isTouched: formik.touched.hra,
+    },
+    {
+      id: 11,
+      labelName: "DA",
+      inputType: "number",
+      inputId: "da",
+      value: formik.values.da,
+      errors: formik.errors.da,
+      isTouched: formik.touched.da,
+    },
+    {
+      id: 12,
+      labelName: "Special Allowances",
+      inputType: "number",
+      inputId: "specialAllowances",
+      value: formik.values.specialAllowances,
+      errors: formik.errors.specialAllowances,
+      isTouched: formik.touched.specialAllowances,
     },
   ];
 

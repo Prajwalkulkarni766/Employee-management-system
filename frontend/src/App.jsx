@@ -13,7 +13,10 @@ import Login from "./pages/public/Login";
 
 // admin page
 // dashboard page
-import DashBoard from "./pages/private/DashBoard";
+import DashBoard from "./pages/private/admin/dashboard/DashBoard";
+
+// configuration page
+import Configuration from "./pages/private/admin/configuration/Configuration";
 
 // employee pages
 import AddEmployee from "./pages/private/admin/employee/AddEmployee";
@@ -30,17 +33,16 @@ import AddHoliday from "./pages/private/admin/holiday/AddHoliday";
 import EditHoliday from "./pages/private/admin/holiday/EditHoliday";
 
 // attendance pages
-import EmployeeAttendance from "./pages/private/admin/attendance/EmployeeAttendance";
+import AllAttendance from "./pages/private/admin/attendance/AllAttendance";
 
 // payroll pages
 import EmployeeSalary from "./pages/private/admin/payroll/EmployeeSalary";
 import ReleaseSalary from "./pages/private/admin/payroll/ReleaseSalary";
 
-
 // employee page
 // attendance page
 import EmployeeTodayAttendance from "./pages/private/employee/attendance/EmployeeTodayAttendance";
-import EmployeeAttendanceSheet from "./pages/private/employee/attendance/EmployeeAttendanceSheet";
+import EmployeeAttendance from "./pages/private/employee/attendance/EmployeeAttendance";
 
 // leave page
 import EmployeeAllLeave from "./pages/private/employee/leave/EmployeeAllLeave";
@@ -62,6 +64,14 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <AdminNavbar component={DashBoard} />
+      </PrivateRoute>
+    ),
+  },
+  {
+    path: "admin/configuration",
+    element: (
+      <PrivateRoute>
+        <AdminNavbar component={Configuration} />
       </PrivateRoute>
     ),
   },
@@ -133,7 +143,7 @@ const router = createBrowserRouter([
     path: "admin/attendence/employeeattendence",
     element: (
       <>
-        <AdminNavbar component={EmployeeAttendance} />
+        <AdminNavbar component={AllAttendance} />
       </>
     ),
   },
@@ -173,7 +183,7 @@ const router = createBrowserRouter([
     path: "employee/attendence/attendencesheet",
     element: (
       <>
-        <EmployeeNavBar component={EmployeeAttendanceSheet} />
+        <EmployeeNavBar component={EmployeeAttendance} />
       </>
     ),
   },

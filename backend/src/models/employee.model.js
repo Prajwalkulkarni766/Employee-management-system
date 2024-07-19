@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import bcrypt from "bcrypt";
 
 const employeeSchema = new mongoose.Schema({
@@ -62,6 +62,18 @@ const employeeSchema = new mongoose.Schema({
   salary: {
     type: Number,
     required: true,
+  },
+  hra: {
+    type: Number,
+    required: [true, "Please provide hra"],
+  },
+  da: {
+    type: Number,
+    required: [true, "Please provide da"],
+  },
+  specialAllowances: {
+    type: Number,
+    default: 0,
   },
   role: {
     type: String,

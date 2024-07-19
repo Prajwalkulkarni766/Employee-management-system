@@ -5,6 +5,7 @@ import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutli
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import FeedIcon from "@mui/icons-material/Feed";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import TuneIcon from "@mui/icons-material/Tune";
 import MenuItem from "./MenuItem";
 import NavBar from "./NavBar";
 
@@ -43,6 +44,8 @@ const ListItemsWithTextAndIcon = () => {
         icon={PaymentsIcon}
         menuItems={["Employee Salary", "Release Salary"]}
       />
+
+      <MenuItem menuTitle="Configuration" icon={TuneIcon} menuItems={[]} />
     </React.Fragment>
   );
 };
@@ -64,7 +67,13 @@ const ListItemWithLogoOnly = () => {
         menuItems={[]}
       />
 
-      <MenuItem menuTitle="Payroll" icon={PaymentsIcon} menuItems={[]} />
+      <MenuItem
+        menuTitle="Payroll"
+        icon={PaymentsIcon}
+        menuItems={["Employee Salary", "Release Salary"]}
+      />
+
+      <MenuItem menuTitle="Configuration" icon={TuneIcon} menuItems={[]} />
     </React.Fragment>
   );
 };

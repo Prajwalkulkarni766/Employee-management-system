@@ -88,13 +88,20 @@ const payrollProcess = catchAsync(async (req, res, next) => {
       continue;
     }
 
+    const payment = {
+      salary: employee.salary,
+      hra: employee.hra,
+      da: employee.da,
+      specialAllowances: employee.specialAllowances,
+    };
+
     // release payment
     await new Payroll({
       employeeId: employee.employeeId,
       payStartDate: startOfMonth,
       payEndDate: endOfMonth,
       payStatus: "Paid",
-      totalAmountPaid: employee.salary,
+      earning: payment,
     }).save();
   }
 

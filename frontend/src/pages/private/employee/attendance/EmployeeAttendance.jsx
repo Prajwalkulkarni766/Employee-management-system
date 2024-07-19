@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import axiosInstance from "../../../../axios/axiosInstance";
 import Toast from "../../../../helper/Toast";
 
-export default function EmployeeAttendanceSheet() {
+export default function EmployeeAttendance() {
   const [rows, setRows] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month() + 1);
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
