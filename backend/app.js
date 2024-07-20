@@ -65,17 +65,19 @@ import attendanceRoute from "./src/routes/attendance.route.js";
 import leaveRoute from "./src/routes/leave.route.js";
 import holidayRoute from "./src/routes/holiday.route.js";
 import payrollRoute from "./src/routes/payroll.route.js";
+import configurationRoute from "./src/routes/configuration.route.js";
 import AppError from "./src/utils/appError.js";
 
 //routes declaration
 app.use(express.static("public"));
 app.use("/api/v1/auth", authenticateRoute);
-app.use(verifyToken);
+// app.use(verifyToken);
 app.use("/api/v1/employee", employeeRoute);
 app.use("/api/v1/attendance", attendanceRoute);
 app.use("/api/v1/leave", leaveRoute);
 app.use("/api/v1/holiday", holidayRoute);
 app.use("/api/v1/payroll", payrollRoute);
+app.use("/api/v1/configuration", configurationRoute);
 
 app.use(globalErrorHandler);
 

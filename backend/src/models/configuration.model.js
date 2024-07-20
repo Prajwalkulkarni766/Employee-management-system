@@ -1,8 +1,8 @@
 import mongoose, { Schema, model } from "mongoose";
 
 const configurationSchema = new Schema({
-  officeStartTime: Number,
-  officeEndTime: Number,
+  officeStartTime: String,
+  officeEndTime: String,
   lateMarkDeduction: Number,
   lessWorkTimeDeduction: Number,
   halfDayDeduction: Number,
@@ -11,7 +11,6 @@ const configurationSchema = new Schema({
   overTimeAddition: Number,
   holiday: {
     type: [String],
-    default: [],
   },
 });
 

@@ -81,6 +81,29 @@ function checkData(routeName) {
     holidayId: [
       check("holidayId").notEmpty().withMessage("Please provide required data"),
     ],
+    configuration: [
+      check("officeStartTime")
+        .isString()
+        .withMessage("Please provide office start time"),
+      check("officeEndTime")
+        .isString()
+        .withMessage("Please provide office end time"),
+      check("lateMarkDeduction")
+        .isNumeric()
+        .withMessage("Please provide late mark deduction amount"),
+      check("lessWorkTimeDeduction")
+        .isNumeric()
+        .withMessage("Please provide less work time deduction amount"),
+      check("halfDayDeduction")
+        .isNumeric()
+        .withMessage("Please provide half day deduction amount"),
+      check("totalWorkingHours")
+        .isNumeric()
+        .withMessage("Please provide total woking hours"),
+      check("overTimeAddition")
+        .isNumeric()
+        .withMessage("Please provide over time amount"),
+    ],
   };
 
   return checks[routeName] || [];
