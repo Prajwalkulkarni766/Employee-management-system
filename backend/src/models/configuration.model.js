@@ -6,12 +6,9 @@ const configurationSchema = new Schema({
   lateMarkDeduction: Number,
   lessWorkTimeDeduction: Number,
   halfDayDeduction: Number,
-  companyLogo: String,
   totalWorkingHours: Number,
   overTimeAddition: Number,
-  holiday: {
-    type: [String],
-  },
+  holiday: [String],
 });
 
 const Configuration = model("Configuration", configurationSchema);

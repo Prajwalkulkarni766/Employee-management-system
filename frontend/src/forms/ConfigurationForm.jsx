@@ -5,19 +5,18 @@ import { Grid } from "@mui/material";
 import Toast from "../helper/Toast";
 import Input from "../components/Input";
 import Button from "@mui/material/Button";
-import { MuiFileInput } from "mui-file-input";
 import { useState } from "react";
 import CloseIcon from "@mui/icons-material/Close";
 import axiosInstance from "../axios/axiosInstance";
 import MyTimePicker from "../components/MyTimePicker";
 import dayjs from "dayjs";
+import MyMultipleSelect from "../components/MyMultipleSelect";
 
 export default function ConfigurationForm() {
-  const [file, setFile] = useState(null);
 
-  const handleChange = (newFile) => {
-    setFile(newFile);
-  };
+  const handleMultipleSelectionChange = (value) => {
+    formik.setFieldValue('holiday', value);
+  }
 
   const configurationSchema = Yup.object({
     officeStartTime: Yup.string().required("Office Start Time Required"),
@@ -33,48 +32,44 @@ export default function ConfigurationForm() {
     ),
     totalWorkingHours: Yup.number().required("Total Working Hours Required"),
     overTimeAddition: Yup.number().required("Over Time Amount Required"),
+    holiday: Yup.array().required("Holiday Required")
   });
 
   const formik = useFormik({
     initialValues: {
       officeStartTime: dayjs(),
       officeEndTime: dayjs(),
-      lateMarkDeduction: "",
-      lessWorkTimeDeduction: "",
-      halfDayDeduction: "",
-      totalWorkingHours: "",
-      overTimeAddition: "",
+      lateMarkDeduction: 0,
+      lessWorkTimeDeduction: 0,
+      halfDayDeduction: 0,
+      totalWorkingHours: 0,
+      overTimeAddition: 0,
+      holiday: []
     },
     validationSchema: configurationSchema,
     onSubmit: async (values) => {
       try {
+
         // const formData = new FormData();
-        // formData.append("officeStartTime", values.officeStartTime);
-        // formData.append("officeEndTime", values.officeEndTime);
-        // formData.append("lateMarkDeduction", values.lateMarkDeduction);
-        // formData.append("lessWorkTimeDeduction", values.lessWorkTimeDeduction);
-        // formData.append("halfDayDeduction", values.halfDayDeduction);
-        // formData.append("totalWorkingHours", values.totalWorkingHours);
-        // formData.append("overTimeAddition", values.overTimeAddition);
+        // formData.append("officeStartTime", dayjs(values.officeStartTime).format("HH:mm"));
+        // const response = await axiosInstance.post("/v1/configuration", formData);
 
-        // if (file) {
-        //   formData.append("image", file);
-        // }
+        const response = await axiosInstance.post("/v1/configuration", {
+          officeStartTime: dayjs(values.officeStartTime).format("HH:mm"),
+          officeEndTime: dayjs(values.officeEndTime).format("HH:mm"),
+          lateMarkDeduction: values.lateMarkDeduction,
+          lessWorkTimeDeduction: values.lessWorkTimeDeduction,
+          halfDayDeduction: values.halfDayDeduction,
+          totalWorkingHours: values.totalWorkingHours,
+          overTimeAddition: values.overTimeAddition,
+          holiday: values.holiday
+        });
 
-        console.log(values);
-
-        // const response = statusOfIsEditing
-        //   ? await axiosInstance.patch("/v1/employee", formData)
-        //   : await axiosInstance.post("/v1/employee", formData);
-
-        // if (response.status === 201) {
-        //   Toast.success("Employee created successfully");
-        //   formik.resetForm();
-        // } else if (response.status === 200) {
-        //   Toast.success("Employee updated successfully");
-        // } else {
-        //   throw new Error("Unexpected status code received");
-        // }
+        if (response.status === 200) {
+          Toast.success("Configured successfully");
+        } else {
+          throw new Error("Unexpected status code received");
+        }
       } catch (error) {
         const errorMessage =
           error.response?.data?.message || "An error occurred.";
@@ -183,27 +178,29 @@ export default function ConfigurationForm() {
             </Grid>
           ))}
           <Grid item xs={6}>
-            <MuiFileInput
-              inputProps={{ accept: ".png, .jpeg" }}
-              label="Company Logo"
-              value={file}
-              onChange={handleChange}
-              hideSizeText={false}
-              clearIconButtonProps={{
-                title: "Remove",
-                children: <CloseIcon fontSize="small" />,
-              }}
-              fullWidth
+            <MyMultipleSelect
+              options={[
+                'Sunday',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday',
+              ]}
+              labelName={"Holiday List"}
+              onChange={handleMultipleSelectionChange}
+              value={formik.values.holiday}
+              errors={formik.errors.holiday}
+              isTouched={formik.touched.holiday}
             />
           </Grid>
         </Grid>
-        {/* &nbsp; */}
         &nbsp;
         <Button
           sx={{ padding: "13px 15px" }}
           variant="contained"
           type="submit"
-          onClick={formik.handleSubmit}
           fullWidth
         >
           Save Changes

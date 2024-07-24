@@ -8,8 +8,8 @@ const configurationRoute = express.Router();
 
 configurationRoute.post(
   "/",
-  checkData("configuration"),
-  checkErrors,
+  // checkData("configuration"),
+  // checkErrors,
   setConfiguration
 );
 

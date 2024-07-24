@@ -83,25 +83,25 @@ function checkData(routeName) {
     ],
     configuration: [
       check("officeStartTime")
-        .isString()
+        .notEmpty()
         .withMessage("Please provide office start time"),
       check("officeEndTime")
-        .isString()
+        .notEmpty()
         .withMessage("Please provide office end time"),
       check("lateMarkDeduction")
-        .isNumeric()
+        .notEmpty()
         .withMessage("Please provide late mark deduction amount"),
       check("lessWorkTimeDeduction")
-        .isNumeric()
+        .notEmpty()
         .withMessage("Please provide less work time deduction amount"),
       check("halfDayDeduction")
-        .isNumeric()
+        .notEmpty()
         .withMessage("Please provide half day deduction amount"),
       check("totalWorkingHours")
-        .isNumeric()
+        .notEmpty()
         .withMessage("Please provide total woking hours"),
       check("overTimeAddition")
-        .isNumeric()
+        .notEmpty()
         .withMessage("Please provide over time amount"),
     ],
   };

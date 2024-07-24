@@ -2,6 +2,7 @@ import Configuration from "../models/configuration.model.js";
 import catchAsync from "../utils/catchAsync.js";
 import AppResponse from "../utils/appResponse.js";
 import AppError from "../utils/appError.js";
+import fs, { unlink } from "fs";
 
 const setConfiguration = catchAsync(async (req, res, next) => {
   const { body } = req;
