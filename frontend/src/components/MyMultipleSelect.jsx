@@ -5,7 +5,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-const ITEM_HEIGHT = 48;
+const ITEM_HEIGHT = 55;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
     PaperProps: {
@@ -16,7 +16,7 @@ const MenuProps = {
     },
 };
 
-export default function MyMultipleSelect({ options, labelName, onChange, value }) {
+export default function MyMultipleSelect({ options, labelName, onChange, value, isTouched, errors }) {
 
     const name = labelName.toLowerCase().replace(/\s+/g, "-");
 
@@ -46,6 +46,7 @@ export default function MyMultipleSelect({ options, labelName, onChange, value }
                     </MenuItem>
                 ))}
             </Select>
+            {isTouched && errors ? <p className="error-text">{errors}</p> : <p></p>}
         </FormControl>
     );
 };

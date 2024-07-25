@@ -5,14 +5,18 @@ import { Grid } from "@mui/material";
 import Toast from "../helper/Toast";
 import Input from "../components/Input";
 import Button from "@mui/material/Button";
-import { useState } from "react";
-import CloseIcon from "@mui/icons-material/Close";
+import { useEffect } from "react";
 import axiosInstance from "../axios/axiosInstance";
 import MyTimePicker from "../components/MyTimePicker";
 import dayjs from "dayjs";
 import MyMultipleSelect from "../components/MyMultipleSelect";
+import { useSelector, useDispatch } from "react-redux";
+import { setConfiguration } from "../redux/configuration/index.slice";
 
 export default function ConfigurationForm() {
+
+  const dispatch = useDispatch();
+  const configuration = useSelector((state) => state.configuration.configuration);
 
   const handleMultipleSelectionChange = (value) => {
     formik.setFieldValue('holiday', value);
@@ -32,27 +36,28 @@ export default function ConfigurationForm() {
     ),
     totalWorkingHours: Yup.number().required("Total Working Hours Required"),
     overTimeAddition: Yup.number().required("Over Time Amount Required"),
-    holiday: Yup.array().required("Holiday Required")
+    holiday: Yup.array()
   });
 
   const formik = useFormik({
     initialValues: {
-      officeStartTime: dayjs(),
-      officeEndTime: dayjs(),
-      lateMarkDeduction: 0,
-      lessWorkTimeDeduction: 0,
-      halfDayDeduction: 0,
-      totalWorkingHours: 0,
-      overTimeAddition: 0,
-      holiday: []
+      officeStartTime: configuration.officeStartTime ? dayjs() : dayjs(),
+      officeEndTime: configuration.officeEndTime ? dayjs() : dayjs(),
+      lateMarkDeduction: configuration.lateMarkDeduction ? configuration.lateMarkDeduction : 0,
+      lessWorkTimeDeduction: configuration.lessWorkTimeDeduction ? configuration.lessWorkTimeDeduction : 0,
+      halfDayDeduction: configuration.halfDayDeduction ? configuration.halfDayDeduction : 0,
+      totalWorkingHours: configuration.totalWorkingHours ? configuration.totalWorkingHours : 0,
+      overTimeAddition: configuration.overTimeAddition ? configuration.overTimeAddition : 0,
+      holiday: configuration.holiday ? configuration.holiday : []
     },
     validationSchema: configurationSchema,
     onSubmit: async (values) => {
       try {
 
-        // const formData = new FormData();
-        // formData.append("officeStartTime", dayjs(values.officeStartTime).format("HH:mm"));
-        // const response = await axiosInstance.post("/v1/configuration", formData);
+        if (values.holiday.length == 0) {
+          formik.setFieldError("holiday", "Holiday required")
+          return;
+        }
 
         const response = await axiosInstance.post("/v1/configuration", {
           officeStartTime: dayjs(values.officeStartTime).format("HH:mm"),
@@ -146,6 +151,30 @@ export default function ConfigurationForm() {
       isTouched: formik.touched.overTimeAddition,
     },
   ];
+
+  useEffect(() => {
+
+    // if configuration not found then fetch from
+    if (!configuration.officeStartTime) {
+
+      (async function () {
+        try {
+          const response = await axiosInstance.get("/v1/configuration");
+          // setting value to form 
+          formik.setFieldValue("lateMarkDeduction", response.data.data.lateMarkDeduction)
+          formik.setFieldValue("lessWorkTimeDeduction", response.data.data.lessWorkTimeDeduction)
+          formik.setFieldValue("halfDayDeduction", response.data.data.halfDayDeduction)
+          formik.setFieldValue("totalWorkingHours", response.data.data.totalWorkingHours)
+          formik.setFieldValue("overTimeAddition", response.data.data.overTimeAddition)
+          formik.setFieldValue("holiday", response.data.data.holiday)
+          dispatch(setConfiguration(response.data.data))
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.message || "An error occurred.";
+        }
+      })();
+    }
+  }, [])
 
   return (
     <Paper elevation={3} sx={{ p: 2 }}>

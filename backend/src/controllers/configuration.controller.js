@@ -4,6 +4,14 @@ import AppResponse from "../utils/appResponse.js";
 import AppError from "../utils/appError.js";
 import fs, { unlink } from "fs";
 
+const getConfiguration = catchAsync(async (req, res, next) => {
+  const configuration = await Configuration.findOne({});
+
+  return res
+    .status(200)
+    .json(new AppResponse(200, configuration, "Configuration found"));
+});
+
 const setConfiguration = catchAsync(async (req, res, next) => {
   const { body } = req;
   const configuration = await Configuration.findOne({});
@@ -34,4 +42,4 @@ const setConfiguration = catchAsync(async (req, res, next) => {
   }
 });
 
-export { setConfiguration };
+export { setConfiguration, getConfiguration };
