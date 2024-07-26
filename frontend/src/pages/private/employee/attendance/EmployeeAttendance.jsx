@@ -61,7 +61,6 @@ export default function EmployeeAttendance() {
         throw new Error("Unexpected status code received");
       }
     } catch (error) {
-      console.log(error);
       const errorMessage =
         error.response?.data?.message || "An error occurred.";
       Toast.error(errorMessage);

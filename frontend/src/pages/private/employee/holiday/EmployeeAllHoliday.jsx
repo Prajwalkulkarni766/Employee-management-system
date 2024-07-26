@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import axiosInstance from "../../../../axios/axiosInstance";
 import MyYearPicker from "../../../../components/MyYearPicker";
 import dayjs from "dayjs";
+import Toast from "../../../../helper/Toast";
 
 export default function AddHoliday() {
   const [rows, setRows] = useState([]);
@@ -32,8 +33,8 @@ export default function AddHoliday() {
 
   const fetchHolidayData = async (selectedYear) => {
     try {
-      const startingOfYear = dayjs().year(selectedYear.year()).startOf("year");
-      const endingOfYear = dayjs().year(selectedYear.year()).endOf("year");
+      const startingOfYear = dayjs().year(selectedYear.year()).startOf("year").format("YYYY-MM-DD");
+      const endingOfYear = dayjs().year(selectedYear.year()).endOf("year").format("YYYY-MM-DD");
 
       const response = await axiosInstance.get(
         `/v1/holiday?date[gte]=${startingOfYear}&date[lte]=${endingOfYear}`

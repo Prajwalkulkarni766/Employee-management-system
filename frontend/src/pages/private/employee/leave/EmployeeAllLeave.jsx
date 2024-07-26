@@ -44,8 +44,8 @@ export default function EmployeeAllLeave() {
 
             if (response.status === 200 || response.status === 201) {
                 // add new attribute id
-                for (const holiday of response.data.data) {
-                    holiday.id = i++;
+                for (const leave of response.data.data) {
+                    leave.id = i++;
                 }
 
                 setRows(response.data.data);

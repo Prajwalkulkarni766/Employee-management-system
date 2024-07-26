@@ -10,6 +10,7 @@ import MenuItem from "@mui/material/MenuItem";
 import axiosInstance from "../../../../axios/axiosInstance";
 import dayjs from "dayjs";
 import MyMonthSelector from "../../../../components/MyMonthSelector"
+import Toast from "../../../../helper/Toast"
 
 export default function AllLeave() {
   const [rows, setRows] = useState([]);
@@ -28,6 +29,13 @@ export default function AllLeave() {
         leaveId: row._id,
         leaveStatus: leaveStatus,
       });
+
+      if (response.status === 200) {
+        const updatedRows = rows.map((r) =>
+          r._id === row._id ? { ...r, leaveStatus: leaveStatus } : r
+        );
+        setRows(updatedRows);
+      }
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "An error occurred.";
@@ -106,10 +114,14 @@ export default function AllLeave() {
           .format("YYYY-MM-DD");
 
         const response = await axiosInstance.get(
-          `/v1/leave?fromDate=${fromDate}&toDate=${toDate}`
+          `/v1/leave?leaveStartDate[gte]=${fromDate}&leaveEndDate[lte]=${toDate}`
         );
 
         if (response.status === 200) {
+          let i = 1;
+          for (const leave of response.data.data) {
+            leave.id = i++;
+          }
           setRows(response.data.data);
         } else {
           throw new Error("Unexpected status code received");
