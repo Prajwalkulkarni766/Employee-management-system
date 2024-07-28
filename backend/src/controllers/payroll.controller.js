@@ -67,9 +67,23 @@ const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   }
 );
 
-const generatePayrollSlip = undefined;
+const generatePaySlip = undefined;
+/*
+TODO:
+
+generate payslip and send html content
+
+*/
 
 const payrollProcess = catchAsync(async (req, res, next) => {
+  /*
+TODO:
+
+rather than fetching data from employee collection and after doing payroll process
+
+process the payroll data received in request
+
+  */
   const { startOfMonth, endOfMonth } = req.body;
 
   const employees = await Employee.find({
@@ -117,6 +131,8 @@ const createPayroll = catchAsync(async (req, res, next) => {
   const employeeData = await Employee.find({ role: { $ne: "Admin" } });
 
   /*
+
+  TODO:
   count total number of days present in month
 
   remove default holiday (fetched from configuration collection) + declared holiday (fetched from holiday collection)
@@ -177,7 +193,7 @@ code that gives total  present, ... working hours status
 
 export {
   getEmployeePayrollDataOfSpecifiedMonth,
-  generatePayrollSlip,
+  generatePaySlip,
   payrollProcess,
   createPayroll,
 };

@@ -7,7 +7,7 @@ import axiosInstance from "../../../../axios/axiosInstance";
 import dayjs from "dayjs";
 
 export default function EmployeeTodayAttendance() {
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState(dayjs());
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isCheckedOut, setIsCheckedOut] = useState(false);
   const [checkInTime, setCheckInTime] = useState(null);
@@ -84,7 +84,7 @@ export default function EmployeeTodayAttendance() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date());
+      setCurrentTime(dayjs());
     }, 1000);
     getCheckInAndCheckOutData();
     return () => clearInterval(timer);
@@ -95,7 +95,7 @@ export default function EmployeeTodayAttendance() {
       <PageHeading pageName={"Today's Attendance"} />
       <Paper elevation={3} sx={{ p: 2, width: "100%", textAlign: "center" }}>
         <Typography variant="h2" sx={{ mb: 5 }}>
-          {currentTime.toLocaleTimeString()}
+          {currentTime.format("HH:mm:ss")}
         </Typography>
         {!isCheckedIn && (
           <Button onClick={checkIn} variant="contained">

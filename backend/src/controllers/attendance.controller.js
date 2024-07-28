@@ -30,9 +30,6 @@ const attendance = catchAsync(async (req, res, next) => {
 });
 
 const getAtteandanceOfDate = catchAsync(async (req, res, next) => {
-  // const date = new Date(req.query.date);
-  // date.setUTCHours(0, 0, 0, 0);
-
   const date = req.query.date;
 
   // get attendance data

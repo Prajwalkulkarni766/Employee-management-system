@@ -10,24 +10,15 @@ import axiosInstance from "../axios/axiosInstance";
 import MyTimePicker from "../components/MyTimePicker";
 import dayjs from "dayjs";
 import MyMultipleSelect from "../components/MyMultipleSelect";
-import { useSelector, useDispatch } from "react-redux";
-import { setConfiguration } from "../redux/configuration/index.slice";
-
-
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 
 export default function ConfigurationForm() {
-
-  const dispatch = useDispatch();
-  const configuration = useSelector((state) => state.configuration.configuration);
 
   const handleMultipleSelectionChange = (value) => {
     formik.setFieldValue('holiday', value);
   }
 
   const configurationSchema = Yup.object({
+    officeName: Yup.string().required("Office Name Required"),
     officeStartTime: Yup.string().required("Office Start Time Required"),
     officeEndTime: Yup.string().required("Office End Time Required"),
     lateMarkDeduction: Yup.number().required(
@@ -42,20 +33,27 @@ export default function ConfigurationForm() {
     totalWorkingHours: Yup.number().required("Total Working Hours Required"),
     overTimeWorkingHours: Yup.number().required("Total Over Time Working Hours Required"),
     overTimeAddition: Yup.number().required("Over Time Amount Required"),
-    holiday: Yup.array()
+    holiday: Yup.array(),
+    totalCasualLeaves: Yup.number().required("Total Casual Leave"),
+    totalMedicalLeaves: Yup.number().required("Total Medical Leaves"),
+    amountDeductedWhenEmployeeIsAbsent: Yup.number().required("Amount Deducted When Employee Is Absent")
   });
 
   const formik = useFormik({
     initialValues: {
-      officeStartTime: configuration.officeStartTime ? dayjs(configuration.officeStartTime, 'hh:mm A') : dayjs(),
-      officeEndTime: configuration.officeEndTime ? dayjs(configuration.officeEndTime, 'HH:mm A') : dayjs(),
-      lateMarkDeduction: configuration.lateMarkDeduction ? configuration.lateMarkDeduction : 0,
-      lessWorkTimeDeduction: configuration.lessWorkTimeDeduction ? configuration.lessWorkTimeDeduction : 0,
-      halfDayWorkingHours: configuration.halfDayWorkingHours ? configuration.halfDayWorkingHours : 0,
-      totalWorkingHours: configuration.totalWorkingHours ? configuration.totalWorkingHours : 0,
-      overTimeWorkingHours: configuration.overTimeWorkingHours ? configuration.overTimeWorkingHours : 0,
-      overTimeAddition: configuration.overTimeAddition ? configuration.overTimeAddition : 0,
-      holiday: configuration.holiday ? configuration.holiday : []
+      officeName: '',
+      officeStartTime: dayjs(),
+      officeEndTime: dayjs(),
+      lateMarkDeduction: 0,
+      lessWorkTimeDeduction: 0,
+      halfDayWorkingHours: 0,
+      totalWorkingHours: 0,
+      overTimeWorkingHours: 0,
+      overTimeAddition: 0,
+      holiday: [],
+      totalCasualLeaves: 0,
+      totalMedicalLeaves: 0,
+      amountDeductedWhenEmployeeIsAbsent: 0,
     },
     validationSchema: configurationSchema,
     onSubmit: async (values) => {
@@ -67,6 +65,7 @@ export default function ConfigurationForm() {
         }
 
         const response = await axiosInstance.post("/v1/configuration", {
+          officeName: values.officeName,
           officeStartTime: dayjs(values.officeStartTime).format("HH:mm A"),
           officeEndTime: dayjs(values.officeEndTime).format("HH:mm A"),
           lateMarkDeduction: values.lateMarkDeduction,
@@ -75,7 +74,10 @@ export default function ConfigurationForm() {
           totalWorkingHours: values.totalWorkingHours,
           overTimeWorkingHours: values.overTimeWorkingHours,
           overTimeAddition: values.overTimeAddition,
-          holiday: values.holiday
+          holiday: values.holiday,
+          totalCasualLeaves: values.totalCasualLeaves,
+          totalMedicalLeaves: values.totalMedicalLeaves,
+          amountDeductedWhenEmployeeIsAbsent: values.amountDeductedWhenEmployeeIsAbsent
         });
 
         if (response.status === 200) {
@@ -115,6 +117,15 @@ export default function ConfigurationForm() {
   const inputFields = [
     {
       id: 1,
+      labelName: "Office Name",
+      inputType: "text",
+      inputId: "officeName",
+      value: formik.values.officeName,
+      errors: formik.errors.officeName,
+      isTouched: formik.touched.officeName,
+    },
+    {
+      id: 2,
       labelName: "Late Mark Deduction",
       inputType: "number",
       inputId: "lateMarkDeduction",
@@ -123,7 +134,7 @@ export default function ConfigurationForm() {
       isTouched: formik.touched.lateMarkDeduction,
     },
     {
-      id: 2,
+      id: 3,
       labelName: "Less Work Time Deduction",
       inputType: "number",
       inputId: "lessWorkTimeDeduction",
@@ -132,7 +143,7 @@ export default function ConfigurationForm() {
       isTouched: formik.touched.lessWorkTimeDeduction,
     },
     {
-      id: 3,
+      id: 4,
       labelName: "Half Working Hours",
       inputType: "number",
       inputId: "halfDayWorkingHours",
@@ -141,7 +152,7 @@ export default function ConfigurationForm() {
       isTouched: formik.touched.halfDayWorkingHours,
     },
     {
-      id: 4,
+      id: 5,
       labelName: "Total Working Hours",
       inputType: "number",
       inputId: "totalWorkingHours",
@@ -150,7 +161,7 @@ export default function ConfigurationForm() {
       isTouched: formik.touched.totalWorkingHours,
     },
     {
-      id: 5,
+      id: 6,
       labelName: "Over Time Addition Per Hour",
       inputType: "number",
       inputId: "overTimeAddition",
@@ -159,7 +170,7 @@ export default function ConfigurationForm() {
       isTouched: formik.touched.overTimeAddition,
     },
     {
-      id: 6,
+      id: 7,
       labelName: "Over Time Working Hours",
       inputType: "number",
       inputId: "overTimeWorkingHours",
@@ -167,33 +178,61 @@ export default function ConfigurationForm() {
       errors: formik.errors.overTimeWorkingHours,
       isTouched: formik.touched.overTimeWorkingHours,
     },
+    {
+      id: 8,
+      labelName: "Total Paid Casual Leaves",
+      inputType: "number",
+      inputId: "totalCasualLeaves",
+      value: formik.values.totalCasualLeaves,
+      errors: formik.errors.totalCasualLeaves,
+      isTouched: formik.touched.totalCasualLeaves,
+    },
+    {
+      id: 9,
+      labelName: "Total Paid Medical Leaves",
+      inputType: "number",
+      inputId: "totalMedicalLeaves",
+      value: formik.values.totalMedicalLeaves,
+      errors: formik.errors.totalMedicalLeaves,
+      isTouched: formik.touched.totalMedicalLeaves,
+    },
+    {
+      id: 10,
+      labelName: "Amount Deducted When Employee Is Absent",
+      inputType: "number",
+      inputId: "amountDeductedWhenEmployeeIsAbsent",
+      value: formik.values.amountDeductedWhenEmployeeIsAbsent,
+      errors: formik.errors.amountDeductedWhenEmployeeIsAbsent,
+      isTouched: formik.touched.amountDeductedWhenEmployeeIsAbsent,
+    }
   ];
 
   useEffect(() => {
 
-    // if configuration not found then fetch from
-    if (!configuration.officeStartTime) {
+    (async function () {
+      try {
+        const response = await axiosInstance.get("/v1/configuration");
 
-      (async function () {
-        try {
-          const response = await axiosInstance.get("/v1/configuration");
-          // setting value to form 
-          formik.setFieldValue("officeStartTime", response.data.data.officeStartTime)
-          formik.setFieldValue("officeEndTime", response.data.data.officeEndTime)
-          formik.setFieldValue("lateMarkDeduction", response.data.data.lateMarkDeduction)
-          formik.setFieldValue("lessWorkTimeDeduction", response.data.data.lessWorkTimeDeduction)
-          formik.setFieldValue("halfDayWorkingHours", response.data.data.halfDayWorkingHours)
-          formik.setFieldValue("totalWorkingHours", response.data.data.totalWorkingHours)
-          formik.setFieldValue("overTimeWorkingHours", response.data.data.overTimeWorkingHours)
-          formik.setFieldValue("overTimeAddition", response.data.data.overTimeAddition)
-          formik.setFieldValue("holiday", response.data.data.holiday)
-          dispatch(setConfiguration(response.data.data))
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.message || "An error occurred.";
-        }
-      })();
-    }
+        // setting value to form 
+        formik.setFieldValue("officeName", response.data.data.officeName)
+        formik.setFieldValue("officeStartTime", response.data.data.officeStartTime)
+        formik.setFieldValue("officeEndTime", response.data.data.officeEndTime)
+        formik.setFieldValue("lateMarkDeduction", response.data.data.lateMarkDeduction)
+        formik.setFieldValue("lessWorkTimeDeduction", response.data.data.lessWorkTimeDeduction)
+        formik.setFieldValue("halfDayWorkingHours", response.data.data.halfDayWorkingHours)
+        formik.setFieldValue("totalWorkingHours", response.data.data.totalWorkingHours)
+        formik.setFieldValue("overTimeWorkingHours", response.data.data.overTimeWorkingHours)
+        formik.setFieldValue("overTimeAddition", response.data.data.overTimeAddition)
+        formik.setFieldValue("holiday", response.data.data.holiday)
+        formik.setFieldValue("totalCasualLeaves", response.data.data.totalCasualLeaves)
+        formik.setFieldValue("totalMedicalLeaves", response.data.data.totalMedicalLeaves)
+        formik.setFieldValue("amountDeductedWhenEmployeeIsAbsent", response.data.data.amountDeductedWhenEmployeeIsAbsent)
+      } catch (error) {
+        const errorMessage =
+          error.response?.data?.message || "An error occurred.";
+        Toast.error(errorMessage);
+      }
+    })();
   }, [])
 
   return (

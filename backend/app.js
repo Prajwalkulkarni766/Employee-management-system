@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import mongoSanitize from "express-mongo-sanitize";
 import { xss } from "express-xss-sanitizer";
+import compression from "compression";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(xss());
 app.use(express.json());
 app.use(express.static("public"));
 app.use(cookieParser());
+app.use(compression());
 
 // whitelist api params
 app.use((req, res, next) => {

@@ -70,6 +70,14 @@ export default function EmployeeSalary() {
 
   return (
     <>
+      {/* 
+    
+    TODO:
+
+
+add functionality to download payslip
+
+    */}
       <PageHeading pageName="Employee Salary" />
       <MyMonthSelector
         selectedMonth={selectedMonth}

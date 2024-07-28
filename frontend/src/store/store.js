@@ -3,7 +3,6 @@ import tokenReducer from "../redux/auth/index.slice.js";
 import employeeReducer from "../redux/employee/index.slice.js";
 import holidayReducer from "../redux/holiday/index.slice.js";
 import loadingReducer from "../redux/loading/index.slice.js";
-import configurationReducer from "../redux/configuration/index.slice.js";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +10,5 @@ export const store = configureStore({
     employee: employeeReducer,
     holiday: holidayReducer,
     loading: loadingReducer,
-    configuration: configurationReducer,
   },
 });
