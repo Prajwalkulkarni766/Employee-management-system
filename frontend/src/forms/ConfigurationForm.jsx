@@ -13,6 +13,11 @@ import MyMultipleSelect from "../components/MyMultipleSelect";
 import { useSelector, useDispatch } from "react-redux";
 import { setConfiguration } from "../redux/configuration/index.slice";
 
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+
 export default function ConfigurationForm() {
 
   const dispatch = useDispatch();
@@ -31,22 +36,24 @@ export default function ConfigurationForm() {
     lessWorkTimeDeduction: Yup.number().required(
       "Less Work Time Deduction Amount Required"
     ),
-    halfDayDeduction: Yup.number().required(
-      "Half Day Deduction Amount Required"
+    halfDayWorkingHours: Yup.number().required(
+      "Half Day Working Hours"
     ),
     totalWorkingHours: Yup.number().required("Total Working Hours Required"),
+    overTimeWorkingHours: Yup.number().required("Total Over Time Working Hours Required"),
     overTimeAddition: Yup.number().required("Over Time Amount Required"),
     holiday: Yup.array()
   });
 
   const formik = useFormik({
     initialValues: {
-      officeStartTime: configuration.officeStartTime ? dayjs() : dayjs(),
-      officeEndTime: configuration.officeEndTime ? dayjs() : dayjs(),
+      officeStartTime: configuration.officeStartTime ? dayjs(configuration.officeStartTime, 'hh:mm A') : dayjs(),
+      officeEndTime: configuration.officeEndTime ? dayjs(configuration.officeEndTime, 'HH:mm A') : dayjs(),
       lateMarkDeduction: configuration.lateMarkDeduction ? configuration.lateMarkDeduction : 0,
       lessWorkTimeDeduction: configuration.lessWorkTimeDeduction ? configuration.lessWorkTimeDeduction : 0,
-      halfDayDeduction: configuration.halfDayDeduction ? configuration.halfDayDeduction : 0,
+      halfDayWorkingHours: configuration.halfDayWorkingHours ? configuration.halfDayWorkingHours : 0,
       totalWorkingHours: configuration.totalWorkingHours ? configuration.totalWorkingHours : 0,
+      overTimeWorkingHours: configuration.overTimeWorkingHours ? configuration.overTimeWorkingHours : 0,
       overTimeAddition: configuration.overTimeAddition ? configuration.overTimeAddition : 0,
       holiday: configuration.holiday ? configuration.holiday : []
     },
@@ -60,12 +67,13 @@ export default function ConfigurationForm() {
         }
 
         const response = await axiosInstance.post("/v1/configuration", {
-          officeStartTime: dayjs(values.officeStartTime).format("HH:mm"),
-          officeEndTime: dayjs(values.officeEndTime).format("HH:mm"),
+          officeStartTime: dayjs(values.officeStartTime).format("HH:mm A"),
+          officeEndTime: dayjs(values.officeEndTime).format("HH:mm A"),
           lateMarkDeduction: values.lateMarkDeduction,
           lessWorkTimeDeduction: values.lessWorkTimeDeduction,
-          halfDayDeduction: values.halfDayDeduction,
+          halfDayWorkingHours: values.halfDayWorkingHours,
           totalWorkingHours: values.totalWorkingHours,
+          overTimeWorkingHours: values.overTimeWorkingHours,
           overTimeAddition: values.overTimeAddition,
           holiday: values.holiday
         });
@@ -87,20 +95,20 @@ export default function ConfigurationForm() {
     {
       id: 1,
       labelName: "Office Start Time",
-      inputType: "text",
       inputId: "officeStartTime",
-      value: formik.values.officeStartTime,
       errors: formik.errors.officeStartTime,
       isTouched: formik.touched.officeStartTime,
+      onChange: (newValue) => formik.setFieldValue("officeStartTime", newValue),
+      defaultValue: formik.values.officeStartTime,
     },
     {
       id: 2,
       labelName: "Office End Time",
-      inputType: "text",
       inputId: "officeEndTime",
-      value: formik.values.officeEndTime,
       errors: formik.errors.officeEndTime,
       isTouched: formik.touched.officeEndTime,
+      onChange: (newValue) => formik.setFieldValue("officeEndTime", newValue),
+      defaultValue: formik.values.officeEndTime,
     },
   ];
 
@@ -125,12 +133,12 @@ export default function ConfigurationForm() {
     },
     {
       id: 3,
-      labelName: "Half Day Deduction",
+      labelName: "Half Working Hours",
       inputType: "number",
-      inputId: "halfDayDeduction",
-      value: formik.values.halfDayDeduction,
-      errors: formik.errors.halfDayDeduction,
-      isTouched: formik.touched.halfDayDeduction,
+      inputId: "halfDayWorkingHours",
+      value: formik.values.halfDayWorkingHours,
+      errors: formik.errors.halfDayWorkingHours,
+      isTouched: formik.touched.halfDayWorkingHours,
     },
     {
       id: 4,
@@ -143,12 +151,21 @@ export default function ConfigurationForm() {
     },
     {
       id: 5,
-      labelName: "Over Time Addition",
+      labelName: "Over Time Addition Per Hour",
       inputType: "number",
       inputId: "overTimeAddition",
       value: formik.values.overTimeAddition,
       errors: formik.errors.overTimeAddition,
       isTouched: formik.touched.overTimeAddition,
+    },
+    {
+      id: 6,
+      labelName: "Over Time Working Hours",
+      inputType: "number",
+      inputId: "overTimeWorkingHours",
+      value: formik.values.overTimeWorkingHours,
+      errors: formik.errors.overTimeWorkingHours,
+      isTouched: formik.touched.overTimeWorkingHours,
     },
   ];
 
@@ -161,10 +178,13 @@ export default function ConfigurationForm() {
         try {
           const response = await axiosInstance.get("/v1/configuration");
           // setting value to form 
+          formik.setFieldValue("officeStartTime", response.data.data.officeStartTime)
+          formik.setFieldValue("officeEndTime", response.data.data.officeEndTime)
           formik.setFieldValue("lateMarkDeduction", response.data.data.lateMarkDeduction)
           formik.setFieldValue("lessWorkTimeDeduction", response.data.data.lessWorkTimeDeduction)
-          formik.setFieldValue("halfDayDeduction", response.data.data.halfDayDeduction)
+          formik.setFieldValue("halfDayWorkingHours", response.data.data.halfDayWorkingHours)
           formik.setFieldValue("totalWorkingHours", response.data.data.totalWorkingHours)
+          formik.setFieldValue("overTimeWorkingHours", response.data.data.overTimeWorkingHours)
           formik.setFieldValue("overTimeAddition", response.data.data.overTimeAddition)
           formik.setFieldValue("holiday", response.data.data.holiday)
           dispatch(setConfiguration(response.data.data))
@@ -184,10 +204,9 @@ export default function ConfigurationForm() {
             <Grid key={obj.id} item xs={6}>
               <MyTimePicker
                 labelName={obj.labelName}
-                inputType={obj.inputType}
                 inputId={obj.inputId}
-                onChange={formik.handleChange}
-                value={obj.value}
+                onChange={obj.onChange}
+                defaultValue={obj.defaultValue}
                 errors={obj.errors}
                 isTouched={obj.isTouched}
               />

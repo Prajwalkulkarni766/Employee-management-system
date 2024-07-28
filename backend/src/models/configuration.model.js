@@ -5,8 +5,9 @@ const configurationSchema = new Schema({
   officeEndTime: String,
   lateMarkDeduction: Number,
   lessWorkTimeDeduction: Number,
-  halfDayDeduction: Number,
+  halfDayWorkingHours: Number,
   totalWorkingHours: Number,
+  overTimeWorkingHours: Number,
   overTimeAddition: Number,
   holiday: [String],
 });
