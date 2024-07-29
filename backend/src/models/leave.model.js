@@ -28,7 +28,7 @@ const leaveSchema = new Schema(
     },
     isPaid: {
       type: Boolean,
-      // required: true,
+      required: true,
     },
     leaveStatus: {
       type: String,

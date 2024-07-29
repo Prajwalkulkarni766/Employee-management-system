@@ -5,6 +5,9 @@ import AppResponse from "../utils/appResponse.js";
 import Employee from "../models/employee.model.js";
 import Attendance from "../models/attendance.model.js";
 import Configuration from "../models/configuration.model.js";
+import dayjs from "dayjs";
+import Holiday from "../models/holiday.model.js";
+import Leave from "../models/leave.model.js";
 
 const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   async (req, res, next) => {
@@ -67,7 +70,7 @@ const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   }
 );
 
-const generatePaySlip = undefined;
+const generatePaySlip = catchAsync(async (req, res, next) => {});
 /*
 TODO:
 
@@ -127,68 +130,168 @@ process the payroll data received in request
 });
 
 const createPayroll = catchAsync(async (req, res, next) => {
+  const { month, year } = req.body;
+
+  // fetching configuration
   const configuration = await Configuration.findOne();
-  const employeeData = await Employee.find({ role: { $ne: "Admin" } });
 
-  /*
+  // calculating total number of days present in month
+  const startOfMonth = dayjs(`${year}-${month}-01`);
+  const endOfMonth = startOfMonth.endOf("month");
+  const totalNumberOfDaysInMonth = endOfMonth.date();
 
-  TODO:
-  count total number of days present in month
-
-  remove default holiday (fetched from configuration collection) + declared holiday (fetched from holiday collection)
-
-  count how many days employee is absent count leave also which are not paid
-
-  count how many days employee received late mark
-
-  count how many days employee received less work time
-
-
-  so now calculate how much salary he / she will receive
-
-  */
-
-  /*
-code that gives total  present, ... working hours status
-
-[
-  {
-    $match: {
-      employeeId: "EMP-2",
-      date: {
-        $gte: ISODate("2024-07-01"),
-        $lte: ISODate("2024-07-31")
-      }
-    }
-  },
-  {
-    $group: {
-      _id: "$workingStatus",
-      count: { $sum: 1 }
-    }
-  },
-  {
-    $project: {
-      _id: 0,
-      workingStatus: "$_id",
-      count: 1
+  // remove default holidays from total number of days in month
+  const holidaySet = new Set(configuration.holiday);
+  let workingDays = 0;
+  for (let day = 1; day <= totalNumberOfDaysInMonth; day++) {
+    const currentDay = dayjs(`${year}-${month}-${day}`);
+    const dayOfWeek = currentDay.format("dddd");
+    if (!holidaySet.has(dayOfWeek)) {
+      workingDays++;
     }
   }
-]
 
-
-  */
-
-  const data = employeeData.map(async (employee) => {
-    const attendanceData = await Attendance.find({
-      employeeId: employee.employeeId,
-      workingHours: { $lt: configuration.totalWorkingHours },
-    });
+  // fetching declared holidays and removing it from working days
+  const totalNumberOfDeclaredHolidays = await Holiday.countDocuments({
+    date: {
+      $gte: startOfMonth.format("YYYY-MM-DD"),
+      $lte: endOfMonth.format("YYYY-MM-DD"),
+    },
   });
 
-  // const lessWorkTimeData;
+  workingDays -= totalNumberOfDeclaredHolidays;
 
-  res.send(processData);
+  const employeeData = await Employee.find({ role: { $ne: "Admin" } });
+
+  const payRollData = employeeData.map(async (data) => {
+    let workingDaysOfParticularEmployee = workingDays;
+
+    // Fetching total leaves taken by that particular employee within that month
+    const leavesTaken = await Leave.countDocuments({
+      employeeId: data.employeeId,
+      leaveStartDate: { $gte: startOfMonth.format("YYYY-MM-DD") },
+      leaveEndDate: { $lte: endOfMonth.format("YYYY-MM-DD") },
+      leaveStatus: "Approved",
+      isPaid: false,
+    });
+
+    // workingDaysOfParticularEmployee -= numberOfTotalLeavesTaken;
+
+    // const workingStatus = await Attendance.aggregate([
+    //   {
+    //     $match: {
+    //       employeeId: data.employeeId,
+    //       date: {
+    //         $gte: new Date(startOfMonth.format("YYYY-MM-DD")),
+    //         $lte: new Date(endOfMonth.format("YYYY-MM-DD")),
+    //       },
+    //     },
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$workingStatus",
+    //       count: { $sum: 1 },
+    //     },
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 0,
+    //       workingStatus: "$_id",
+    //       count: 1,
+    //     },
+    //   },
+    // ]);
+
+    const halfDaysWorking = await Attendance.countDocuments({
+      employeeId: data.employeeId,
+      date: {
+        $gte: new Date(startOfMonth.format("YYYY-MM-DD")),
+        $lte: new Date(endOfMonth.format("YYYY-MM-DD")),
+      },
+      workingStatus: "Half Day",
+    });
+
+    const lessWorking = await Attendance.countDocuments({
+      employeeId: data.employeeId,
+      date: {
+        $gte: new Date(startOfMonth.format("YYYY-MM-DD")),
+        $lte: new Date(endOfMonth.format("YYYY-MM-DD")),
+      },
+      workingStatus: {
+        $in: ["Almost Present", "Not Considerable"],
+      },
+    });
+
+    const lateMarking = await Attendance.countDocuments({
+      employeeId: data.employeeId,
+      date: {
+        $gte: new Date(startOfMonth.format("YYYY-MM-DD")),
+        $lte: new Date(endOfMonth.format("YYYY-MM-DD")),
+      },
+      isLate: true,
+    });
+
+    const absent = await Attendance.countDocuments({
+      employeeId: data.employeeId,
+      date: {
+        $gte: new Date(startOfMonth.format("YYYY-MM-DD")),
+        $lte: new Date(endOfMonth.format("YYYY-MM-DD")),
+      },
+      workingStatus: "Absent",
+    });
+
+    // list of earning
+    const basicSalary = data.salary;
+
+    const hra = data.hra;
+
+    const da = data.da;
+
+    const specialAllowances = data.specialAllowances;
+
+    const bonus = 0;
+
+    const totalEarnings = basicSalary + hra + da + specialAllowances + bonus;
+
+    // list of deduction
+    const providentFund = 0;
+
+    const totalAmountDeductedBecauseOfAbsense =
+      (absent + leavesTaken) * configuration.amountDeductedWhenEmployeeIsAbsent;
+
+    const totalAmountDeductedBecauseOfLessWorkTime =
+      lessWorking * configuration.lessWorkTimeDeduction;
+
+    const totalAmountDeductedBecauseOfLateMark =
+      lateMarking * configuration.lateMarkDeduction;
+
+    const totalDeductions =
+      providentFund +
+      totalAmountDeductedBecauseOfAbsense +
+      totalAmountDeductedBecauseOfLessWorkTime +
+      totalAmountDeductedBecauseOfLateMark;
+
+    return {
+      employeeId: data.employeeId,
+      employeeName: data.employeeName,
+      basicSalary,
+      hra,
+      da,
+      specialAllowances,
+      bonus,
+      totalEarnings,
+      providentFund,
+      totalAmountDeductedBecauseOfAbsense,
+      totalAmountDeductedBecauseOfLessWorkTime,
+      totalAmountDeductedBecauseOfLateMark,
+      totalDeductions,
+      netPay: totalEarnings - totalDeductions,
+    };
+  });
+
+  const results = await Promise.all(payRollData);
+
+  res.send(results);
 });
 
 export {

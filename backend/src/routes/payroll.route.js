@@ -2,6 +2,7 @@ import {
   getEmployeePayrollDataOfSpecifiedMonth,
   payrollProcess,
   createPayroll,
+  generatePaySlip,
 } from "../controllers/payroll.controller.js";
 import express from "express";
 import checkErrors from "../middlewares/checkErrors.middleware.js";
@@ -14,6 +15,7 @@ payrollRoute
   .use(restrictTo("Admin"))
   .get("/", getEmployeePayrollDataOfSpecifiedMonth)
   .post("/", payrollProcess)
+  .get("/generatePaySlip", generatePaySlip)
   .get("/createPayroll", createPayroll);
 
 export default payrollRoute;
