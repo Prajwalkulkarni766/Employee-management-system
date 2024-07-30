@@ -11,6 +11,9 @@ import { restrictTo } from "../middlewares/auth.middleware.js";
 
 const payrollRoute = express.Router();
 
+/*
+TODO: implement check data and check error
+*/
 payrollRoute
   .use(restrictTo("Admin"))
   .get("/", getEmployeePayrollDataOfSpecifiedMonth)

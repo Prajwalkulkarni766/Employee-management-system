@@ -70,59 +70,245 @@ const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   }
 );
 
-const generatePaySlip = catchAsync(async (req, res, next) => {});
-/*
-TODO:
+const generatePaySlip = catchAsync(async (req, res, next) => {
+  const { employeeId, payMonth } = req.query;
 
-generate payslip and send html content
+  const configuration = await Configuration.findOne();
+  const employee = await Employee.findOne({ employeeId });
+  const payroll = await Payroll.findOne({ employeeId, payMonth });
 
-*/
+  const paySlipTemplate = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        border: 1px dotted black;
+        padding: 0.5em;
+        vertical-align: middle;
+        font-family: "Roboto";
+        font-size: 11pt;
+        background-color: white;
+      }
+      td,
+      th {
+        border: none;
+      }
+      .header {
+        text-align: center;
+        font-weight: bold;
+        color: #000;
+        border-bottom: 1px dashed black;
+      }
+      .header span {
+        display: block;
+      }
+      .section-heading {
+        font-weight: bold;
+        text-align: left;
+        border-bottom: 1px solid black;
+      }
+      .amount {
+        text-align: right;
+      }
+      .total {
+        font-weight: bold;
+      }
+      .amount,
+      .total {
+        text-align: right;
+      }
+      .left-align {
+        text-align: left;
+      }
+      .right-align {
+        text-align: right;
+      }
+      .center-align {
+        text-align: center;
+        color: #959595;
+      }
+      .null {
+        border: none;
+      }
+      .note {
+        color: #959595;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="sheet0">
+      <thead>
+        <tr>
+          <th colspan="4" class="header">
+            <span style="font-size: 20pt">${configuration.officeName}</span>
+            <span style="font-size: 11pt">PaySlip</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4" class="null"></td>
+        </tr>
+        <tr>
+          <td class="left-align">Date of Joining : ${employee.joiningDate}</td>
+          <td colspan="2" class="null"></td>
+          <td class="left">Employee name : ${employee.firstName} ${employee.lastName}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Pay Period : ${payroll.payMonth}</td>
+          <td colspan="2" class="null"></td>
+          <td class="left-align">Designation : ${employee.designation}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Worked Days : 26</td>
+          <td colspan="2" class="null"></td>
+          <td class="left-align">Department : ${employee.department}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="null"></td>
+        </tr>
+        <tr class="section-heading earnings">
+          <td colspan="3" class="">Earnings</td>
+          <td class="amount">Amount</td>
+        </tr>
+        <tr>
+          <td class="left-align">Basic</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.earning.salary}</td>
+        </tr>
+        <tr>
+          <td class="left-align">HRA</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.earning.hra}</td>
+        </tr>
+        <tr>
+          <td class="left-align">DA</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.earning.da}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Special Allowance</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.earning.specialAllowances}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Bonus</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.earning.bonus}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="null"></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="null"></td>
+          <td class="left-align total">Total Earnings</td>
+          <td class="amount total">${payroll.earning.totalEarnings}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="null"></td>
+        </tr>
+        <tr class="section-heading">
+          <td colspan="3" class="deductions">Deductions</td>
+          <td class="amount">Amount</td>
+        </tr>
+        <tr>
+          <td class="left-align">Provident Fund</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.deduction.providentFund}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Late Mark</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.deduction.lateMark}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Less Work Time</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.deduction.lessWorkMinute}</td>
+        </tr>
+        <tr>
+          <td class="left-align">Half Day</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">0</td>
+        </tr>
+        <tr>
+          <td class="left-align">Absent or Leave</td>
+          <td class="null"></td>
+          <td class="null"></td>
+          <td class="amount">${payroll.deduction.absent}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="null"></td>
+        </tr>
+        <tr>
+          <td colspan="2" class="null"></td>
+          <td class="left-align total">Total Deductions</td>
+          <td class="amount total">${payroll.deduction.totalDeduction}</td>
+        </tr>
+        <tr>
+          <td colspan="2" class="null"></td>
+          <td class="left-align total">Net Pay</td>
+          <td class="amount total">${payroll.netPay}</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="null"></td>
+        </tr>
+        <tr>
+          <td colspan="4" class="left-align note">
+            *Note : This is a system generated payslip
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
+`;
+
+  res.send(paySlipTemplate);
+});
 
 const payrollProcess = catchAsync(async (req, res, next) => {
-  /*
-TODO:
+  const { payMonth, payRollData } = req.body;
 
-rather than fetching data from employee collection and after doing payroll process
-
-process the payroll data received in request
-
-  */
-  const { startOfMonth, endOfMonth } = req.body;
-
-  const employees = await Employee.find({
-    role: { $eq: "Employee" },
-    isWorking: { $eq: true },
-  });
-
-  for (const employee of employees) {
-    // finding data of payment
-    const paymentInfo = await Payroll.findOne({
-      employeeId: employee.employeeId,
-      payStartDate: startOfMonth,
-      payEndDate: endOfMonth,
-    });
-
-    // means already paid data
-    if (paymentInfo) {
-      continue;
-    }
-
-    const payment = {
-      salary: employee.salary,
-      hra: employee.hra,
-      da: employee.da,
-      specialAllowances: employee.specialAllowances,
-    };
-
-    // release payment
-    await new Payroll({
-      employeeId: employee.employeeId,
-      payStartDate: startOfMonth,
-      payEndDate: endOfMonth,
-      payStatus: "Paid",
-      earning: payment,
-    }).save();
-  }
+  await Promise.all(
+    payRollData.map(async (data) => {
+      await new Payroll({
+        employeeId: data.employeeId,
+        payMonth: payMonth,
+        earning: {
+          salary: data.basicSalary,
+          hra: data.hra,
+          da: data.da,
+          specialAllowances: data.specialAllowances,
+          bonus: data.bonus,
+          totalEarnings: data.totalEarnings,
+        },
+        deduction: {
+          providentFund: data.providentFund,
+          lateMark: data.totalAmountDeductedBecauseOfLateMark,
+          lessWorkMinute: data.totalAmountDeductedBecauseOfLessWorkTime,
+          absent: data.totalAmountDeductedBecauseOfAbsense,
+          totalDeduction: data.totalDeductions,
+        },
+        netPay: data.netPay,
+      }).save();
+    })
+  );
 
   return res
     .status(200)
