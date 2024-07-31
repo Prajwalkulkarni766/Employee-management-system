@@ -316,7 +316,7 @@ const payrollProcess = catchAsync(async (req, res, next) => {
 });
 
 const createPayroll = catchAsync(async (req, res, next) => {
-  const { month, year } = req.body;
+  const { month, year } = req.query;
 
   // fetching configuration
   const configuration = await Configuration.findOne();
@@ -451,15 +451,19 @@ const createPayroll = catchAsync(async (req, res, next) => {
     const totalAmountDeductedBecauseOfLateMark =
       lateMarking * configuration.lateMarkDeduction;
 
+    const totalAmountDeductedBecauseOfHalfDay =
+      halfDaysWorking * configuration.halfDayDeduction;
+
     const totalDeductions =
       providentFund +
       totalAmountDeductedBecauseOfAbsense +
       totalAmountDeductedBecauseOfLessWorkTime +
-      totalAmountDeductedBecauseOfLateMark;
+      totalAmountDeductedBecauseOfLateMark +
+      totalAmountDeductedBecauseOfHalfDay;
 
     return {
       employeeId: data.employeeId,
-      employeeName: data.employeeName,
+      employeeName: data.firstName + " " + data.lastName,
       basicSalary,
       hra,
       da,
@@ -470,6 +474,7 @@ const createPayroll = catchAsync(async (req, res, next) => {
       totalAmountDeductedBecauseOfAbsense,
       totalAmountDeductedBecauseOfLessWorkTime,
       totalAmountDeductedBecauseOfLateMark,
+      totalAmountDeductedBecauseOfHalfDay,
       totalDeductions,
       netPay: totalEarnings - totalDeductions,
     };

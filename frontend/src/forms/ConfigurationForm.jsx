@@ -27,6 +27,7 @@ export default function ConfigurationForm() {
     lessWorkTimeDeduction: Yup.number().required(
       "Less Work Time Deduction Amount Required"
     ),
+    halfDayDeduction: Yup.number().required("Half Day Deduction Required"),
     halfDayWorkingHours: Yup.number().required(
       "Half Day Working Hours"
     ),
@@ -46,6 +47,7 @@ export default function ConfigurationForm() {
       officeEndTime: dayjs(),
       lateMarkDeduction: 0,
       lessWorkTimeDeduction: 0,
+      halfDayDeduction: 0,
       halfDayWorkingHours: 0,
       totalWorkingHours: 0,
       overTimeWorkingHours: 0,
@@ -70,6 +72,7 @@ export default function ConfigurationForm() {
           officeEndTime: dayjs(values.officeEndTime).format("HH:mm A"),
           lateMarkDeduction: values.lateMarkDeduction,
           lessWorkTimeDeduction: values.lessWorkTimeDeduction,
+          halfDayDeduction: values.halfDayDeduction,
           halfDayWorkingHours: values.halfDayWorkingHours,
           totalWorkingHours: values.totalWorkingHours,
           overTimeWorkingHours: values.overTimeWorkingHours,
@@ -204,6 +207,15 @@ export default function ConfigurationForm() {
       value: formik.values.amountDeductedWhenEmployeeIsAbsent,
       errors: formik.errors.amountDeductedWhenEmployeeIsAbsent,
       isTouched: formik.touched.amountDeductedWhenEmployeeIsAbsent,
+    },
+    {
+      id: 11,
+      labelName: "Half Day Deduction",
+      inputType: "number",
+      inputId: "halfDayDeduction",
+      value: formik.values.halfDayDeduction,
+      errors: formik.errors.halfDayDeduction,
+      isTouched: formik.touched.halfDayDeduction,
     }
   ];
 
@@ -219,6 +231,7 @@ export default function ConfigurationForm() {
         formik.setFieldValue("officeEndTime", response.data.data.officeEndTime)
         formik.setFieldValue("lateMarkDeduction", response.data.data.lateMarkDeduction)
         formik.setFieldValue("lessWorkTimeDeduction", response.data.data.lessWorkTimeDeduction)
+        formik.setFieldValue("halfDayDeduction", response.data.data.halfDayDeduction)
         formik.setFieldValue("halfDayWorkingHours", response.data.data.halfDayWorkingHours)
         formik.setFieldValue("totalWorkingHours", response.data.data.totalWorkingHours)
         formik.setFieldValue("overTimeWorkingHours", response.data.data.overTimeWorkingHours)

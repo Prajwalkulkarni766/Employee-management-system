@@ -72,10 +72,7 @@ export default function EmployeeSalary() {
     <>
       {/* 
     
-    TODO:
-
-
-add functionality to download payslip
+    TODO: add functionality to download payslip
 
     */}
       <PageHeading pageName="Employee Salary" />

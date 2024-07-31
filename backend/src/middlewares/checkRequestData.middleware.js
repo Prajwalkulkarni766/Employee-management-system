@@ -104,6 +104,10 @@ function checkData(routeName) {
         .notEmpty()
         .withMessage("Please provide over time amount"),
     ],
+    createPayroll: [
+      check("month").notEmpty().withMessage("Please provide month"),
+      check("year").notEmpty().withMessage("Please provide year"),
+    ],
   };
 
   return checks[routeName] || [];

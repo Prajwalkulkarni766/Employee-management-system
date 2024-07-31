@@ -43,6 +43,8 @@ app.use((req, res, next) => {
     "date[lte]",
     "leaveStartDate",
     "leaveEndDate",
+    "month",
+    "year",
   ];
 
   const unknownParams = Object.keys(req.query).filter(

@@ -19,6 +19,11 @@ payrollRoute
   .get("/", getEmployeePayrollDataOfSpecifiedMonth)
   .post("/", payrollProcess)
   .get("/generatePaySlip", generatePaySlip)
-  .get("/createPayroll", createPayroll);
+  .get(
+    "/createPayroll",
+    checkData("createPayroll"),
+    checkErrors,
+    createPayroll
+  );
 
 export default payrollRoute;
