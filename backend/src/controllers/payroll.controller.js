@@ -11,11 +11,10 @@ import Leave from "../models/leave.model.js";
 
 const getEmployeePayrollDataOfSpecifiedMonth = catchAsync(
   async (req, res, next) => {
-    const { fromDate, toDate } = req.query;
+    const { payMonth } = req.query;
 
     let paymentInfo = await Payroll.find({
-      payStartDate: fromDate,
-      payEndDate: toDate,
+      payMonth: payMonth,
     });
 
     paymentInfo = await Promise.all(
@@ -77,6 +76,8 @@ const generatePaySlip = catchAsync(async (req, res, next) => {
   const employee = await Employee.findOne({ employeeId });
   const payroll = await Payroll.findOne({ employeeId, payMonth });
 
+  console.log(dayjs(employee.joiningDate).format("DD-MM-YYYY"));
+
   const paySlipTemplate = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -84,7 +85,7 @@ const generatePaySlip = catchAsync(async (req, res, next) => {
     <style>
       table {
         border-collapse: collapse;
-        width: 100%;
+        width: "100%";
       }
       td,
       th {
@@ -111,7 +112,7 @@ const generatePaySlip = catchAsync(async (req, res, next) => {
       .section-heading {
         font-weight: bold;
         text-align: left;
-        border-bottom: 1px solid black;
+        border-bottom: 1spx solid black;
       }
       .amount {
         text-align: right;
@@ -156,9 +157,13 @@ const generatePaySlip = catchAsync(async (req, res, next) => {
           <td colspan="4" class="null"></td>
         </tr>
         <tr>
-          <td class="left-align">Date of Joining : ${employee.joiningDate}</td>
+          <td class="left-align">Date of Joining : ${dayjs(
+            employee.joiningDate
+          ).format("DD-MM-YYYY")}</td>
           <td colspan="2" class="null"></td>
-          <td class="left">Employee name : ${employee.firstName} ${employee.lastName}</td>
+          <td class="left">Employee name : ${employee.firstName} ${
+    employee.lastName
+  }</td>
         </tr>
         <tr>
           <td class="left-align">Pay Period : ${payroll.payMonth}</td>
@@ -360,33 +365,6 @@ const createPayroll = catchAsync(async (req, res, next) => {
       leaveStatus: "Approved",
       isPaid: false,
     });
-
-    // workingDaysOfParticularEmployee -= numberOfTotalLeavesTaken;
-
-    // const workingStatus = await Attendance.aggregate([
-    //   {
-    //     $match: {
-    //       employeeId: data.employeeId,
-    //       date: {
-    //         $gte: new Date(startOfMonth.format("YYYY-MM-DD")),
-    //         $lte: new Date(endOfMonth.format("YYYY-MM-DD")),
-    //       },
-    //     },
-    //   },
-    //   {
-    //     $group: {
-    //       _id: "$workingStatus",
-    //       count: { $sum: 1 },
-    //     },
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 0,
-    //       workingStatus: "$_id",
-    //       count: 1,
-    //     },
-    //   },
-    // ]);
 
     const halfDaysWorking = await Attendance.countDocuments({
       employeeId: data.employeeId,

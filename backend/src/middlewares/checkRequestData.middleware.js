@@ -108,6 +108,9 @@ function checkData(routeName) {
       check("month").notEmpty().withMessage("Please provide month"),
       check("year").notEmpty().withMessage("Please provide year"),
     ],
+    getAllPayroll: [
+      check("payMonth").notEmpty().withMessage("Please provide pay month"),
+    ],
   };
 
   return checks[routeName] || [];

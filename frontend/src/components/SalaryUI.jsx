@@ -8,17 +8,13 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Typography } from '@mui/material';
 import { useRef } from 'react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+
+/*
+TODO: add functionality to download pdf
+
+*/
 
 function generatePdf() {
-    const input = document.getElementById('payslip-table'); // ID of the table container
-    html2canvas(input).then((canvas) => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jsPDF('p', 'mm', 'a4');
-        pdf.addImage(imgData, 'PNG', 10, 10, 180, 0);
-        pdf.save('payslip.pdf');
-    });
 }
 
 function createData(
