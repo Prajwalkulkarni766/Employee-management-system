@@ -12,17 +12,18 @@ import { restrictTo } from "../middlewares/auth.middleware.js";
 const payrollRoute = express.Router();
 
 payrollRoute
-  .use(restrictTo("Admin"))
   .get(
     "/",
+    restrictTo("Admin"),
     checkData("getAllPayroll"),
     checkErrors,
     getEmployeePayrollDataOfSpecifiedMonth
   )
-  .post("/", payrollProcess)
+  .post("/", restrictTo("Admin"), payrollProcess)
   .get("/generatePaySlip", generatePaySlip)
   .get(
     "/createPayroll",
+    restrictTo("Admin"),
     checkData("createPayroll"),
     checkErrors,
     createPayroll

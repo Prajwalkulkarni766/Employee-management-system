@@ -1,95 +1,50 @@
 import * as React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Typography } from '@mui/material';
-import { useRef } from 'react';
-
-/*
-TODO: add functionality to download pdf
-
-*/
-
-function generatePdf() {
-}
-
-function createData(
-    name = string,
-    calories = number,
-    fat = number,
-    carbs = number,
-    protein = number,
-) {
-    return { name, calories, fat, carbs, protein };
-}
-
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-];
-
+import { Button } from '@mui/material';
+import DownloadPdf from '../pdf/index';
+import dayjs from 'dayjs';
+import axiosInstance from '../axios/axiosInstance';
+import { useSelector } from "react-redux"
+import Toast from "../helper/Toast";
 
 export default function SalaryUI() {
-    const tableRef = useRef(null);
+
+    const employee = useSelector((state) => state.employee.employee);
+    const [htmlContent, setHtmlContent] = React.useState("Payslip not found this month");
+
+    function generatePdf() {
+        DownloadPdf(htmlContent)
+    }
+
+    const fetchData = async () => {
+        try {
+            const monthName = dayjs().startOf("month").format("MMMM");
+            // const monthName = "April"
+            const year = dayjs().startOf("month").format("YYYY");
+            const employeeId = employee.employee.employeeId;
+
+            const response = await axiosInstance.get(`/v1/payroll/generatePaySlip?employeeId=${employeeId}&payMonth=${monthName} ${year}`);
+
+            if (response.status === 200) {
+                setHtmlContent(response.data)
+                document.getElementById("payslip-generator").innerHTML = htmlContent
+            }
+        } catch (error) {
+            const errorMessage =
+                error.response?.data?.message || "An error occurred.";
+            Toast.error(errorMessage);
+            document.getElementById("payslip-generator").innerHTML = htmlContent
+        }
+    }
+
+    React.useEffect(() => {
+        fetchData();
+    })
 
     return (
         <Paper elevation={0} sx={{ width: "100%", p: 5 }}>
-            <TableContainer id="payslip-table" ref={tableRef}>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell colSpan={2}>Earnings</TableCell>
-                            <TableCell colSpan={2}>Deductions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <TableRow>
-                            <TableCell>Basic</TableCell>
-                            <TableCell>1000</TableCell>
-                            <TableCell>Provident Fund</TableCell>
-                            <TableCell>Provident Fund</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>HRA</TableCell>
-                            <TableCell>HRA</TableCell>
-                            <TableCell>Profession Tax</TableCell>
-                            <TableCell>Profession Tax</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>DA</TableCell>
-                            <TableCell>DA</TableCell>
-                            <TableCell>ESI</TableCell>
-                            <TableCell>ESI</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Special Allowance</TableCell>
-                            <TableCell>Special Allowance</TableCell>
-                            <TableCell>Home Loan</TableCell>
-                            <TableCell>Home Loan</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Bonus</TableCell>
-                            <TableCell>Bonus</TableCell>
-                            <TableCell>TDS</TableCell>
-                            <TableCell>TDS</TableCell>
-                        </TableRow>
-                        <TableRow>
-                            <TableCell>Total Earnings</TableCell>
-                            <TableCell>Total Earnings</TableCell>
-                            <TableCell>Total Deductions</TableCell>
-                            <TableCell>Total Deductions</TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-                <Typography sx={{ mt: 5 }}>Net Pay: 1000</Typography>
-            </TableContainer>
-
-
-            <button onClick={generatePdf}>Download Payslip as PDF</button>
+            <Button onClick={generatePdf}>Download Payslip as PDF</Button>
+            <div id="payslip-generator" style={{ width: "100%" }}></div>
         </Paper>
     )
 }

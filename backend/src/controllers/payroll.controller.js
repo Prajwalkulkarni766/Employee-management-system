@@ -76,8 +76,6 @@ const generatePaySlip = catchAsync(async (req, res, next) => {
   const employee = await Employee.findOne({ employeeId });
   const payroll = await Payroll.findOne({ employeeId, payMonth });
 
-  console.log(dayjs(employee.joiningDate).format("DD-MM-YYYY"));
-
   const paySlipTemplate = `<!DOCTYPE html>
 <html lang="en">
   <head>

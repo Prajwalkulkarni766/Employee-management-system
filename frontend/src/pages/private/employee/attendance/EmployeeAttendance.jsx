@@ -59,6 +59,7 @@ export default function EmployeeAttendance() {
         setRows(response.data.data);
       } else {
         throw new Error("Unexpected status code received");
+        setRows([])
       }
     } catch (error) {
       const errorMessage =
