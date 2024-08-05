@@ -1,20 +1,44 @@
+import React, { useState, useEffect } from 'react';
 import PageHeading from "../../../../components/PageHeading";
 import DataTable from "../../../../components/DataTable";
 import { IconButton } from "@mui/material";
-import { useState } from "react";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { useEffect } from "react";
 import axiosInstance from "../../../../axios/axiosInstance";
 import dayjs from "dayjs";
-import MyMonthSelector from "../../../../components/MyMonthSelector"
+import MyMonthSelector from "../../../../components/MyMonthSelector";
+import Toast from "../../../../helper/Toast";
+import DownloadPdf from '../../../../pdf/index';
 
 export default function EmployeeSalary() {
   const [rows, setRows] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(dayjs().month());
   const [selectedYear, setSelectedYear] = useState(dayjs().year());
+  const [htmlContent, setHtmlContent] = useState('');
+
+  const fetchSalary = async (employeeId) => {
+    try {
+      const date = dayjs(`${selectedYear}-${selectedMonth}-01`);
+      const monthName = date.format('MMMM');
+      const response = await axiosInstance.get(`/v1/payroll/generatePaySlip?employeeId=${employeeId}&payMonth=${monthName} ${selectedYear}`);
+
+      setHtmlContent(response.data);
+    } catch (error) {
+      const errorMessage = error.response?.data?.message || "An error occurred.";
+      Toast.error(errorMessage);
+    }
+  };
+
+  const handleDownload = async (id) => {
+    await fetchSalary(id);
+
+    if (htmlContent) {
+      DownloadPdf(htmlContent)
+    }
+  };
 
   const columns = [
     { field: "id", headerName: "Sr. No", flex: 1 },
+    { field: "employeeId", headerName: "EMP-ID", flex: 1 },
     { field: "name", headerName: "Name", flex: 1 },
     { field: "department", headerName: "Department", flex: 1 },
     { field: "role", headerName: "Role", flex: 1 },
@@ -31,7 +55,7 @@ export default function EmployeeSalary() {
       headerAlign: "center",
       renderCell: (params) => (
         <IconButton>
-          <FileDownloadIcon onClick={() => handleEdit(params.row.id)} />
+          <FileDownloadIcon onClick={() => handleDownload(params.row.employeeId)} />
         </IconButton>
       ),
     },
@@ -40,18 +64,9 @@ export default function EmployeeSalary() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const fromDate = dayjs(`${selectedYear}-${selectedMonth}-01`).format(
-          "YYYY-MM-DD"
-        );
-        const toDate = dayjs(
-          `${selectedYear}-${selectedMonth}-${dayjs(
-            `${selectedYear}-${selectedMonth}`
-          ).daysInMonth()}`
-        ).format("YYYY-MM-DD");
-
-        const response = await axiosInstance(
-          `/v1/payroll?fromDate=${fromDate}&toDate=${toDate}`
-        );
+        const date = dayjs(`${selectedYear}-${selectedMonth}-01`);
+        const monthName = date.format('MMMM');
+        const response = await axiosInstance(`/v1/payroll?payMonth=${monthName} ${selectedYear}`);
 
         if (response.status === 200) {
           setRows(response.data.data);
@@ -59,8 +74,7 @@ export default function EmployeeSalary() {
           throw new Error("Unexpected status code received");
         }
       } catch (error) {
-        const errorMessage =
-          error.response?.data?.message || "An error occurred.";
+        const errorMessage = error.response?.data?.message || "An error occurred.";
         Toast.error(errorMessage);
       }
     };

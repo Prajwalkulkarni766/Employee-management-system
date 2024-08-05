@@ -18,39 +18,21 @@ const MenuItem = ({ menuTitle, icon: Icon, menuItems }) => {
   };
 
   const showExpandMore = menuItems.length > 0;
-  const path = `/${employeeRole.toLowerCase()}/${menuTitle
+  const path = menuTitle !== "Dashboard" && menuTitle !== "Configuration" ? `/${employeeRole.toLowerCase()}/${menuTitle
     .toLowerCase()
     .replace(/ /g, "")
-    .replace(/'/g, "")}`;
+    .replace(/'/g, "")}` : `/${employeeRole.toLowerCase()}`;
 
   return (
     <>
       <Tooltip title={menuTitle} placement="right">
-        {!showExpandMore ? (
-          <NavLink
-            to={path}
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-            }}
-          >
-            <ListItemButton onClick={handleOpen}>
-              <ListItemIcon>
-                <Icon />
-              </ListItemIcon>
-              <ListItemText primary={menuTitle} />
-              {showExpandMore && (isOpen ? <ExpandLess /> : <ExpandMore />)}
-            </ListItemButton>
-          </NavLink>
-        ) : (
-          <ListItemButton onClick={handleOpen}>
-            <ListItemIcon>
-              <Icon />
-            </ListItemIcon>
-            <ListItemText primary={menuTitle} />
-            {showExpandMore && (isOpen ? <ExpandLess /> : <ExpandMore />)}
-          </ListItemButton>
-        )}
+        <ListItemButton onClick={handleOpen}>
+          <ListItemIcon>
+            <Icon />
+          </ListItemIcon>
+          <ListItemText primary={menuTitle} />
+          {showExpandMore && (isOpen ? <ExpandLess /> : <ExpandMore />)}
+        </ListItemButton>
       </Tooltip>
 
       {showExpandMore && (

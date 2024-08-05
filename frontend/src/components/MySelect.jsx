@@ -14,7 +14,6 @@ export default function MySelect({
 }) {
   const name = labelName.toLowerCase().replace(/\s+/g, "-");
   const [open, setOpen] = React.useState(false);
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -35,8 +34,7 @@ export default function MySelect({
         open={open}
         onClose={handleClose}
         onOpen={handleOpen}
-        fullWidth
-      >
+        fullWidth>
         <MenuItem value="">
           <em>None</em>
         </MenuItem>

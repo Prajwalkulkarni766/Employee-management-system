@@ -31,8 +31,6 @@ export default function LeaveForm({ statusOfIsEditing }) {
         validationSchema: leaveSchema,
         onSubmit: async (values) => {
             try {
-                // console.log("Leave start date", dayjs(values.leaveStartDate).format("DD-MM-YYYY"))
-                // console.log("Leave end date", dayjs(values.leaveEndDate).format("DD-MM-YYYY"))
                 values.leaveType = values.leavetype
                 values.leaveStartDate = dayjs(values.leaveStartDate).format("YYYY-MM-DD")
                 values.leaveEndDate = dayjs(values.leaveEndDate).format("YYYY-MM-DD")

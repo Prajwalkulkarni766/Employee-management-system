@@ -1,4 +1,4 @@
-import PageHeading from "../../components/PageHeading";
+import PageHeading from "../../../../components/PageHeading";
 import React from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { BarChart } from "@mui/x-charts/BarChart";
@@ -30,26 +30,25 @@ function EarningChart() {
         { data: yearlyBonuses, label: "Yearly Bonuses", id: "bonusesId" },
       ]}
       xAxis={[{ data: departmentLabels, scaleType: "band" }]}
+      sx={{ width: '100%', height: '100%' }}
     />
   );
 }
 
 const employeeWorkingHours = [
-  { date: "2024-06-01", hours: 8 },
-  { date: "2024-06-02", hours: 7.5 },
-  { date: "2024-06-03", hours: 7 },
-  { date: "2024-06-04", hours: 8 },
-  { date: "2024-06-05", hours: 7 },
-  { date: "2024-06-06", hours: 8 },
-  { date: "2024-06-07", hours: 7.5 },
+  { date: "06-01", hours: 8 },
+  { date: "06-02", hours: 7.5 },
+  { date: "06-03", hours: 7 },
+  { date: "06-04", hours: 8 },
+  { date: "06-05", hours: 7 },
+  { date: "06-06", hours: 8 },
+  { date: "06-07", hours: 7.5 },
 ];
 
 const WorkingHour = () => {
-  // Extract dates and hours
   const dates = employeeWorkingHours.map((data) => data.date);
   const hoursWorked = employeeWorkingHours.map((data) => data.hours);
 
-  // Prepare data for the line chart
   const lineChartData = [
     {
       data: hoursWorked,
@@ -60,7 +59,7 @@ const WorkingHour = () => {
 
   return (
     <>
-      <h3>Employee Working Hours Over Time</h3>
+      <Typography variant="h6">Employee Working Hours Over Time</Typography>
       <LineChart
         height={400}
         series={lineChartData}
@@ -68,6 +67,7 @@ const WorkingHour = () => {
         yAxisTitle="Hours"
         xAxisTitle="Date"
         title="Employee Working Hours"
+        sx={{ width: '100%' }}
       />
     </>
   );
@@ -83,8 +83,7 @@ const employeeAttendanceData = [
   { name: "David", attendance: 91 },
 ];
 
-function EmpAttendence() {
-  // Extract employee names and attendance percentages
+function EmpAttendance() {
   const employeeNames = employeeAttendanceData.map((data) => data.name);
   const attendancePercentages = employeeAttendanceData.map(
     (data) => data.attendance
@@ -92,7 +91,7 @@ function EmpAttendence() {
 
   return (
     <>
-      <h3>All Emp Attendence in %</h3>
+      <Typography variant="h6">All Employee Attendance in %</Typography>
       <BarChart
         height={500}
         series={[{ data: attendancePercentages, id: "attendanceId" }]}
@@ -105,30 +104,33 @@ function EmpAttendence() {
             fill: "#1976d2",
           },
         }}
+        sx={{ width: '100%' }}
       />
     </>
   );
 }
 
+// TODO: make dashboard functional integrates api
+
 const cards = [
   {
     icon: <BadgeIcon fontSize="large" />,
-    title: "Total Employees Working",
+    title: "Employees Working",
     content: "100",
   },
   {
     icon: <TimerIcon fontSize="large" />,
-    title: "Average Working Hours",
+    title: "Avg Working Hours",
     content: "8",
   },
   {
     icon: <AttachMoneyIcon fontSize="large" />,
-    title: "Total Expenditure On Salary",
+    title: "Salary Expenditure",
     content: "100",
   },
   {
     icon: <LuggageIcon fontSize="large" />,
-    title: "Next Holiday",
+    title: "Upcoming Holiday",
     content: "13-01-2024",
   },
 ];
@@ -138,10 +140,10 @@ export default function DashBoard() {
     <>
       <PageHeading pageName="Dashboard" />
 
-      <Box sx={{ flexGrow: 1, marginBottom: 2 }}>
+      <Box sx={{ flexGrow: 1, mb: 2 }}>
         <Grid container spacing={3}>
           {cards.map((card, index) => (
-            <Grid item xs={3} key={index}>
+            <Grid item xs={12} sm={6} md={6} lg={3} key={index}>
               <Paper
                 elevation={3}
                 sx={{
@@ -168,19 +170,19 @@ export default function DashBoard() {
 
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <Paper elevation={3} sx={{ width: "100%", p: 2 }}>
+          <Grid item xs={12} md={12} lg={6}>
+            <Paper elevation={3} sx={{ width: '100%', p: 2 }}>
               <WorkingHour />
             </Paper>
           </Grid>
-          <Grid item xs={6}>
-            <Paper elevation={3} sx={{ width: "100%", p: 2, height: 500 }}>
+          <Grid item xs={12} md={12} lg={6}>
+            <Paper elevation={3} sx={{ width: '100%', p: 2, height: 500 }}>
               <EarningChart />
             </Paper>
           </Grid>
-          <Grid item xs={6}>
-            <Paper elevation={3} sx={{ width: "100%", p: 2 }}>
-              <EmpAttendence />
+          <Grid item xs={12}>
+            <Paper elevation={3} sx={{ width: '100%', p: 2 }}>
+              <EmpAttendance />
             </Paper>
           </Grid>
         </Grid>

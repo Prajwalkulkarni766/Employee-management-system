@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import MyDatePicker from "../../../../components/MyDatePicker";
 import { Paper } from "@mui/material";
 
-export default function EmployeeAttendance() {
+export default function AllAttendance() {
   const [rows, setRows] = useState([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
 

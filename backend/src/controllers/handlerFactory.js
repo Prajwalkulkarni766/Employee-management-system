@@ -69,7 +69,8 @@ const getOne = (Model, popOptions) =>
 const getAll = (Model) =>
   catchAsync(async (req, res, next) => {
     let filter = {};
-    // if (req.params.tourId) filter = { tour: req.params.tourId };
+    if (req.query.employeeId && req.role !== "Employee")
+      req.query = delete req.query.employeeId;
 
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()

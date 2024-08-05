@@ -3,6 +3,7 @@ import {
   reportInText,
   remarkAsAbsent,
   attendance,
+  getAllAtteandanceData,
 } from "../controllers/attendance.controller.js";
 import express from "express";
 import checkErrors from "../middlewares/checkErrors.middleware.js";
@@ -18,6 +19,7 @@ attendanceRoute
     checkErrors,
     getAtteandanceOfDate
   )
+  .get("/getAllAtteandanceData", getAllAtteandanceData)
   .post("/checkIn", checkData("checkIn"), checkErrors, attendance)
   .post("/checkOut", checkData("checkOut"), checkErrors, attendance)
   .get("/reportInText", checkData("reportInText"), checkErrors, reportInText)

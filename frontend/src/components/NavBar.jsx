@@ -19,6 +19,9 @@ import { Tooltip } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setToken } from "../redux/auth/index.slice";
+import FloatingActionButton from './FloatingActionButton';
+import { useMediaQuery, useTheme } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 export const drawerWidth = 280;
 
@@ -40,6 +43,12 @@ export const AppBar = styled(MuiAppBar, {
       duration: theme.transitions.duration.enteringScreen,
     }),
   }),
+  [theme.breakpoints.down('sm')]: {
+    ...(open && {
+      width: '100%',
+      marginLeft: 0,
+    }),
+  }
 }));
 
 export const Drawer = styled(MuiDrawer, {
@@ -54,6 +63,16 @@ export const Drawer = styled(MuiDrawer, {
       duration: theme.transitions.duration.enteringScreen,
     }),
     boxSizing: "border-box",
+    ...(open && {
+      width: drawerWidth,
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        height: '100%',
+      },
+    }),
     ...(!open && {
       overflowX: "hidden",
       transition: theme.transitions.create("width", {
@@ -76,6 +95,8 @@ export default function NavBar({
   const [open, setOpen] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -102,7 +123,7 @@ export default function NavBar({
             <IconButton
               edge="start"
               aria-label="open drawer"
-              onClick={toggleDrawer}
+               onClick={toggleDrawer}
               sx={{
                 marginRight: "36px",
                 ...(open && { display: "none" }),
@@ -111,7 +132,7 @@ export default function NavBar({
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" component="h1" sx={{ flexGrow: 1 }}>
-              Employee Management System
+              EMS
             </Typography>
             <Box sx={{ display: "flex", alignItems: "center" }}>
               <Typography
@@ -145,11 +166,9 @@ export default function NavBar({
               px: [1],
             }}
           >
-            {open && (
-              <IconButton hidden={!open} onClick={toggleDrawer}>
-                <ChevronLeftIcon />
-              </IconButton>
-            )}
+            <IconButton onClick={toggleDrawer} sx={{ marginLeft: 'auto' }}>
+              <ChevronLeftIcon />
+            </IconButton>
           </Toolbar>
           <Divider />
           <List component="nav">
@@ -175,6 +194,9 @@ export default function NavBar({
             </Grid>
           </Container>
         </Box>
+        {isSmallScreen && open && (
+          <FloatingActionButton onClick={toggleDrawer} icon={CloseIcon} />
+        )}
       </Box>
     </>
   );
