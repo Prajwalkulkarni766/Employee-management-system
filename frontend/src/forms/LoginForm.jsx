@@ -61,7 +61,7 @@ export default function LoginForm() {
           if (response.data.data.employee.role === "Admin") {
             navigate("/admin/dashboard");
           } else if (response.data.data.employee.role === "Employee") {
-            navigate("/employee/dashboard");
+            navigate("/employee/attendence/todaysattendence");
           } else {
             throw new Error("Unexpected user role received");
           }

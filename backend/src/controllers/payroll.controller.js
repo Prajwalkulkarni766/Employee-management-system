@@ -318,6 +318,8 @@ const payrollProcess = catchAsync(async (req, res, next) => {
     .json(new AppResponse(200, undefined, "Payment released successfully"));
 });
 
+// TODO: check functionality and test this function again
+
 const createPayroll = catchAsync(async (req, res, next) => {
   const { month, year } = req.query;
 

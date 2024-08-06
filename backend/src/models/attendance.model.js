@@ -22,7 +22,10 @@ const attendanceSchema = new Schema({
     type: Date,
   },
   workingHours: {
-    type: String,
+    type: Number,
+  },
+  workingMinutes: {
+    type: Number,
   },
   workingStatus: {
     type: String,
@@ -72,7 +75,9 @@ attendanceSchema.methods.calculateWorkingHoursStatus = async function () {
     } else {
       this.workingStatus = "Not Considerable";
     }
-    this.workingHours = `${workingHours}:${workingMinutes}`;
+    // this.workingHours = `${workingHours}:${workingMinutes}`;
+    this.workingHours = workingHours;
+    this.workingMinutes = workingMinutes;
   }
 };
 
