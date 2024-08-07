@@ -1,4 +1,3 @@
-import Configuration from "../models/configuration.model.js";
 import Employee from "../models/employee.model.js";
 import Attendance from "../models/attendance.model.js";
 import Payroll from "../models/payroll.model.js";
@@ -90,12 +89,6 @@ const generateStats = catchAsync(async (req, res, next) => {
         },
       },
     },
-    {
-      $group: {
-        _id: null,
-        avgTotalWorkingHours: { $avg: "$totalWorkingHours" },
-      },
-    },
   ]);
 
   const monthArray = [];
@@ -112,15 +105,7 @@ const generateStats = catchAsync(async (req, res, next) => {
     {
       $match: {
         payMonth: {
-          $in: [
-            "January 2024",
-            "February 2024",
-            "March 2024",
-            "April 2024",
-            "May 2024",
-            "June 2024",
-            "July 2024",
-          ],
+          $in: monthArray,
         },
       },
     },
@@ -204,9 +189,7 @@ const generateStats = catchAsync(async (req, res, next) => {
     avgWorkingHoursOfPreviousMonth: Math.round(
       avgWorkingHoursOfPreviousMonth[0]?.avgTotalWorkingHours || 0
     ),
-    avgWorkingHoursLastSevenDays: Math.round(
-      avgWorkingHoursLastSevenDays[0]?.avgTotalWorkingHours || 0
-    ),
+    avgWorkingHoursLastSevenDays: avgWorkingHoursLastSevenDays || [],
     monthlySalaryDistibution,
     topTenAttendance,
   };

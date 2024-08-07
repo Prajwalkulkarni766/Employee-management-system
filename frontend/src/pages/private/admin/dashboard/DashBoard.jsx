@@ -1,5 +1,5 @@
 import PageHeading from "../../../../components/PageHeading";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { LineChart } from "@mui/x-charts/LineChart";
 import { BarChart } from "@mui/x-charts/BarChart";
 import { Paper, Grid, Typography } from "@mui/material";
@@ -8,46 +8,28 @@ import BadgeIcon from "@mui/icons-material/Badge";
 import TimerIcon from "@mui/icons-material/Timer";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import LuggageIcon from "@mui/icons-material/Luggage";
-import Stack from "@mui/material/Stack";
+import axiosInstance from "../../../../axios/axiosInstance";
+import DashboardCards from "../../../../components/DashboardCards";
+import dayjs from "dayjs"
 
-const monthlySalaries = [7000, 6000, 8000, 7500, 9000, 6500, 7200];
-const yearlyBonuses = [1200, 1500, 1100, 1400, 1600, 1300, 1250];
-const departmentLabels = [
-  "HR",
-  "Finance",
-  "Engineering",
-  "Marketing",
-  "Sales",
-  "IT",
-  "Support",
-];
+function EarningChart({ data }) {
+  const xAxisData = data.map(item => item.payMonth.split(" ")[0]);
+  const seriesData = data.map(item => item.totalAmountPaid);
 
-function EarningChart() {
   return (
     <BarChart
       series={[
-        { data: monthlySalaries, label: "Monthly Salaries", id: "salariesId" },
-        { data: yearlyBonuses, label: "Yearly Bonuses", id: "bonusesId" },
+        { data: seriesData, label: "Total Amount Paid", id: "amountPaidId" },
       ]}
-      xAxis={[{ data: departmentLabels, scaleType: "band" }]}
+      xAxis={[{ data: xAxisData, scaleType: "band" }]}
       sx={{ width: '100%', height: '100%' }}
     />
   );
-}
+};
 
-const employeeWorkingHours = [
-  { date: "06-01", hours: 8 },
-  { date: "06-02", hours: 7.5 },
-  { date: "06-03", hours: 7 },
-  { date: "06-04", hours: 8 },
-  { date: "06-05", hours: 7 },
-  { date: "06-06", hours: 8 },
-  { date: "06-07", hours: 7.5 },
-];
-
-const WorkingHour = () => {
-  const dates = employeeWorkingHours.map((data) => data.date);
-  const hoursWorked = employeeWorkingHours.map((data) => data.hours);
+const WorkingHour = ({ data }) => {
+  const dates = data.map((data) => dayjs(data.date).format("DD-M"));
+  const hoursWorked = data.map((data) => data.totalWorkingHours);
 
   const lineChartData = [
     {
@@ -59,7 +41,7 @@ const WorkingHour = () => {
 
   return (
     <>
-      <Typography variant="h6">Employee Working Hours Over Time</Typography>
+      <Typography variant="h6">Employee Working Hours</Typography>
       <LineChart
         height={400}
         series={lineChartData}
@@ -73,29 +55,17 @@ const WorkingHour = () => {
   );
 };
 
-const employeeAttendanceData = [
-  { name: "John", attendance: 95 },
-  { name: "Alice", attendance: 92 },
-  { name: "Bob", attendance: 88 },
-  { name: "Eve", attendance: 94 },
-  { name: "Michael", attendance: 90 },
-  { name: "Emma", attendance: 93 },
-  { name: "David", attendance: 91 },
-];
-
-function EmpAttendance() {
-  const employeeNames = employeeAttendanceData.map((data) => data.name);
-  const attendancePercentages = employeeAttendanceData.map(
-    (data) => data.attendance
-  );
+function EmpAttendance({ data }) {
+  const employeeId = data.map((data) => data._id);
+  const workingHour = data.map((data) => data.totalWorkingHours);
 
   return (
     <>
       <Typography variant="h6">All Employee Attendance in %</Typography>
       <BarChart
         height={500}
-        series={[{ data: attendancePercentages, id: "attendanceId" }]}
-        xAxis={[{ data: employeeNames, scaleType: "band" }]}
+        series={[{ data: workingHour, id: "attendanceId" }]}
+        xAxis={[{ data: employeeId, scaleType: "band" }]}
         yAxisTitle="Attendance (%)"
         xAxisTitle="Employees"
         title="Employee Attendance"
@@ -110,61 +80,50 @@ function EmpAttendance() {
   );
 }
 
-// TODO: make dashboard functional integrates api
-
-const cards = [
-  {
-    icon: <BadgeIcon fontSize="large" />,
-    title: "Employees Working",
-    content: "100",
-  },
-  {
-    icon: <TimerIcon fontSize="large" />,
-    title: "Avg Working Hours",
-    content: "8",
-  },
-  {
-    icon: <AttachMoneyIcon fontSize="large" />,
-    title: "Salary Expenditure",
-    content: "100",
-  },
-  {
-    icon: <LuggageIcon fontSize="large" />,
-    title: "Upcoming Holiday",
-    content: "13-01-2024",
-  },
-];
-
 export default function DashBoard() {
+  const [totalEmployeeWorking, setTotalEmployeeWorking] = useState(null);
+  const [avgWorkingHours, setAvgWorkingHours] = useState(null);
+  const [salaryExpenditure, setSalaryExpenditure] = useState(null);
+  const [upcomingHoliday, setUpcomingHoliday] = useState(null);
+  const [monthlySalaryDistibution, setMonthlySalaryDistibution] = useState([]);
+  const [topAttendance, setTopAtteandance] = useState([]);
+  const [wokingHours, setWorkingHours] = useState([])
+
+  const fetchDashboardData = async () => {
+    try {
+      const response = await axiosInstance.get("/v1/dashboard");
+
+      if (response.status === 200) {
+        setTotalEmployeeWorking(response.data.data?.totalEmployeeWorking || "-")
+        setSalaryExpenditure(response.data.data?.totalSalaryExpenditure || "-")
+        setAvgWorkingHours(response.data.data?.avgWorkingHoursOfPreviousMonth || "-")
+        setUpcomingHoliday(response.data.data?.nextHoliday || "-")
+        setMonthlySalaryDistibution(response.data.data?.monthlySalaryDistibution || [])
+        setTopAtteandance(response.data.data?.topTenAttendance || [])
+        setWorkingHours(response.data.data?.avgWorkingHoursLastSevenDays || [])
+      } else {
+        throw new Error("Unexpected status code received");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "An error occurred.";
+      Toast.error(errorMessage);
+    }
+  }
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [])
+
   return (
     <>
       <PageHeading pageName="Dashboard" />
-
       <Box sx={{ flexGrow: 1, mb: 2 }}>
         <Grid container spacing={3}>
-          {cards.map((card, index) => (
-            <Grid item xs={12} sm={6} md={6} lg={3} key={index}>
-              <Paper
-                elevation={3}
-                sx={{
-                  p: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <Stack spacing={2} direction="row">
-                  {card.icon}
-                  <Stack direction="column">
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                      {card.title}
-                    </Typography>
-                    <Typography variant="body1">{card.content}</Typography>
-                  </Stack>
-                </Stack>
-              </Paper>
-            </Grid>
-          ))}
+          <DashboardCards icon={BadgeIcon} title={"Employees Working"} content={totalEmployeeWorking} />
+          <DashboardCards icon={TimerIcon} title={"Avg Working Hours"} content={avgWorkingHours} />
+          <DashboardCards icon={AttachMoneyIcon} title={"Salary Expenditure"} content={salaryExpenditure} />
+          <DashboardCards icon={LuggageIcon} title={"Upcoming Holiday"} content={upcomingHoliday} />
         </Grid>
       </Box>
 
@@ -172,17 +131,17 @@ export default function DashBoard() {
         <Grid container spacing={3}>
           <Grid item xs={12} md={12} lg={6}>
             <Paper elevation={3} sx={{ width: '100%', p: 2 }}>
-              <WorkingHour />
+              <WorkingHour data={wokingHours} />
             </Paper>
           </Grid>
           <Grid item xs={12} md={12} lg={6}>
             <Paper elevation={3} sx={{ width: '100%', p: 2, height: 500 }}>
-              <EarningChart />
+              <EarningChart data={monthlySalaryDistibution} />
             </Paper>
           </Grid>
           <Grid item xs={12}>
             <Paper elevation={3} sx={{ width: '100%', p: 2 }}>
-              <EmpAttendance />
+              <EmpAttendance data={topAttendance} />
             </Paper>
           </Grid>
         </Grid>
