@@ -355,7 +355,7 @@ const createPayroll = catchAsync(async (req, res, next) => {
   const employeeData = await Employee.find({ role: { $ne: "Admin" } });
 
   const payRollData = employeeData.map(async (data) => {
-    let workingDaysOfParticularEmployee = workingDays;
+    // let workingDaysOfParticularEmployee = workingDays;
 
     // Fetching total leaves taken by that particular employee within that month
     const leavesTaken = await Leave.countDocuments({

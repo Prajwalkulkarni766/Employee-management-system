@@ -1,0 +1,23 @@
+[{
+  "_id": {
+    "$oid": "66a9ba56e857a38168859953"
+  },
+  "officeName": "Practease",
+  "officeStartTime": "Invalid Date",
+  "officeEndTime": "Invalid Date",
+  "lateMarkDeduction": 10,
+  "lessWorkTimeDeduction": 10,
+  "halfDayDeduction": 10,
+  "halfDayWorkingHours": 5,
+  "totalWorkingHours": 8,
+  "overTimeWorkingHours": 9,
+  "overTimeAddition": 100,
+  "totalCasualLeaves": 10,
+  "totalMedicalLeaves": 8,
+  "amountDeductedWhenEmployeeIsAbsent": 99,
+  "holiday": [
+    "Sunday",
+    "Saturday"
+  ],
+  "__v": 0
+}]

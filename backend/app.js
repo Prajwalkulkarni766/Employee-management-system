@@ -77,7 +77,7 @@ import AppError from "./src/utils/appError.js";
 //routes declaration
 app.use(express.static("public"));
 app.use("/api/v1/auth", authenticateRoute);
-// app.use(verifyToken);
+app.use(verifyToken);
 app.use("/api/v1/dashboard", dashboardRoute);
 app.use("/api/v1/employee", employeeRoute);
 app.use("/api/v1/attendance", attendanceRoute);
