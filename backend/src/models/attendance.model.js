@@ -75,43 +75,15 @@ attendanceSchema.methods.calculateWorkingHoursStatus = async function () {
     } else {
       this.workingStatus = "Not Considerable";
     }
-    // this.workingHours = `${workingHours}:${workingMinutes}`;
     this.workingHours = workingHours;
     this.workingMinutes = workingMinutes;
   }
 };
 
-// Function to get absent employee IDs for a date
-// attendanceSchema.statics.getAbsentEmployeeIds = async function (date) {
-//   const existingAttendance = await this.find({ date: date.toISOString() });
-//   const allEmployees = await mongoose.model("Employee").find();
-//   const absentEmployeeIds = [];
-
-//   for (const employee of allEmployees) {
-//     let found = false;
-//     for (const attendance of existingAttendance) {
-//       if (attendance.employee.toString() === employee._id.toString()) {
-//         found = true;
-//         break;
-//       }
-//     }
-//     if (!found) {
-//       absentEmployeeIds.push(employee._id);
-//     }
-//   }
-
-//   return absentEmployeeIds;
-// };
-
 attendanceSchema.pre("save", function (next) {
   this.calculateWorkingHoursStatus();
   next();
 });
-
-// attendanceSchema.post("save", function (doc, next) {
-//   this.checkLateForWorkOrNot();
-//   next();
-// });
 
 const Attendance = model("Attendance", attendanceSchema);
 

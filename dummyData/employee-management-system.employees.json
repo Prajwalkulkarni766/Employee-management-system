@@ -1,0 +1,50 @@
+[{
+  "_id": {
+    "$oid": "66940592f618e771c15482b8"
+  },
+  "firstName": "admin",
+  "gender": "Male",
+  "mobileNumber": 1234567890,
+  "password": "$2b$10$rPUk8R4UYjt/14wO6lTUXO4REH9CPs.cOg23f/p0MpbOOtxhns1lm",
+  "department": "HR",
+  "email": "admin@gmail.com",
+  "dateOfBirth": {
+    "$date": "2022-01-01T00:00:00.000Z"
+  },
+  "joiningDate": {
+    "$date": "2022-01-01T00:00:00.000Z"
+  },
+  "salary": 1000,
+  "role": "Admin",
+  "isWorking": true,
+  "employeeId": "EMP-1",
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "669405c6f618e771c15482c2"
+  },
+  "employeeId": "EMP-2",
+  "firstName": "employee1",
+  "lastName": "employee1",
+  "gender": "Male",
+  "mobileNumber": 1234567890,
+  "password": "$2b$10$cJvMhYHNzV1D5brMgExDze/S/GMg.P4iLXPeUJkZwdlW5sZEJwMga",
+  "designation": "employee1",
+  "department": "Development",
+  "address": "employee1",
+  "email": "employee1@gmail.com",
+  "dateOfBirth": {
+    "$date": "2024-07-14T00:00:00.000Z"
+  },
+  "education": "employee1",
+  "joiningDate": {
+    "$date": "2024-07-14T00:00:00.000Z"
+  },
+  "salary": 100,
+  "role": "Employee",
+  "isWorking": true,
+  "__v": 0,
+  "da": 0,
+  "hra": 0
+}]
